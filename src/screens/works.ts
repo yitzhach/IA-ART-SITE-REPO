@@ -11,11 +11,16 @@ import {publishWork} from '../lib/artworks';
 import {get} from '../api';
 import {navigate} from '../router';
 
-type Filter = {kind: 'all' | 'drafts' | 'public' | 'sold'} | {kind: 'collection'; name: string};
+type Filter = {kind: 'all' | 'drafts' | 'public' | 'sold' | 'site'} | {kind: 'collection'; name: string};
 let filter: Filter = {kind: 'all'};
 
 /** Which works a filter shows. */
-export function applyFilter(works: Artwork[], f: Filter): Artwork[] {
+export const isSitePhoto = (w: Pick<Artwork, 'kind'>) => w.kind === 'site_photo';
+
+/** Which works a filter shows. Site photos only appear under their own chip, never mixed in with the works. */
+export function applyFilter(all: Artwork[], f: Filter): Artwork[] {
+  if (f.kind === 'site') return all.filter(isSitePhoto);
+  const works = all.filter(w => !isSitePhoto(w));
   switch (f.kind) {
     case 'all':
       return works;
@@ -84,7 +89,17 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
   }
 
   const drafts = works.filter(isDraft).length;
-  const collections = [...new Set(works.map(w => w.collection).filter((c): c is string => !!c))].sort();
+  const sitePhotos = works.filter(isSitePhoto);
+  const siteDrafts = sitePhotos.filter(isDraft).length;
+  if (filter.kind === 'site' && !sitePhotos.length) filter = {kind: 'all'};
+  const collections = [
+    ...new Set(
+      works
+        .filter(w => !isSitePhoto(w))
+        .map(w => w.collection)
+        .filter((c): c is string => !!c),
+    ),
+  ].sort();
   if (filter.kind === 'collection' && !collections.includes(filter.name)) filter = {kind: 'all'};
   const grid = h('div', {class: 'grid'});
   const bar = h('div', {class: 'chips filters', role: 'group', 'aria-label': 'Show'});
@@ -112,6 +127,7 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
       pill('Public', {kind: 'public'}),
       pill('Sold', {kind: 'sold'}),
       ...collections.map(name => pill(name, {kind: 'collection', name})),
+      ...(sitePhotos.length ? [pill('Site photos', {kind: 'site'})] : []),
     );
   };
   draw();
@@ -123,7 +139,12 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
       ? h(
           'a',
           {class: 'banner', href: '/studio/review'},
-          h('span', null, drafts === 1 ? '1 draft waiting for you' : `${drafts} drafts waiting for you`),
+          h(
+            'span',
+            null,
+            (drafts === 1 ? '1 draft waiting for you' : `${drafts} drafts waiting for you`) +
+              (siteDrafts ? ` (${siteDrafts} site photo${siteDrafts === 1 ? '' : 's'})` : ''),
+          ),
           h('strong', null, 'Review →'),
         )
       : null,

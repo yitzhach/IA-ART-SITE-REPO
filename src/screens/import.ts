@@ -5,9 +5,10 @@ import {attachToArtwork, uploadPrepared} from '../lib/upload';
 import {h} from '../ui';
 import type {Params} from '../router';
 import type {Drafts, Manifest} from '../import/types';
+import {runSiteImportInto, siteStepPending} from '../import/site-ui';
 import {keysToRecord, listEveryWork, plan, runImport, type ImportProgress, type ImportResult} from '../import/run';
 
-const api = {get, post: <T>(p: string, b?: unknown) => post<T>(p, b), patch};
+const api = {get, post: <T>(p: string, b?: unknown, v?: number) => post<T>(p, b, v), patch};
 
 async function fetchImage(url: string): Promise<Blob> {
   const res = await fetch(url);
@@ -34,7 +35,7 @@ async function draft(artworkId: string, prepared?: Drafts[string]): Promise<'sta
 
 interface Settings {
   version: number;
-  meta?: Record<string, unknown> & {siteImport?: {keys?: string[]}};
+  meta?: Record<string, unknown> & {siteImport?: {keys?: string[]; siteStep?: string}};
 }
 const recordedKeys = (s: Settings) => new Set(s.meta?.siteImport?.keys ?? []);
 
@@ -43,7 +44,11 @@ async function record(manifest: Manifest): Promise<void> {
   try {
     const s = await get<Settings>('/settings');
     const keys = keysToRecord(await listEveryWork(api), recordedKeys(s));
-    await patch('/settings', {meta: {...s.meta, siteImport: {sha: manifest.sha, keys}}}, s.version);
+    await patch(
+      '/settings',
+      {meta: {...s.meta, siteImport: {...s.meta?.siteImport, sha: manifest.sha, keys}}},
+      s.version,
+    );
   } catch {
     // Not fatal: the next run checks again.
   }
@@ -76,6 +81,7 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
   const total = manifest.works.length;
   const left = pending.todo.length;
   const status = h('div', {'aria-live': 'polite'});
+  const siteBox = h('div', {class: 'site-step'});
   const start = h('button', {class: 'primary', type: 'button'}, `Import ${photos(left)}`);
   const stop = h('button', {type: 'button', hidden: true}, 'Stop');
   let controller: AbortController | null = null;
@@ -100,10 +106,12 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
     root.replaceChildren(
       ...intro,
       h('p', null, 'Everything is already in. ', h('a', {href: '/studio/review'}, 'Next: review them')),
+      siteBox,
     );
+    if (await siteStepPending().catch(() => false)) await runSiteImportInto(siteBox);
     return;
   }
-  root.replaceChildren(...intro, h('div', {class: 'row'}, start, stop), status);
+  root.replaceChildren(...intro, h('div', {class: 'row'}, start, stop), status, siteBox);
 
   const showProgress = (p: ImportProgress) =>
     status.replaceChildren(
@@ -151,6 +159,9 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
       });
       showResult(result);
       await record(manifest);
+      // the words and photos follow once every photo is in
+      if (!result.failed.length && !result.stopped && (await siteStepPending().catch(() => false)))
+        await runSiteImportInto(siteBox);
       start.textContent = 'Import again';
       start.hidden = !result.failed.length && !result.stopped;
     } catch (e) {

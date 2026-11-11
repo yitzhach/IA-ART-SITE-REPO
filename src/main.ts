@@ -32,6 +32,7 @@ function header(user: Me) {
       link('/studio/works', 'Works', 'works'),
       link('/studio/add', 'Add', 'add'),
       link('/studio/review', 'Review', 'review'),
+      link('/studio/site', 'Site', 'site'),
     ),
     h(
       'button',

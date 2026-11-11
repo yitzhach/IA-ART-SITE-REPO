@@ -10,7 +10,8 @@
     "test": "vitest run",
     "format": "prettier --write src worker tests scripts index.html",
     "format:check": "prettier --check src worker tests scripts index.html",
-    "test:screens": "node tests/screens.mjs"
+    "test:screens": "node tests/screens.mjs",
+    "test:site": "node tests/site/checks.mjs"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261110.1",

@@ -14,7 +14,11 @@ export interface SiteEnv {
   STUDIO_SLUG?: string;
 }
 
-const HTML = {'content-type': 'text/html; charset=utf-8'};
+const HTML = {
+  'content-type': 'text/html; charset=utf-8',
+  'x-content-type-options': 'nosniff',
+  'referrer-policy': 'strict-origin-when-cross-origin',
+};
 
 export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);

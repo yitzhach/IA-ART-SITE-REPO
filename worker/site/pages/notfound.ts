@@ -1,4 +1,4 @@
-// The site's own "not found" and "something went wrong" pages.
+// The site's own "not found" page.
 import {html} from '../html';
 import type {Page} from '../page';
 
@@ -6,8 +6,12 @@ export const notFound = (): Page => ({
   status: 404,
   title: 'Not found',
   noindex: true,
-  body: html`<section class="notfound">
-    <h1>Not found</h1>
-    <p>That page isn't here. <a href="/works">See the works</a> or <a href="/">go home</a>.</p>
-  </section>`,
+  body: html`<div class="wrap">
+    <section class="intro notfound">
+      <p class="eyebrow">404</p>
+      <h1>Not found</h1>
+      <p class="lede">That page isn't here.</p>
+      <p class="btns"><a class="btn" href="/works">See the works</a><a class="btn alt" href="/">Go home</a></p>
+    </section>
+  </div>`,
 });

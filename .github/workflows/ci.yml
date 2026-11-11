@@ -25,8 +25,21 @@ jobs:
           npx playwright@1.56.1 install --with-deps chromium || npx playwright@1.56.1 install chromium
       - name: Screens (390 and 1280 px, light and dark, no sideways scroll)
         run: SKIP_BUILD=1 npm run test:screens
+      - name: Site checks (no-JS, 390 px, budgets, Lighthouse)
+        run: npm run test:site
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: screens
           path: test-results/screens
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: site-checks
+          path: test-results/site-checks
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: site-shots
+          path: test-results/site-shots
+          if-no-files-found: ignore

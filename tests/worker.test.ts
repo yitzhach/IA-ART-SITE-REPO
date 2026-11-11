@@ -25,6 +25,11 @@ describe('worker', () => {
     expect(r.headers.get('x-content-type-options')).toBe('nosniff');
     expect(r.headers.get('referrer-policy')).toBe('strict-origin-when-cross-origin');
   });
+  it('redirects the old /index.html to /', async () => {
+    const r = await call('/index.html');
+    expect(r.status).toBe(301);
+    expect(r.headers.get('location')).toBe('https://x.test/');
+  });
   it('leaves API responses alone', async () =>
     expect((await call('/v1/me')).headers.get('content-security-policy')).toBeNull());
   it('lets the CSP run WebAssembly (the Safari WebP fallback) and load signed pictures', async () => {

@@ -43,7 +43,7 @@ export default {
     const p = url.pathname;
     if (under(p, '/v1')) return env.API.fetch(request);
     if (under(p, '/assistant')) return env.ASSISTANT.fetch(request);
-    if (under(p, '/studio') || p === '/index.html') return secured(await env.ASSETS.fetch(request));
+    if (under(p, '/studio')) return secured(await env.ASSETS.fetch(request));
     if (STATIC.test(p)) {
       const res = await env.ASSETS.fetch(request);
       // A missing file must not come back as the studio app's page.
