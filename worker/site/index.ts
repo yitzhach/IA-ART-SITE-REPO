@@ -33,7 +33,7 @@ export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContex
   try {
     const studio = await data.studio();
     if (url.pathname === '/sitemap.xml')
-      return cached(request, studio.catalogueVersion, ctx, () => sitemap(url.origin, data));
+      return await cached(request, studio.catalogueVersion, ctx, () => sitemap(url.origin, data));
     const route = match(url.pathname);
     return await cached(request, studio.catalogueVersion, ctx, async () => {
       const pc: PageCtx = {url, data, studio, photos: await data.sitePhotos()};

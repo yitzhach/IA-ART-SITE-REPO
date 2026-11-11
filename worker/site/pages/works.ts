@@ -17,16 +17,19 @@ export const render: Render = async (ctx, _params) => {
   const cursor = q.get('cursor') || undefined;
   const list = await ctx.data.works({collection, status, cursor});
 
-  const href = (c?: string, s?: string, cur?: string) => {
+  const href = (c?: string, s?: string, cur?: string, from?: number) => {
     const qs = new URLSearchParams();
     if (c) qs.set('collection', c);
     if (s) qs.set('status', s);
     if (cur) qs.set('cursor', cur);
+    if (cur && from) qs.set('from', String(from));
     return `/works${qs.size ? `?${qs}` : ''}`;
   };
   const link = (label: string, to: string, on: boolean): Raw =>
     html`<li><a href="${to}" ${on ? html`aria-current="true"` : ''}>${label}</a></li>`;
-  const offset = cursor && /^\d+$/.test(cursor) ? Number(cursor) : 0;
+  // The API's cursor is opaque; the More link carries where the numbering goes on.
+  const from = Number(q.get('from'));
+  const offset = cursor && Number.isInteger(from) && from > 0 && from < 100000 ? from : 0;
 
   const body = html`<div class="wrap">
     <div class="intro">
@@ -50,14 +53,14 @@ export const render: Render = async (ctx, _params) => {
           </ul>`
         : html`<p class="empty">No works match. <a href="/works">See all works</a>.</p>`
     }
-    ${list.nextCursor ? html`<p class="more"><a class="btn alt" href="${href(collection, status, list.nextCursor)}" rel="next">More</a></p>` : ''}
+    ${list.nextCursor ? html`<p class="more"><a class="btn alt" href="${href(collection, status, list.nextCursor, offset + list.items.length)}" rel="next">More</a></p>` : ''}
   </div>`;
   return {
     title: 'Works',
     description: `Works by ${ctx.studio.name}${collection ? ` — ${collection}` : ''}${status ? `, ${status}` : ''}.`,
     body,
     nav: 'works',
-    canonical: href(collection, status, cursor),
+    canonical: href(collection, status, cursor, offset),
     scripts: ['/site/inquiry.js'],
   };
 };

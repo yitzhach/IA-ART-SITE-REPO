@@ -36,8 +36,8 @@ describe('works', () => {
   it('a More link after 48 works', async () => {
     for (let n = 6; n <= 60; n++) fixture.works.push({...fixture.works[2]!, slug: `extra-${n}`, title: `Extra ${n}`});
     const {text} = await get('/works');
-    expect(text).toMatch(/href="\/works\?cursor=48" rel="next">More<\/a>/);
-    const p2 = await get('/works?cursor=48');
+    expect(text).toMatch(/href="\/works\?cursor=48&amp;from=48" rel="next">More<\/a>/);
+    const p2 = await get('/works?cursor=48&from=48');
     expect(p2.text).toContain('No. 49');
     expect(p2.text).not.toContain('>More<');
   });
@@ -46,5 +46,14 @@ describe('works', () => {
     const r = await get('/works');
     expect(r.status).toBe(200);
     expect(r.text).toContain('No works match');
+  });
+});
+
+describe('sizes', () => {
+  it('needs both height and width; depth only when known', async () => {
+    const {sizeLine} = await import('../../worker/site/format');
+    expect(sizeLine({height: null, width: 24, depth: 3, sizeUnit: 'in'})).toBeNull();
+    expect(sizeLine({height: 36, width: 24, depth: null, sizeUnit: 'in'})).toBe('36 × 24 in (91.4 × 61 cm)');
+    expect(sizeLine({height: 36, width: 24, depth: 2, sizeUnit: 'in'})).toBe('36 × 24 × 2 in (91.4 × 61 × 5.1 cm)');
   });
 });

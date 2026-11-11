@@ -168,10 +168,10 @@ function fake(
 }
 
 describe('runSiteStep', () => {
-  it('marks kinds, saves the profile once, publishes placed photos and fixes the time zone', async () => {
+  it('marks kinds, saves the profile once, publishes placed site photos (never a work) and fixes the time zone', async () => {
     const f = fake();
     const r = await runSiteStep({api: f.api, manifest, text});
-    expect(r).toMatchObject({ran: true, kindsMarked: 1, placesSet: 3, published: 2, failed: [], timezoneChanged: true});
+    expect(r).toMatchObject({ran: true, kindsMarked: 1, placesSet: 3, published: 1, failed: [], timezoneChanged: true});
     expect(r.skippedPaths.sort()).toEqual(['images/missing.webp', 'images/nothing.webp']);
     // kind marked on the site photo only (A3 is a work; A2 already was one)
     expect(f.artworks.A1.kind).toBe('site_photo');
@@ -183,12 +183,10 @@ describe('runSiteStep', () => {
     expect(s.meta.site.photos).toEqual({'home.hero': ['A1'], 'about.studio': ['A2'], 'home.object-1': ['A3']});
     expect(s.meta.site.hours).toEqual({from: '09:00', to: '18:00'});
     expect(f.calls.filter(c => c === 'PATCH /settings')).toHaveLength(1);
-    // A1 and A3 published, one at a time; A2 was already public
-    expect(f.calls.filter(c => c.includes('/publish'))).toEqual([
-      'POST /artworks/A1/publish',
-      'POST /artworks/A3/publish',
-    ]);
-    expect(f.artworks.A1.public && f.artworks.A3.public).toBe(true);
+    // A1 published; A2 was already public; A3 is a work and waits for Isaac's own approval (D-122)
+    expect(f.calls.filter(c => c.includes('/publish'))).toEqual(['POST /artworks/A1/publish']);
+    expect(f.artworks.A1.public).toBe(true);
+    expect(f.artworks.A3.public).toBe(false);
   });
   it('a second run changes nothing', async () => {
     const f = fake();
@@ -217,7 +215,7 @@ describe('runSiteStep', () => {
     f.failPublish('A1');
     const r = await runSiteStep({api: f.api, manifest, text});
     expect(r.failed).toEqual([{title: 'Hero A', message: 'No web sizes yet.'}]);
-    expect(r.published).toBe(1);
+    expect(r.published).toBe(0);
     expect(f.settings().meta.siteImport.siteStep).toBe('sha-1');
   });
 });

@@ -185,9 +185,10 @@ export async function runSiteStep(d: SiteStepDeps): Promise<SiteStepResult> {
   d.onProgress?.('Saving the words…');
   await api.patch('/settings', body, settings.version);
 
-  // (e) a photo shows on the site only while its work is public
+  // (e) a photo shows on the site only while it is public. Only the site photos are published here (they were public
+  // on the old site); a work placed on a page waits for Isaac's own approval like any other draft (D-122).
   const placed = new Set(Object.values(photos).flat());
-  const todo = works.filter(w => placed.has(w.id) && !w.public);
+  const todo = works.filter(w => placed.has(w.id) && !w.public && w.kind === 'site_photo');
   for (const [i, w] of todo.entries()) {
     d.onProgress?.(`Publishing site photo ${i + 1} of ${todo.length}…`);
     try {

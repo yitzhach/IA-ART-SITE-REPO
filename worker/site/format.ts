@@ -5,8 +5,9 @@ const n = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1).replace
 
 /** '24 × 36 in (61 × 91.4 cm)'; depth added when known; null when no size. */
 export function sizeLine(a: Pick<PublicArtwork, 'width' | 'height' | 'depth' | 'sizeUnit'>): string | null {
-  const dims = [a.height, a.width, a.depth].filter((v): v is number => typeof v === 'number' && v > 0);
-  if (dims.length < 2) return null;
+  const ok = (v: number | null): v is number => typeof v === 'number' && v > 0;
+  if (!ok(a.height) || !ok(a.width)) return null;
+  const dims = ok(a.depth) ? [a.height, a.width, a.depth] : [a.height, a.width];
   const inch = a.sizeUnit === 'in';
   const other = dims.map(v => (inch ? v * 2.54 : v / 2.54));
   return `${dims.map(n).join(' × ')} ${a.sizeUnit} (${other.map(v => n(Math.round(v * 10) / 10)).join(' × ')} ${inch ? 'cm' : 'in'})`;

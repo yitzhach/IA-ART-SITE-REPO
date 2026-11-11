@@ -18,7 +18,7 @@ export function layout(ctx: PageCtx, page: Page): string {
   const s = ctx.studio;
   const home = ctx.url.pathname === '/';
   const title = home ? `${s.name}${s.tagline ? ` — ${s.tagline}` : ''}` : `${page.title} — ${s.name}`;
-  const description = (page.description ?? s.description ?? s.tagline ?? '').slice(0, 160);
+  const description = (page.description || s.description || s.tagline || '').slice(0, 160);
   const canonical = new URL(page.canonical ?? ctx.url.pathname, ctx.url.origin).toString();
   const og = page.image ? sizeUrl(page.image, 960) : null;
   const nav = () =>
