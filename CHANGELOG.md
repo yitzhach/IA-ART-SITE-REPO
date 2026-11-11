@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Works page no longer jumps while fonts load (CI measured layout shift 0.22, Lighthouse performance 88): the
+  filter rows stay on one line (they scroll sideways if a studio has many collections), and the layout preloads
+  the header's Archivo 600 and Plex Mono as well.
 - Site 3.0 stage 2: the public site (D-116…D-123). The Worker now serves `/`, `/works`, `/works/{slug}`,
   `/commissions`, `/process`, `/about`, `/sitemap.xml`, `/robots.txt` and 301s for the old site's addresses, from
   studio-api's public routes for the studio in `STUDIO_SLUG` (staging: Isaac's). Plain TypeScript templates

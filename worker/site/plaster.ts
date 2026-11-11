@@ -9,8 +9,15 @@ const FONTS = `--head:'Bodoni Moda','Bodoni 72',Didot,Georgia,serif;--serif:News
 const face = (family: string, file: string, weight: number, style = 'normal') =>
   `@font-face{font-family:'${family}';font-style:${style};font-weight:${weight};font-display:swap;src:url(/fonts/${file}.woff2) format('woff2')}`;
 
-/** The files the layout preloads (used above the fold on every page). */
-export const PRELOAD_FONTS = ['/fonts/bodoni-700.woff2', '/fonts/archivo-400.woff2'];
+/** The files the layout preloads: every face used above the fold on every page (headings, body, the header's
+ * links in Archivo 600, eyebrows and labels in Plex Mono). A face that arrives late swaps in at a different width,
+ * rewraps a row (Works' filters) and moves the page under it: CI measured that as layout shift. */
+export const PRELOAD_FONTS = [
+  '/fonts/bodoni-700.woff2',
+  '/fonts/archivo-400.woff2',
+  '/fonts/archivo-600.woff2',
+  '/fonts/plexmono-400.woff2',
+];
 
 export const CSS = [
   `:root{${LIGHT}${FONTS}--gut:max(20px,env(safe-area-inset-left));color-scheme:light dark}`,
@@ -69,8 +76,8 @@ article.split{margin-bottom:40px}
 .btn.alt{background:none;color:var(--ink);border-color:var(--ink)}
 .btn.alt:hover{background:var(--ink);color:var(--bg)}
 .btn[hidden]{display:none}
-.filters{display:flex;flex-wrap:wrap;gap:0 18px;margin:0 0 4px;padding:0;list-style:none}
-.filters li{margin:0}
+.filters{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:0 18px;margin:0 0 4px;padding:0;list-style:none}
+.filters li{margin:0;flex:none}
 .filters a{display:inline-flex;align-items:center;min-height:44px;color:var(--ink);text-decoration:none;font:600 13px var(--body);border-bottom:2px solid transparent}
 .filters a:hover,.filters a[aria-current]{border-bottom-color:var(--accent)}
 .filters .lbl{font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);display:inline-flex;align-items:center;min-height:44px;margin-right:2px}
