@@ -141,7 +141,15 @@ function createBody(w: ManifestWork, palette: Prepared['palette'], sha: string) 
 
 export async function runImport<P extends Prepared>(d: ImportDeps<P>): Promise<ImportResult> {
   const {manifest, api} = d;
-  const result: ImportResult = {total: 0, created: 0, repaired: 0, alreadyThere: 0, failed: [], stopped: false, voiceSet: false};
+  const result: ImportResult = {
+    total: 0,
+    created: 0,
+    repaired: 0,
+    alreadyThere: 0,
+    failed: [],
+    stopped: false,
+    voiceSet: false,
+  };
 
   const existing = await listEveryWork(api);
   const {todo, alreadyThere} = plan(manifest, existing);

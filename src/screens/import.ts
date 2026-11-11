@@ -35,7 +35,9 @@ async function draft(artworkId: string, prepared?: Drafts[string]): Promise<'sta
 const photos = (n: number) => `${n} photo${n === 1 ? '' : 's'}`;
 
 export async function render(el: HTMLElement, _params: Params): Promise<void> {
-  el.replaceChildren(h('section', {class: 'import'}, h('h1', null, 'Bring in your old photos'), h('p', null, 'Looking…')));
+  el.replaceChildren(
+    h('section', {class: 'import'}, h('h1', null, 'Bring in your old photos'), h('p', null, 'Looking…')),
+  );
   const root = el.firstElementChild as HTMLElement;
 
   let manifest: Manifest, drafts: Drafts, pending: ReturnType<typeof plan>;
@@ -71,7 +73,10 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
   ];
 
   if (left === 0) {
-    root.replaceChildren(...intro, h('p', null, 'Everything is already in. ', h('a', {href: '/studio/review'}, 'Next: review them')));
+    root.replaceChildren(
+      ...intro,
+      h('p', null, 'Everything is already in. ', h('a', {href: '/studio/review'}, 'Next: review them')),
+    );
     return;
   }
   root.replaceChildren(...intro, h('div', {class: 'row'}, start, stop), status);
@@ -92,7 +97,11 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
     if (r.failed.length) {
       status.append(
         h('p', null, 'These need another try (tap Import again, the rest are done):'),
-        h('ul', {class: 'problems', role: 'alert'}, r.failed.map(f => h('li', null, `${f.title}: ${f.message}`))),
+        h(
+          'ul',
+          {class: 'problems', role: 'alert'},
+          r.failed.map(f => h('li', null, `${f.title}: ${f.message}`)),
+        ),
       );
       if (!r.stopped) status.append(h('p', null, h('a', {href: '/studio/review'}, 'Review the ones that are in')));
     }
@@ -121,7 +130,11 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
       start.hidden = !result.failed.length && !result.stopped;
     } catch (e) {
       status.replaceChildren(
-        h('p', {class: 'err', role: 'alert'}, 'The import could not start. Check your connection and tap Import again.'),
+        h(
+          'p',
+          {class: 'err', role: 'alert'},
+          'The import could not start. Check your connection and tap Import again.',
+        ),
       );
     } finally {
       start.disabled = false;
