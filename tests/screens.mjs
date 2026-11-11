@@ -171,6 +171,74 @@ const works = titles.map((title, i) => {
   if (i === 4) Object.assign(w, {width: 12, height: 12, priceCents: 40000});
   return w;
 });
+// two site photos (public, so they are not drafts): kept out of the works list, offered first by the Site picker
+for (const [i, title] of [
+  [8, 'Studio wall'],
+  [9, 'Hands in plaster'],
+]) {
+  const img = {
+    ...works[0]._img,
+    ...base(i),
+    id: `F${i}`,
+    entityId: `SP${i}`,
+    meta: {pixels: {width: 1000, height: 800}},
+  };
+  works.push({
+    ...base(i),
+    id: `SP${i}`,
+    title,
+    kind: 'site_photo',
+    public: true,
+    publishedAt: now,
+    status: 'not_for_sale',
+    primaryFileId: `F${i}`,
+    meta: {importedFrom: {key: `sp-${i}`, page: 'site-photo'}},
+    _img: img,
+    _col: palettes[i % 4],
+  });
+}
+const siteSettings = () => ({
+  studioId: 'S1',
+  version: 3,
+  currency: 'USD',
+  timezone: 'America/Los_Angeles',
+  meta: {
+    voice: 'v',
+    siteImport: {sha: 'x', keys: [], siteStep: 'x'},
+    site: {
+      name: 'Isaac Anderson',
+      tagline: 'Revelation in the midst of decay.',
+      description:
+        'Site-specific sculptural work in cement and plaster — for private collections, commercial, interior and exterior.',
+      phone: '+15555550100',
+      email: 'studio@example.com',
+      hours: {from: '09:00', to: '18:00'},
+      pages: {
+        home: {
+          title: 'Isaac Anderson',
+          lede: 'Site-specific sculptural work in cement and plaster.',
+          sections: [
+            {key: 'gallery', heading: 'Gallery', body: 'Site-specific work, framed by project type.'},
+            {key: 'room-1', heading: 'Images', body: 'Residential + commercial', place: 'home.rooms'},
+            {
+              key: 'collections',
+              heading: 'Collections',
+              body: 'A partial index.\n\n• No. 014 · Abstract\n• No. 009 · Figurative',
+            },
+          ],
+        },
+        commissions: {title: 'Commissions', lede: 'Developed with architects, designers and collectors.'},
+        process: {title: 'Process', sections: [{key: 'surface', heading: 'Surface', body: 'Building the surface.'}]},
+      },
+      photos: {
+        'home.hero': ['SP8', 'W0', 'SP9'],
+        'home.rooms': ['W1'],
+        'about.studio': ['SP9'],
+        'process.surface': ['W3'],
+      },
+    },
+  },
+});
 const clean = ({_img, _col, ...w}) => w;
 const detail = w => ({...clean(w), images: [w._img]});
 
@@ -202,6 +270,7 @@ const meBody = {
 async function mock(page, {signedIn = true} = {}) {
   const auth = {signedIn};
   const state = works.map(w => ({...w})); // fresh per page
+  let settings = siteSettings();
   const json = (route, body, status = 200) =>
     route.fulfill({status, contentType: 'application/json', body: JSON.stringify(body)});
   await page.route(
@@ -244,6 +313,25 @@ async function mock(page, {signedIn = true} = {}) {
             hasPassword: false,
           })
         : json(route, {error: {code: 'unauthorized', message: 'Sign in'}}, 401);
+    if (path === '/settings' && method === 'GET') return json(route, settings);
+    if (path === '/settings' && method === 'PATCH') {
+      if (Number(req.headers()['if-match']) !== settings.version)
+        return json(route, {error: {code: 'conflict', message: 'Changed'}}, 409);
+      if (body.meta?.site?.phone && !/^\+?[0-9]{7,15}$/.test(body.meta.site.phone))
+        return json(
+          route,
+          {
+            error: {
+              code: 'bad_request',
+              message: 'Invalid',
+              details: {issues: [{path: ['meta', 'site', 'phone'], message: 'Not a phone number'}]},
+            },
+          },
+          400,
+        );
+      settings = {...settings, ...body, version: settings.version + 1};
+      return json(route, settings);
+    }
     if (path === '/artworks' && method === 'GET')
       return json(route, {items: state.filter(w => !w.deletedAt).map(clean), nextCursor: null});
     if (path === '/artworks' && method === 'POST') {
@@ -320,6 +408,25 @@ const screens = [
   {name: 'work', path: '/studio/works/W3', ready: '.cover-btn img'},
   {name: 'work-public', path: '/studio/works/W1', ready: 'text=Public since'},
   {name: 'review', path: '/studio/review', ready: '.review-head'},
+  {name: 'site', path: '/studio/site', ready: '.place .site-thumb img'},
+  {
+    name: 'site-page-open',
+    path: '/studio/site',
+    ready: '#page-home summary',
+    prep: async page => {
+      await page.click('#page-home summary');
+    },
+  },
+  {
+    name: 'site-picker',
+    path: '/studio/site',
+    ready: '.place button',
+    prep: async page => {
+      await page.click('button[aria-label="Change Home — top picture"]');
+      await page.waitForSelector('dialog.sheet .pick img');
+      await page.waitForTimeout(300);
+    },
+  },
 ];
 
 for (const [w, h] of sizes)
@@ -364,11 +471,75 @@ for (const [w, h] of sizes)
 
   await page.goto(origin + '/studio/works');
   await page.waitForSelector('.work-card');
+  check((await page.locator('.work-card').count()) === 8, 'site photos stay out of the works list');
+  await page.click('button.pill:has-text("Site photos")');
+  check((await page.locator('.work-card').count()) === 2, 'Site photos chip shows the 2 site photos');
   await page.click('button.pill:has-text("Drafts")');
   check((await page.locator('.work-card').count()) === 4, 'Drafts filter shows the 4 unpublished works');
   await page.click('.work-card >> nth=0');
   await page.waitForSelector('text=Approve and publish');
   check((await page.locator('.drafted').count()) >= 3, 'work screen labels the drafted fields');
+  await ctx.close();
+}
+{
+  // Site screen: a field error from the API shows next to its field; choosing a draft photo publishes it.
+  const ctx = await browser.newContext({viewport: {width: 390, height: 844}});
+  const page = await ctx.newPage();
+  const state = await mock(page);
+  await page.goto(origin + '/studio/site');
+  await page.waitForSelector('.place');
+  await page.fill('input[type=tel]', '12');
+  await page.click('button:has-text("Save contact details")');
+  await page.waitForSelector('.field-err:not([hidden])');
+  check(
+    (await page.textContent('.field-err:not([hidden])')).includes('Not a phone number'),
+    'site shows the API field error',
+  );
+  await page.fill('input[type=tel]', '(555) 555-0199');
+  await page.click('button:has-text("Save contact details")');
+  await page.waitForSelector('.save-status:has-text("Saved")');
+  await page.click('button[aria-label="Change Commissions — intro"]');
+  await page.click('dialog.sheet .pick:has-text("Figure in Blue")');
+  await page.click('dialog.sheet button:has-text("Done")');
+  await page.click('dialog button:has-text("Show on my site")');
+  await page.waitForFunction(() => document.querySelectorAll('.place')[4]?.querySelector('.site-thumb'));
+  check(state.find(x => x.id === 'W3').public === true, 'choosing a draft photo publishes it');
+  await ctx.close();
+}
+{
+  // Site screen: the site name can be copied; a field error from the API shows next to its field;
+  // choosing a draft photo publishes it.
+  const ctx = await browser.newContext({
+    viewport: {width: 390, height: 844},
+    permissions: ['clipboard-read', 'clipboard-write'],
+  });
+  const page = await ctx.newPage();
+  const state = await mock(page);
+  await page.goto(origin + '/studio/site');
+  await page.waitForSelector('.place');
+  check(
+    (await page.textContent('.slug-line')).includes('Site name: isaac-anderson-art-abc123'),
+    'site shows the site name',
+  );
+  await page.click('.slug-line button:has-text("Copy")');
+  const copied = await page.evaluate(() => navigator.clipboard.readText()).catch(() => '');
+  check(copied === 'isaac-anderson-art-abc123', `Copy puts the site name on the clipboard (${copied})`);
+  await page.fill('input[type=tel]', '12');
+  await page.click('button:has-text("Save contact details")');
+  await page.waitForSelector('.field-err:not([hidden])');
+  check(
+    (await page.textContent('.field-err:not([hidden])')).includes('Not a phone number'),
+    'site shows the API field error',
+  );
+  await page.fill('input[type=tel]', '(555) 555-0199');
+  await page.click('button:has-text("Save contact details")');
+  await page.waitForSelector('.save-status:has-text("Saved")');
+  await page.click('button[aria-label="Change Commissions — intro"]');
+  await page.click('dialog.sheet .pick:has-text("Figure in Blue")');
+  await page.click('dialog.sheet button:has-text("Done")');
+  await page.click('dialog button:has-text("Show on my site")');
+  await page.waitForFunction(() => document.querySelectorAll('.place')[4]?.querySelector('.site-thumb'));
+  check(state.find(x => x.id === 'W3').public === true, 'choosing a draft photo publishes it');
   await ctx.close();
 }
 {

@@ -1,7 +1,17 @@
 // Process: the five stages as a numbered sequence (01–05), each with its photo.
 import {html, type Raw} from '../html';
 import {place, type Render} from '../page';
-import {conversation, pageDescription, pageOf, photo, prose, sectionBlock, splitClose, titleBlock, WIDE_SIZES} from './parts';
+import {
+  conversation,
+  pageDescription,
+  pageOf,
+  photo,
+  prose,
+  sectionBlock,
+  splitClose,
+  titleBlock,
+  WIDE_SIZES,
+} from './parts';
 
 const STAGES = ['surface', 'layering', 'color', 'erosion', 'finished'];
 

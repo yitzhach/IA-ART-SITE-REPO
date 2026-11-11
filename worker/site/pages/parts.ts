@@ -3,17 +3,23 @@ import {mailHref, smsHref, telHref, type About} from '../contact';
 import {availability, blocks, sizeLine} from '../format';
 import {html, raw, type Raw} from '../html';
 import {picture} from '../picture';
-import type {PageCtx} from '../page';
+import {place, type PageCtx} from '../page';
 import type {PublicArtwork, PublicImage, PublicSitePhoto, SitePage, SitePageKey, SiteSection} from '../types';
 
 /** The `sizes` of the above-the-fold picture; the layout's preload must say the same. */
-export const HERO_SIZES = '100vw';
+export const HERO_SIZES = '(min-width: 1240px) 1240px, 100vw';
 export const COVER_SIZES = '(min-width: 900px) 58vw, 100vw';
 export const CARD_SIZES = '(min-width: 1100px) 25vw, (min-width: 760px) 33vw, 50vw';
 export const WIDE_SIZES = '(min-width: 1240px) 600px, (min-width: 760px) 50vw, 100vw';
 
 export const prose = (body: string | undefined | null): Raw =>
-  html`${blocks(body).map(b => ('p' in b ? html`<p>${b.p}</p>` : html`<ul>${b.list.map(i => html`<li>${i}</li>`)}</ul>`))}`;
+  html`${blocks(body).map(b =>
+    'p' in b
+      ? html`<p>${b.p}</p>`
+      : html`<ul>
+          ${b.list.map(i => html`<li>${i}</li>`)}
+        </ul>`,
+  )}`;
 
 export const pageOf = (ctx: PageCtx, key: SitePageKey): SitePage | undefined => ctx.studio.pages[key];
 export const sectionOf = (p: SitePage | undefined, key: string): SiteSection | undefined =>
@@ -84,7 +90,10 @@ const CLOSERS = ['inquire', 'contact', 'close'];
 /** Splits a page's sections into the ones shown in order and the closing one that carries the contact buttons. */
 export function splitClose(p: SitePage | undefined): {rest: SiteSection[]; closer?: SiteSection} {
   const all = p?.sections ?? [];
-  const at = all.map(s => s.key).findLastIndex(k => !!k && CLOSERS.includes(k));
+  let at = -1;
+  all.forEach((s, i) => {
+    if (s.key && CLOSERS.includes(s.key)) at = i;
+  });
   return at < 0 ? {rest: all} : {rest: all.filter((_, i) => i !== at), closer: all[at]};
 }
 
@@ -94,7 +103,8 @@ export function sectionBlock(ctx: PageCtx, s: SiteSection, sizes = WIDE_SIZES): 
   const id = s.key ? `s-${s.key}` : undefined;
   const text = s.key?.includes('caption')
     ? html`<p class="caption">${s.body}</p>`
-    : html`${s.heading ? html`<h2 id="${id}">${s.heading}</h2>` : ''}<div class="prose">${prose(s.body)}</div>`;
+    : html`${s.heading ? html`<h2 id="${id}">${s.heading}</h2>` : ''}
+        <div class="prose">${prose(s.body)}</div>`;
   if (!ph) return html`<section ${id && s.heading ? html`aria-labelledby="${id}"` : ''}>${text}</section>`;
   return html`<section class="split" ${id && s.heading ? html`aria-labelledby="${id}"` : ''}>
     <div>${photo(ph, sizes)}</div>
@@ -104,7 +114,10 @@ export function sectionBlock(ctx: PageCtx, s: SiteSection, sizes = WIDE_SIZES): 
 
 /** The title block every text page starts with. */
 export const titleBlock = (title: string, lede?: string): Raw =>
-  html`<div class="intro"><h1>${title}</h1>${lede ? html`<p class="lede">${lede}</p>` : ''}</div>`;
+  html`<div class="intro">
+    <h1>${title}</h1>
+    ${lede ? html`<p class="lede">${lede}</p>` : ''}
+  </div>`;
 
 export const pageDescription = (p: SitePage | undefined): string =>
   firstSentence(p?.lede ?? p?.sections?.find(s => s.body)?.body);

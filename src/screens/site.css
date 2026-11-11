@@ -45,6 +45,11 @@
   font-size: 1.15rem;
   font-weight: 700;
 }
+.page-card > summary .count {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
 .page-card[open] > summary {
   margin-bottom: 8px;
 }
@@ -197,4 +202,27 @@ dialog.sheet[open] {
 }
 .site-step {
   margin-top: 8px;
+}
+.slug-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 0 0 12px;
+}
+.slug-line p {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.slug {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  user-select: all;
+}
+.small-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.9rem;
 }

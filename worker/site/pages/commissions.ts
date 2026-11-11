@@ -19,15 +19,20 @@ export const render: Render = async ctx => {
       const steps: SiteSection[] = [];
       while (rest[i]?.key?.startsWith('step-')) steps.push(rest[i++]!);
       i--;
-      out.push(html`<ol class="steps">
-        ${steps.map((st, j) => {
-          const h = stepHead(st, j);
-          return html`<li class="step nophoto">
-            <span class="n">${h.n}</span>
-            <div class="prose"><h3>${h.title}</h3>${prose(st.body)}</div>
-          </li>`;
-        })}
-      </ol>`);
+      out.push(
+        html`<ol class="steps">
+          ${steps.map((st, j) => {
+            const h = stepHead(st, j);
+            return html`<li class="step nophoto">
+              <span class="n">${h.n}</span>
+              <div class="prose">
+                <h3>${h.title}</h3>
+                ${prose(st.body)}
+              </div>
+            </li>`;
+          })}
+        </ol>`,
+      );
     } else if (s.heading && !s.body && !s.place) out.push(html`<h2 class="gap">${s.heading}</h2>`);
     else out.push(sectionBlock(ctx, s));
   }
@@ -35,6 +40,8 @@ export const render: Render = async ctx => {
     title: 'Commissions',
     description: pageDescription(p),
     nav: 'commissions',
-    body: html`<div class="wrap">${titleBlock(p?.title ?? 'Commissions', p?.lede)}${out}${conversation(ctx, closer)}</div>`,
+    body: html`<div class="wrap">
+      ${titleBlock(p?.title ?? 'Commissions', p?.lede)}${out}${conversation(ctx, closer)}
+    </div>`,
   };
 };

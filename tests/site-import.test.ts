@@ -87,8 +87,14 @@ describe('buildPlaces', () => {
     const m = realManifest as unknown as Manifest;
     const artworks = m.works.map((w, i) => ({id: 'W' + i, meta: {importedFrom: {key: w.key}}}));
     const r = buildPlaces((realText as unknown as SiteText).places, m, artworks);
-    expect(Object.keys(r.photos).sort()).toEqual(Object.keys(realText.places).sort());
-    expect(r.skipped).toEqual([]);
+    // object-009.webp was never among the old site's image files the import found, so that place stays empty
+    expect(r.skipped).toEqual(['images/object-009.webp']);
+    expect(Object.keys(r.photos).sort()).toEqual(
+      Object.keys(realText.places)
+        .filter(p => p !== 'home.object-2')
+        .sort(),
+    );
+    expect(r.photos['home.hero']!.length).toBeGreaterThan(1);
   });
 });
 

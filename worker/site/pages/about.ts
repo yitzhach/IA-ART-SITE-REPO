@@ -19,6 +19,8 @@ export const render: Render = async ctx => {
     title: 'About',
     description: pageDescription(p),
     nav: 'about',
-    body: html`<div class="wrap">${titleBlock(p?.title ?? ctx.studio.name, p?.lede)}${sections}${conversation(ctx, closer)}</div>`,
+    body: html`<div class="wrap">
+      ${titleBlock(p?.title ?? ctx.studio.name, p?.lede)}${sections}${conversation(ctx, closer)}
+    </div>`,
   };
 };

@@ -4,7 +4,7 @@
 //  c. budgets: script bytes <= 50 KB, the above-the-fold picture <= 200 KB
 //  d. Lighthouse (mobile): performance, accessibility, best-practices, seo >= 95; LCP <= 2000 ms
 // Run: npm run test:site. Reports go to test-results/site-checks/. Exit 1 on any failure.
-import {spawnSync} from 'node:child_process';
+import {spawn} from 'node:child_process';
 import {mkdirSync, readFileSync, existsSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import {join} from 'node:path';
@@ -136,11 +136,24 @@ try {
 }
 
 // d. Lighthouse
+function run(cmd, args, env, timeout = 240000) {
+  return new Promise(resolve => {
+    const child = spawn(cmd, args, {env, stdio: ['ignore', 'ignore', 'pipe']});
+    let stderr = '';
+    child.stderr.on('data', d => (stderr += d));
+    const timer = setTimeout(() => child.kill('SIGKILL'), timeout);
+    child.on('close', status => {
+      clearTimeout(timer);
+      resolve({status, stderr});
+    });
+  });
+}
 const chrome = chromium.executablePath();
 for (const p of LH_PAGES) {
   const name = (p === '/' ? 'home' : p.slice(1).replace(/\//g, '-')) + '.json';
   const file = join(out, `lighthouse-${name}`);
-  const r = spawnSync(
+  // Async, not spawnSync: the site's server runs in this process and must keep answering Lighthouse.
+  const r = await run(
     'npx',
     [
       '-y',
@@ -151,7 +164,7 @@ for (const p of LH_PAGES) {
       '--output=json',
       `--output-path=${file}`,
     ],
-    {env: {...process.env, CHROME_PATH: chrome}, encoding: 'utf8', timeout: 240000},
+    {...process.env, CHROME_PATH: chrome},
   );
   if (r.status !== 0 || !existsSync(file)) {
     record(p, 'lighthouse ran', 'failed', false, (r.stderr || '').trim().split('\n').slice(-2).join(' '));

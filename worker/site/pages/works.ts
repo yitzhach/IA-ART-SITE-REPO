@@ -29,7 +29,10 @@ export const render: Render = async (ctx, _params) => {
   const offset = cursor && /^\d+$/.test(cursor) ? Number(cursor) : 0;
 
   const body = html`<div class="wrap">
-    <div class="intro"><p class="eyebrow">Index</p><h1>Works</h1></div>
+    <div class="intro">
+      <p class="eyebrow">Index</p>
+      <h1>Works</h1>
+    </div>
     <nav aria-label="Filter works">
       <ul class="filters">
         <li class="lbl">Collection</li>
@@ -40,9 +43,13 @@ export const render: Render = async (ctx, _params) => {
         ${link('All', href(collection), !status)}${STATUSES.map(([k, l]) => link(l, href(collection, k), k === status))}
       </ul>
     </nav>
-    ${list.items.length
-      ? html`<ul class="grid top">${list.items.map((w, i) => workCard(w, offset + i + 1))}</ul>`
-      : html`<p class="empty">No works match. <a href="/works">See all works</a>.</p>`}
+    ${
+      list.items.length
+        ? html`<ul class="grid top">
+            ${list.items.map((w, i) => workCard(w, offset + i + 1))}
+          </ul>`
+        : html`<p class="empty">No works match. <a href="/works">See all works</a>.</p>`
+    }
     ${list.nextCursor ? html`<p class="more"><a class="btn alt" href="${href(collection, status, list.nextCursor)}" rel="next">More</a></p>` : ''}
   </div>`;
   return {

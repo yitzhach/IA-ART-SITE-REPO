@@ -89,16 +89,28 @@ export const render: Render = async (ctx, {slug}) => {
     <article class="piece">
       <div class="piece-media">
         ${cover ? lb(cover, COVER_SIZES, true) : ''}
-        ${more.length
-          ? html`<ul class="pics">${more.map(i => html`<li>${lb(i, '(min-width: 900px) 28vw, 50vw', false)}</li>`)}</ul>`
-          : ''}
+        ${
+          more.length
+            ? html`<ul class="pics">
+                ${more.map(i => html`<li>${lb(i, '(min-width: 900px) 28vw, 50vw', false)}</li>`)}
+              </ul>`
+            : ''
+        }
       </div>
       <div class="piece-info">
         <p class="eyebrow">${w.collection ?? 'Work'}</p>
         <h1>${w.title}</h1>
-        ${facts.length
-          ? html`<dl class="facts">${facts.map(([k, v]) => html`<dt>${k}</dt><dd>${v}</dd>`)}</dl>`
-          : ''}
+        ${
+          facts.length
+            ? html`<dl class="facts">
+                ${facts.map(
+                  ([k, v]) =>
+                    html`<dt>${k}</dt>
+                      <dd>${v}</dd>`,
+                )}
+              </dl>`
+            : ''
+        }
         <p class="avail">${availability_}</p>
         <div class="prose">${prose(w.description)}</div>
         <p class="btns">
@@ -109,12 +121,14 @@ export const render: Render = async (ctx, {slug}) => {
         </p>
       </div>
     </article>
-    ${prev || next
-      ? html`<nav class="prevnext" aria-label="More works">
-          ${prev ? html`<a href="/works/${prev.slug}" rel="prev">← ${prev.title}</a>` : html`<span></span>`}
-          ${next ? html`<a href="/works/${next.slug}" rel="next">${next.title} →</a>` : ''}
-        </nav>`
-      : ''}
+    ${
+      prev || next
+        ? html`<nav class="prevnext" aria-label="More works">
+            ${prev ? html`<a href="/works/${prev.slug}" rel="prev">← ${prev.title}</a>` : html`<span></span>`}
+            ${next ? html`<a href="/works/${next.slug}" rel="next">${next.title} →</a>` : ''}
+          </nav>`
+        : ''
+    }
   </div>`;
 
   return {

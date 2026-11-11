@@ -210,21 +210,49 @@ function addressCard(st: State): HTMLElement {
     {class: 'card site-card', 'aria-labelledby': 'site-your'},
     h('h2', {id: 'site-your'}, 'Your site'),
     h('p', {class: 'muted'}, 'Public address: ', h('strong', null, location.host)),
-    st.slug
-      ? h(
-          'p',
-          {class: 'muted'},
-          'Studio code: ',
-          h('code', null, st.slug),
-          ' · ',
-          h(
-            'a',
-            {href: `/v1/public/studios/${encodeURIComponent(st.slug)}`, target: '_blank', rel: 'noopener'},
-            'What the public sees',
-          ),
-        )
-      : null,
+    st.slug ? slugLine(st.slug) : null,
     h('div', {class: 'row'}, h('a', {class: 'btn primary', href: '/'}, 'Open your site')),
+  );
+}
+
+/** "Site name: <slug>" with Copy: Isaac pastes it once when the live site is set up. */
+function slugLine(slug: string): HTMLElement {
+  const code = h('code', {class: 'slug', id: 'site-slug'}, slug);
+  const selectIt = () => {
+    const r = document.createRange();
+    r.selectNodeContents(code);
+    const sel = getSelection();
+    sel?.removeAllRanges();
+    sel?.addRange(r);
+  };
+  const copy = h(
+    'button',
+    {
+      type: 'button',
+      class: 'small',
+      'aria-describedby': 'site-slug',
+      onclick: async () => {
+        try {
+          await navigator.clipboard.writeText(slug);
+          toast('Copied');
+        } catch {
+          selectIt();
+          toast('Selected — tap Copy in the menu');
+        }
+      },
+    },
+    'Copy',
+  );
+  return h(
+    'div',
+    {class: 'slug-line'},
+    h('p', null, h('span', {class: 'muted'}, 'Site name: '), code),
+    copy,
+    h(
+      'a',
+      {class: 'small-link', href: `/v1/public/studios/${encodeURIComponent(slug)}`, target: '_blank', rel: 'noopener'},
+      'What the public sees',
+    ),
   );
 }
 
@@ -448,7 +476,16 @@ function pageCard(
   const el = h(
     'details',
     {class: 'card site-card page-card', id: `page-${key}`},
-    h('summary', null, h('span', null, label), h('small', {class: 'muted'}, `${page?.sections?.length ?? 0} sections`)),
+    h(
+      'summary',
+      null,
+      h('span', null, label),
+      h(
+        'small',
+        {class: 'muted count'},
+        `${page?.sections?.length ?? 0} section${page?.sections?.length === 1 ? '' : 's'}`,
+      ),
+    ),
     h(
       'form',
       {novalidate: true},
