@@ -227,44 +227,21 @@
       "images/hero-macro-5.webp",
       "images/hero-macro-6.webp"
     ],
-    "home.rooms": [
-      "images/insitu-lobby.webp",
-      "images/insitu-hospitality.webp",
-      "images/insitu-collection.webp"
-    ],
-    "commissions.intro": [
-      "images/commission-intro.webp"
-    ],
+    "home.rooms": ["images/insitu-lobby.webp", "images/insitu-hospitality.webp", "images/insitu-collection.webp"],
+    "commissions.intro": ["images/commission-intro.webp"],
     "process.hero": [
       "images/process-hero.webp",
       "images/process-hero-2.webp",
       "images/process-hero-3.webp",
       "images/process-hero-4.webp"
     ],
-    "process.surface": [
-      "images/process-01-material.webp"
-    ],
-    "process.layering": [
-      "images/process-02-formwork.webp"
-    ],
-    "process.color": [
-      "images/process-03-cast.webp"
-    ],
-    "process.erosion": [
-      "images/sculptural-5.webp"
-    ],
-    "process.finished": [
-      "images/object-014.webp"
-    ],
-    "about.studio": [
-      "images/process-01-material.webp",
-      "images/about-studio.webp"
-    ],
-    "home.object-1": [
-      "images/object-014.webp"
-    ],
-    "home.object-2": [
-      "images/object-009.webp"
-    ]
+    "process.surface": ["images/process-01-material.webp"],
+    "process.layering": ["images/process-02-formwork.webp"],
+    "process.color": ["images/process-03-cast.webp"],
+    "process.erosion": ["images/sculptural-5.webp"],
+    "process.finished": ["images/object-014.webp"],
+    "about.studio": ["images/process-01-material.webp", "images/about-studio.webp"],
+    "home.object-1": ["images/object-014.webp"],
+    "home.object-2": ["images/object-009.webp"]
   }
 }

@@ -42,5 +42,6 @@ describe('wrangler.jsonc', () => {
     expect(config.assets.run_worker_first).toEqual(['/*', '!/assets/*', '!/fonts/*', '!/site/*']);
     expect(config.assets.not_found_handling).toBe('single-page-application');
   });
-  it('staging shows Isaac\'s staging studio', () => expect(config.env.staging.vars.STUDIO_SLUG).toBe('isaac-anderson-art-sbtwkm'));
+  it("staging shows Isaac's staging studio", () =>
+    expect(config.env.staging.vars.STUDIO_SLUG).toBe('isaac-anderson-art-sbtwkm'));
 });
