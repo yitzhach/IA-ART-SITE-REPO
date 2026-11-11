@@ -62,3 +62,34 @@ export interface ArtworkDetail extends Artwork {
   /** In position order. */
   images: FileRecord[];
 }
+
+export interface ArtworkPage {
+  items: Artwork[];
+  nextCursor: string | null;
+}
+
+export interface CollectionCount {
+  name: string;
+  count: number;
+}
+
+/** The fields a work can be created or changed with (the platform's `POST` / `PATCH /v1/artworks`). */
+export interface ArtworkInput {
+  title: string;
+  medium: string;
+  year: number | null;
+  width: number | null;
+  height: number | null;
+  depth: number | null;
+  sizeUnit: 'in' | 'cm';
+  priceCents: number | null;
+  currency: string;
+  status: Artwork['status'];
+  collection: string | null;
+  tags: string[];
+  palette: PaletteSwatch[];
+  primaryFileId: string | null;
+  description: string;
+  editionSize: number | null;
+  slug: string;
+}

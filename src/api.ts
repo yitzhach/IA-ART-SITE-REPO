@@ -44,6 +44,7 @@ async function request<T>(method: string, path: string, body?: unknown, version?
 }
 
 export const get = <T>(path: string) => request<T>('GET', path);
-export const post = <T>(path: string, body?: unknown) => request<T>('POST', path, body ?? {});
+export const post = <T>(path: string, body?: unknown, version?: number) =>
+  request<T>('POST', path, body ?? {}, version);
 export const patch = <T>(path: string, body: unknown, version: number) => request<T>('PATCH', path, body, version);
 export const del = <T>(path: string, version: number) => request<T>('DELETE', path, undefined, version);
