@@ -4,6 +4,25 @@ import type {PublicArtwork, PublicArtworkList, PublicCollections, PublicSitePhot
 
 export class NotFound extends Error {}
 
+export const PROFILE_SECONDS = 10;
+
+/** GET a JSON answer through the edge cache for `seconds` (no cache in tests, where `caches` doesn't exist). */
+async function edgeJson(api: Fetcher, url: string, seconds: number): Promise<unknown> {
+  const cache = typeof caches !== 'undefined' ? caches.default : null;
+  const key = new Request(`https://site-cache.internal/${encodeURIComponent(url)}`);
+  const hit = await cache?.match(key).catch(() => undefined);
+  const res = hit ?? (await api.fetch(url, {headers: {accept: 'application/json'}}));
+  if (res.status === 404) throw new NotFound(url);
+  if (!res.ok) throw new Error(`studio-api ${res.status} for the profile`);
+  if (!hit && cache) {
+    const copy = new Response(res.clone().body, {
+      headers: {'content-type': 'application/json', 'cache-control': `public, s-maxage=${seconds}`},
+    });
+    await cache.put(key, copy).catch(() => undefined);
+  }
+  return res.json();
+}
+
 export interface SiteData {
   slug: string;
   studio(): Promise<PublicStudio>;
@@ -33,7 +52,13 @@ export function siteData(api: Fetcher, slug: string): SiteData {
   };
   return {
     slug,
-    studio: () => get('', {}),
+    // The profile carries the catalogue version every page's cache key needs, so it is asked on every request: the
+    // edge keeps it for a few seconds (a publish shows within PROFILE_SECONDS, D-116).
+    studio: () => {
+      const url = base;
+      if (!memo.has(url)) memo.set(url, edgeJson(api, url, PROFILE_SECONDS));
+      return memo.get(url) as Promise<PublicStudio>;
+    },
     works: (q = {}) => get('/artworks', q),
     work: s =>
       get<PublicArtwork>(`/artworks/${encodeURIComponent(s)}`).catch(e =>

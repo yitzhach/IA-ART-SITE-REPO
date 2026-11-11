@@ -103,7 +103,7 @@ describe('edge cache', () => {
 });
 
 describe('site() with the cache', () => {
-  it('a publish (new catalogue version) shows at once; pages carry security headers', async () => {
+  it('a publish (new catalogue version) shows once the profile’s few seconds at the edge are up; pages carry security headers', async () => {
     const get = () => site(new Request('https://site.test/'), env);
     const a = await get();
     expect(a.headers.get('x-site-cache')).toBe('miss');
@@ -112,6 +112,11 @@ describe('site() with the cache', () => {
     expect(a.headers.get('referrer-policy')).toBe('strict-origin-when-cross-origin');
     expect((await get()).headers.get('x-site-cache')).toBe('hit');
     fixture.studio.catalogueVersion += 1;
+    // Within PROFILE_SECONDS the edge still has the old profile, so the old page.
+    expect((await get()).headers.get('x-site-cache')).toBe('hit');
+    const profile = [...cache.store.entries()].find(([k]) => k.startsWith('https://site-cache.internal/'));
+    expect(profile?.[1].headers.get('cache-control')).toBe('public, s-maxage=10');
+    cache.store.delete(profile![0]); // the edge lets it go after 10 s
     expect((await get()).headers.get('x-site-cache')).toBe('miss');
   });
 });

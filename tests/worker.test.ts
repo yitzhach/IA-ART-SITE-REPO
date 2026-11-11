@@ -50,3 +50,37 @@ describe('wrangler.jsonc', () => {
   it("staging shows Isaac's staging studio", () =>
     expect(config.env.staging.vars.STUDIO_SLUG).toBe('isaac-anderson-art-sbtwkm'));
 });
+
+describe('pictures at the edge', () => {
+  const pic = '/v1/public/studios/s/images/01M75HGD35H9DMP2CRXEMSH6MZ/960.webp';
+  it('keeps a 200 picture and answers the next request from the edge', async () => {
+    const store = new Map<string, Response>();
+    (globalThis as any).caches = {
+      default: {
+        match: async (r: Request) => store.get(r.url)?.clone(),
+        put: async (r: Request, res: Response) => void store.set(r.url, res),
+      },
+    };
+    let calls = 0;
+    const api = {
+      fetch: async () => (calls++, new Response('img', {headers: {'content-type': 'image/webp'}})),
+    } as unknown as Fetcher;
+    const e: Env = {...env, API: api};
+    await worker.fetch(new Request('https://x.test' + pic), e);
+    const second = await worker.fetch(new Request('https://x.test' + pic), e);
+    expect(await second.text()).toBe('img');
+    expect(calls).toBe(1);
+    expect(store.get('https://x.test' + pic)?.headers.get('cache-control')).toBe('public, max-age=86400');
+    delete (globalThis as any).caches;
+  });
+  it('never keeps a 404', async () => {
+    const store = new Map<string, Response>();
+    (globalThis as any).caches = {
+      default: {match: async () => undefined, put: async (r: Request, res: Response) => void store.set(r.url, res)},
+    };
+    const api = {fetch: async () => new Response('no', {status: 404})} as unknown as Fetcher;
+    expect((await worker.fetch(new Request('https://x.test' + pic), {...env, API: api})).status).toBe(404);
+    expect(store.size).toBe(0);
+    delete (globalThis as any).caches;
+  });
+});
