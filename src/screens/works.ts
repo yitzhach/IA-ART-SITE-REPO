@@ -6,7 +6,8 @@ import {listAll} from '../lib/artworks';
 import {plainError} from '../lib/artworks';
 import type {Params} from '../router';
 import type {Artwork} from '../types';
-import {h} from '../ui';
+import {confirmDialog, h, toast} from '../ui';
+import {publishWork} from '../lib/artworks';
 import {get} from '../api';
 import {navigate} from '../router';
 
@@ -126,6 +127,7 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
           h('strong', null, 'Review →'),
         )
       : null,
+    drafts ? approveAllButton(el, _params, works.filter(isDraft)) : null,
     bar,
     grid,
   );
@@ -147,4 +149,47 @@ async function shouldStartImport(works: Artwork[]): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+/**
+ * Isaac (2026-11-11): "for this testing phase I need all of the images on the site". One tap approves every draft,
+ * each through the same publish as the work's own button, one at a time. Review stays for new work.
+ */
+function approveAllButton(el: HTMLElement, params: Params, drafts: Artwork[]): HTMLElement {
+  const status = h('p', {class: 'muted', 'aria-live': 'polite'});
+  const button = h(
+    'button',
+    {
+      type: 'button',
+      onclick: async () => {
+        const n = drafts.length;
+        if (
+          !(await confirmDialog(
+            `Make all ${n} drafts public? You can unpublish any of them later.`,
+            'Approve all',
+            'Cancel',
+          ))
+        )
+          return;
+        button.setAttribute('disabled', '');
+        const failed: string[] = [];
+        for (const [i, w] of drafts.entries()) {
+          status.textContent = `Approving ${i + 1} of ${n} — ${w.title}`;
+          try {
+            await publishWork(w.id, w.version);
+          } catch {
+            failed.push(w.title);
+          }
+        }
+        toast(failed.length ? `${n - failed.length} approved, ${failed.length} could not be` : `All ${n} approved`);
+        await render(el, params);
+        if (failed.length)
+          el.prepend(
+            h('p', {class: 'err', role: 'alert'}, `Not approved (open each to see why): ${failed.join(', ')}`),
+          );
+      },
+    },
+    `Approve all ${drafts.length} drafts`,
+  );
+  return h('div', {class: 'row approve-all'}, button, status);
 }

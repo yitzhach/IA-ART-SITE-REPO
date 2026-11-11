@@ -670,3 +670,9 @@ button.small {
   border: 1px solid currentColor;
   color: inherit;
 }
+
+.approve-all {
+  margin: 0 0 12px;
+  align-items: center;
+  gap: 12px;
+}
