@@ -1,9 +1,14 @@
-// studio-site: serves the owner's area (/studio), and forwards /v1/* to studio-api and /assistant/* to
-// studio-assistant through service bindings. It holds no data and no secrets.
+// studio-site: serves the studio's public site (/, /works, … — worker/site/), the owner's area (/studio), and
+// forwards /v1/* to studio-api and /assistant/* to studio-assistant through service bindings. It holds no data
+// and no secrets.
+import {site} from './site/index';
+
 export interface Env {
   API: Fetcher;
   ASSISTANT: Fetcher;
   ASSETS: Fetcher;
+  /** The studio the public site shows (D-117). */
+  STUDIO_SLUG?: string;
 }
 
 export const CSP = [
@@ -29,13 +34,21 @@ function secured(res: Response): Response {
   return out;
 }
 
+/** Files the build puts in dist/ (the studio app's bundle, the site's fonts and small scripts, icons). */
+const STATIC = /^\/(assets|fonts|site)\/|^\/[^/]+\.(ico|png|svg|webmanifest|js|css|woff2|wasm)$/;
+
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx?: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const p = url.pathname;
     if (under(p, '/v1')) return env.API.fetch(request);
     if (under(p, '/assistant')) return env.ASSISTANT.fetch(request);
-    if (p === '/') return Response.redirect(new URL('/studio', url).toString(), 302);
-    return secured(await env.ASSETS.fetch(request));
+    if (under(p, '/studio') || p === '/index.html') return secured(await env.ASSETS.fetch(request));
+    if (STATIC.test(p)) {
+      const res = await env.ASSETS.fetch(request);
+      // A missing file must not come back as the studio app's page.
+      if (!(res.headers.get('content-type') ?? '').includes('text/html')) return res;
+    }
+    return secured(await site(request, env, ctx));
   },
 };

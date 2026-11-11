@@ -8,9 +8,13 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/v1/*", "/assistant/*", "/", "/studio", "/studio/*"]
+    // The Worker answers everything but the built files: the public pages, /studio (for its security headers),
+    // /v1 and /assistant.
+    "run_worker_first": ["/*", "!/assets/*", "!/fonts/*", "!/site/*"]
   },
   // The studio platform (yitzhach/Art-Talk-Back): its API as /v1/*, its assistant as /assistant/*, on this origin.
+  // The studio the public site shows (D-117). Production's is set before its first deploy.
+  "vars": {"STUDIO_SLUG": ""},
   "services": [
     {"binding": "API", "service": "studio-api"},
     {"binding": "ASSISTANT", "service": "studio-assistant"}
@@ -18,6 +22,7 @@
   "env": {
     "staging": {
       "name": "studio-site-staging",
+      "vars": {"STUDIO_SLUG": "isaac-anderson-art-sbtwkm"},
       "services": [
         {"binding": "API", "service": "studio-api-staging"},
         {"binding": "ASSISTANT", "service": "studio-assistant-staging"}

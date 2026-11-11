@@ -1,0 +1,270 @@
+{
+  "sha": "f89c3f0dc94a1c909cb96b099a1c56e060129078",
+  "profile": {
+    "name": "Isaac Anderson",
+    "tagline": "Revelation in the midst of decay.",
+    "description": "Site-specific sculptural work in cement and plaster — for private collections, commercial, interior and exterior.",
+    "phone": "+19498135258",
+    "email": "bobdylan2000@gmail.com"
+  },
+  "pages": {
+    "home": {
+      "title": "Isaac Anderson",
+      "lede": "Site-specific sculptural work in cement and plaster — for private collections, commercial, interior and exterior.",
+      "sections": [
+        {
+          "key": "gallery",
+          "heading": "Gallery",
+          "body": "Site-specific work, framed by project type — for the specifier who needs to picture the piece in a space."
+        },
+        {
+          "key": "room-1",
+          "heading": "Images",
+          "body": "Residential + commercial",
+          "place": "home.rooms"
+        },
+        {
+          "key": "room-2",
+          "heading": "Collections",
+          "body": "Homes + Commercial",
+          "place": "home.rooms"
+        },
+        {
+          "key": "room-3",
+          "heading": "Commissions",
+          "body": "Interior + Exterior",
+          "place": "home.rooms"
+        },
+        {
+          "key": "commission-lead",
+          "body": "Typical lead 8–12 weeks · to-the-trade inquiries welcome"
+        },
+        {
+          "key": "collections",
+          "heading": "Collections",
+          "body": "A partial index.\n\n• No. 014 · Abstract — Cement, plaster · Residential · 2024\n• No. 009 · Figurative — Plaster, steel · Collection · 2023\n• No. 021 · Sculptural — Steel, cement · Commercial · 2025\n\nFull catalogue — 36 images"
+        },
+        {
+          "key": "work-closely",
+          "heading": "The work, closely"
+        },
+        {
+          "key": "object-014",
+          "heading": "No. 014 — LOBBY COMMISSION - STRATA · FRAMED",
+          "body": "A custom art piece for a lobby in Beverly Hills.\n\nGypsum, cement, and custom pigments, framed on a wood panel.\n\n• Cement, plaster\n• 48 × 48 × 2.5 in\n• ~40 lb",
+          "place": "home.object-1"
+        },
+        {
+          "key": "object-009",
+          "heading": "No. 009 — 48\" x 48\" - Inspired a horizontal COMMISSION",
+          "body": "The beginning of a 72\" x 48\" custom piece.\n\nGypsum, cement, gilding, and custom pigments, on a wood panel.\n\n• Plaster, Cement and pigment\n• 48 × 48 × 2.5 in\n• ~40 lb",
+          "place": "home.object-2"
+        },
+        {
+          "key": "proof",
+          "heading": "Seen in / installed for",
+          "body": "• NEW WORKS\n• Private Collection\n• Southern California"
+        },
+        {
+          "key": "contact",
+          "heading": "Start a conversation",
+          "body": "We would love to hear from you. Send us a quick note, with any questions, project ideas, timelines, etc — and let's see what we can create!\n\nStudio — Southern California / Southern Kentucky"
+        }
+      ]
+    },
+    "commissions": {
+      "title": "Commissions",
+      "lede": "Site-specific work in cement, plaster, and steel — developed with architects, designers, and private collectors from first sketch to final install. Interior or exterior, one piece or a full program.",
+      "sections": [
+        {
+          "key": "intro",
+          "place": "commissions.intro",
+          "body": "Every commission begins with a conversation about the space, the aesthetic, and the experience the finished piece is meant to create.\n\nCommissioned work can be found in private collections, hospitality, and commercial spaces across the country. Every commission is unique, inspired by its setting and built to endure."
+        },
+        {
+          "key": "process",
+          "heading": "The process"
+        },
+        {
+          "key": "step-01",
+          "heading": "01 — Consultation",
+          "body": "A conversation about the site, scale, and use — in person or by video, with reference material from prior work."
+        },
+        {
+          "key": "step-02",
+          "heading": "02 — Concept",
+          "body": "A direction, material palette, and quote — refined until the form, vision, and budget align."
+        },
+        {
+          "key": "step-03",
+          "heading": "03 — Fabrication",
+          "body": "Designed, created, and finished in studio — with progress photos shared as the piece develops."
+        },
+        {
+          "key": "step-04",
+          "heading": "04 — Install",
+          "body": "Delivered and installed on site throughout the U.S. and internationally."
+        },
+        {
+          "key": "inquire",
+          "heading": "Start a commission",
+          "body": "Reach out—we would love to hear about your project, your space, and the ideas that inspire it. Together, we’ll explore the details that shape a truly unique, one-of-a-kind commission.\n\nStudio — Southern California & Southern Kentucky"
+        }
+      ]
+    },
+    "process": {
+      "title": "Process",
+      "sections": [
+        {
+          "key": "intro",
+          "heading": "Five stages",
+          "place": "process.hero",
+          "body": "Five stages, in order. The first two are mine to control; the last three belong partly to the material. That division is the whole subject of the work."
+        },
+        {
+          "key": "surface",
+          "heading": "Surface",
+          "place": "process.surface",
+          "body": "Building the Surface\n\nFoundation: preparing the surface.\n\nCustom wood panels are prepared and layered with gypsum, lime, and cementitious plasters, creating the foundation for each piece and establishing the physical depth of the work.\n\n• Wood panel\n• Gypsum · lime\n• Cementitious plaster"
+        },
+        {
+          "key": "layering",
+          "heading": "Layering",
+          "place": "process.layering",
+          "body": "Layering & Material\n\nA surface that records its own making.\n\nSuccessive layers of mineral-based materials are applied, carved, and rebuilt. Each addition and subtraction creates a stratified surface that records the history of its own making.\n\n• Mineral layers\n• Carved\n• Rebuilt"
+        },
+        {
+          "key": "color",
+          "heading": "Color",
+          "place": "process.color",
+          "body": "Color & Light\n\nPigment worked in, with metal catching light.\n\nHand-mixed pigments are worked directly into the plaster, while subtle copper or brass gilding catches changing light, revealing new depth and texture as the surface evolves.\n\n• Hand-mixed pigment\n• Copper gilding\n• Shifts with light"
+        },
+        {
+          "key": "erosion",
+          "heading": "Erosion",
+          "place": "process.erosion",
+          "body": "Erosion & Discovery\n\nWhat's carved away stays visible.\n\nThe surface is sanded, scraped, and excavated, exposing hidden layers beneath. Rather than covering imperfections, the process embraces them as part of the final composition.\n\n• Sanded\n• Excavated\n• Imperfection kept"
+        },
+        {
+          "key": "finished",
+          "heading": "Finished",
+          "place": "process.finished",
+          "body": "The Finished Work\n\nArchitecture, material, and time.\n\nEach piece becomes a tactile convergence of architecture, material, and time — a contemporary work shaped through traditional techniques and guided by the balance between control and discovery.\n\n• Traditional technique\n• Contemporary form\n• Control & chance"
+        },
+        {
+          "key": "close",
+          "body": "Let's connect to discuss a current piece, future project, or commissioned work."
+        }
+      ]
+    },
+    "about": {
+      "title": "Isaac Anderson",
+      "lede": "Sculpture · Mixed media",
+      "sections": [
+        {
+          "key": "intro",
+          "heading": "I build the order. The material supplies the entropy.",
+          "place": "about.studio",
+          "body": "Isaac Anderson makes cast sculpture and mixed-media relief in cement, plaster, and steel. He works between two studios — Southern California and Southern Kentucky — and the split shows up in the work: one half built to tolerance, the other left to weather.\n\nEach piece begins as a controlled form and is finished by processes he doesn't direct: hydration, pigment migration, hairline cracking, and the slow ageing that continues in whatever room the work ends up in."
+        },
+        {
+          "key": "commissions-note",
+          "body": "He works to commission for lobbies, hospitality interiors, and private collections, and keeps a small number of available works in the catalogue at any time."
+        },
+        {
+          "key": "studios",
+          "heading": "Studios",
+          "body": "• Southern California\n• Southern Kentucky"
+        },
+        {
+          "key": "studio-caption",
+          "body": "Studio — Southern California / Southern Kentucky"
+        },
+        {
+          "key": "materials",
+          "heading": "Materials",
+          "body": "• Cement · plaster\n• Steel · pigment"
+        },
+        {
+          "key": "works-to",
+          "heading": "Works to",
+          "body": "• Commission\n• Available catalogue"
+        },
+        {
+          "key": "enquiries",
+          "heading": "Enquiries",
+          "body": "bobdylan2000@gmail.com"
+        },
+        {
+          "key": "artist-statement",
+          "heading": "Artist statement",
+          "body": "I am drawn to the relationship between order and entropy—to surfaces that bear the marks of time rather than conceal them.\n\nThrough layered plasters, mineral pigments, and architectural materials, I seek moments where decay becomes revelation and history becomes tangible. Each work is an invitation to slow down, look closely, and discover the stories held within its layers."
+        },
+        {
+          "key": "education",
+          "heading": "Education",
+          "body": "Edmonds, WA, Carnforth England, Chicago, IL"
+        },
+        {
+          "key": "materials-methods",
+          "heading": "Materials & methods",
+          "body": "• Lime, cement, plaster, raw pigment, geopolymer\n• Welded steel armature; sealed formwork\n• Single continuous pour; hand-vibrated\n• Hand-honed faces, left unsealed"
+        },
+        {
+          "key": "contact",
+          "heading": "Start a commission",
+          "body": "Three fields, one conversation. We reply within two working days with questions, timelines, and — if the fit is right — a concept direction."
+        }
+      ]
+    }
+  },
+  "places": {
+    "home.hero": [
+      "images/hero-macro.webp",
+      "images/hero-macro-2.webp",
+      "images/hero-macro-3.webp",
+      "images/hero-macro-4.webp",
+      "images/hero-macro-5.webp",
+      "images/hero-macro-6.webp"
+    ],
+    "home.rooms": [
+      "images/insitu-lobby.webp",
+      "images/insitu-hospitality.webp",
+      "images/insitu-collection.webp"
+    ],
+    "commissions.intro": [
+      "images/commission-intro.webp"
+    ],
+    "process.hero": [
+      "images/process-hero.webp",
+      "images/process-hero-2.webp",
+      "images/process-hero-3.webp",
+      "images/process-hero-4.webp"
+    ],
+    "process.surface": [
+      "images/process-01-material.webp"
+    ],
+    "process.layering": [
+      "images/process-02-formwork.webp"
+    ],
+    "process.color": [
+      "images/process-03-cast.webp"
+    ],
+    "process.erosion": [
+      "images/sculptural-5.webp"
+    ],
+    "process.finished": [
+      "images/object-014.webp"
+    ],
+    "about.studio": [
+      "images/process-01-material.webp",
+      "images/about-studio.webp"
+    ],
+    "home.object-1": [
+      "images/object-014.webp"
+    ],
+    "home.object-2": [
+      "images/object-009.webp"
+    ]
+  }
+}

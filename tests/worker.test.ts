@@ -13,10 +13,10 @@ describe('worker', () => {
   it('routes /v1/* to API', async () => expect(await (await call('/v1/me')).text()).toBe('api:/v1/me'));
   it('routes /assistant/* to ASSISTANT', async () =>
     expect(await (await call('/assistant/chat')).text()).toBe('assistant:/assistant/chat'));
-  it('redirects / to /studio', async () => {
+  it('serves the public site at / (not set up without STUDIO_SLUG)', async () => {
     const r = await call('/');
-    expect(r.status).toBe(302);
-    expect(r.headers.get('location')).toBe('https://x.test/studio');
+    expect(r.status).toBe(503);
+    expect(r.headers.get('content-security-policy')).toContain("default-src 'self'");
   });
   it('adds the CSP and security headers to HTML', async () => {
     const r = await call('/studio');
@@ -38,9 +38,9 @@ describe('worker', () => {
 describe('wrangler.jsonc', () => {
   const text = readFileSync('wrangler.jsonc', 'utf8');
   const config = JSON.parse(text.replace(/^\s*\/\/.*$/gm, ''));
-  it('runs the Worker first for the SPA, so its HTML gets the security headers', () => {
-    for (const path of ['/studio', '/studio/*', '/v1/*', '/assistant/*', '/'])
-      expect(config.assets.run_worker_first).toContain(path);
+  it('runs the Worker first for everything but the built files, so every page gets the security headers', () => {
+    expect(config.assets.run_worker_first).toEqual(['/*', '!/assets/*', '!/fonts/*', '!/site/*']);
     expect(config.assets.not_found_handling).toBe('single-page-application');
   });
+  it('staging shows Isaac\'s staging studio', () => expect(config.env.staging.vars.STUDIO_SLUG).toBe('isaac-anderson-art-sbtwkm'));
 });
