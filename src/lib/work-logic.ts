@@ -112,3 +112,6 @@ export function plainDate(iso: string | null | undefined): string {
   if (isNaN(d.getTime())) return '';
   return d.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'});
 }
+
+/** A draft is a work that is not public and not archived. */
+export const isDraft = (w: {public: boolean; status: string}) => !w.public && w.status !== 'archived';

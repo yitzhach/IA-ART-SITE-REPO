@@ -1,6 +1,7 @@
 import {statusChips} from '../components/chips';
 import {mount} from '../components/mount';
 import {picture} from '../components/picture';
+import {isDraft} from '../lib/work-logic';
 import {listAll} from '../lib/artworks';
 import {plainError} from '../lib/artworks';
 import type {Params} from '../router';
@@ -16,7 +17,7 @@ export function applyFilter(works: Artwork[], f: Filter): Artwork[] {
     case 'all':
       return works;
     case 'drafts':
-      return works.filter(w => !w.public);
+      return works.filter(isDraft);
     case 'public':
       return works.filter(w => w.public);
     case 'sold':
@@ -78,7 +79,7 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
     return;
   }
 
-  const drafts = works.filter(w => !w.public).length;
+  const drafts = works.filter(isDraft).length;
   const collections = [...new Set(works.map(w => w.collection).filter((c): c is string => !!c))].sort();
   if (filter.kind === 'collection' && !collections.includes(filter.name)) filter = {kind: 'all'};
   const grid = h('div', {class: 'grid'});

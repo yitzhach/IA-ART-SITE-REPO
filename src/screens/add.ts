@@ -1,5 +1,6 @@
 import {INVALID, priceField, sizeField, statusField, textField, yearField} from '../components/fields';
 import {markDrafting, requestDraft} from '../lib/assistant';
+import {changedFields} from '../lib/work-logic';
 import {createWork, plainError, updateWork} from '../lib/artworks';
 import {prepareImage} from '../lib/images';
 import {attachToArtwork, uploadPrepared} from '../lib/upload';
@@ -11,7 +12,10 @@ import {h, toast} from '../ui';
 interface Picked {
   file: File;
   url: string;
+  /** Uploaded and attached: never uploaded again. */
   done: boolean;
+  fileId?: string;
+  palette?: {hex: string; share: number}[];
 }
 
 export function render(el: HTMLElement, _params: Params): void {
@@ -90,14 +94,20 @@ export function render(el: HTMLElement, _params: Params): void {
     save.disabled = true;
     drawThumbs();
     try {
+      const form: Partial<ArtworkInput> = {
+        title: t,
+        status: status.read() as Artwork['status'],
+        medium: (medium.read() as string) || '',
+        year: y,
+        width: w.width,
+        height: w.height,
+        depth: w.depth,
+        sizeUnit: w.sizeUnit,
+        priceCents: p,
+      };
       if (!created) {
-        const body: Partial<ArtworkInput> = {
-          title: t,
-          status: status.read() as Artwork['status'],
-          sizeUnit: w.sizeUnit,
-        };
-        const m = medium.read();
-        if (m !== INVALID && m) body.medium = m;
+        const body: Partial<ArtworkInput> = {title: t, status: form.status, sizeUnit: w.sizeUnit};
+        if (form.medium) body.medium = form.medium;
         if (y !== null) body.year = y;
         if (w.width !== null) body.width = w.width;
         if (w.height !== null) body.height = w.height;
@@ -114,8 +124,38 @@ export function render(el: HTMLElement, _params: Params): void {
             `The work wasn't saved. ${plainError(e, 'Try again in a moment.')} What you typed is still here.`,
           );
         }
+      } else {
+        // A retry: what was typed since the first try goes onto the work that already exists.
+        const edits = changedFields(created as unknown as Partial<ArtworkInput>, form);
+        if (Object.keys(edits).length) {
+          try {
+            created = await updateWork(created.id, edits, created.version);
+          } catch (e) {
+            throw new Failure(
+              `Your changes weren't saved. ${plainError(e, 'Try again in a moment.')} What you typed is still here.`,
+            );
+          }
+        }
       }
       const work = created;
+      /** The cover is its own step, so a failure here never makes a photo upload twice. */
+      const setCover = async () => {
+        const first = picked[0];
+        if (coverSet || !first?.done || !first.fileId) return;
+        try {
+          created = await updateWork(
+            work.id,
+            {primaryFileId: first.fileId, palette: first.palette ?? []},
+            created!.version,
+          );
+          coverSet = true;
+        } catch (e) {
+          throw new Failure(
+            `The photos are saved, but the cover couldn't be set. ${plainError(e, 'Check your connection.')} Tap Save to try again.`,
+          );
+        }
+      };
+      await setCover();
       const todo = picked.filter(x => !x.done);
       for (const item of todo) {
         const n = picked.indexOf(item) + 1;
@@ -128,16 +168,15 @@ export function render(el: HTMLElement, _params: Params): void {
             say(`Uploading photo ${n} of ${total}… ${Math.round((d / tot) * 100)}%`),
           );
           await attachToArtwork(rec.id, work.id);
-          if (!coverSet && picked[0] === item) {
-            created = await updateWork(work.id, {primaryFileId: rec.id, palette: prepared.palette}, created!.version);
-            coverSet = true;
-          }
+          item.fileId = rec.id;
+          item.palette = prepared.palette;
           item.done = true;
         } catch (e) {
           throw new Failure(
             `Photo ${n} didn't make it. ${plainError(e, 'Check your connection.')} The work is saved as a draft and what you typed is still here. Tap Save to try again.`,
           );
         }
+        await setCover();
       }
       say('');
       if (picked.length) {

@@ -1,3 +1,4 @@
+import {readFileSync} from 'node:fs';
 import {describe, expect, it} from 'vitest';
 import worker, {type Env} from '../worker/index';
 
@@ -26,4 +27,20 @@ describe('worker', () => {
   });
   it('leaves API responses alone', async () =>
     expect((await call('/v1/me')).headers.get('content-security-policy')).toBeNull());
+  it('lets the CSP run WebAssembly (the Safari WebP fallback) and load signed pictures', async () => {
+    const csp = (await call('/studio')).headers.get('content-security-policy')!;
+    expect(csp).toMatch(/script-src 'self' 'wasm-unsafe-eval'(;|$)/);
+    expect(csp).toMatch(/img-src 'self'/);
+    expect(csp).toContain("connect-src 'self' https://raw.githubusercontent.com");
+  });
+});
+
+describe('wrangler.jsonc', () => {
+  const text = readFileSync('wrangler.jsonc', 'utf8');
+  const config = JSON.parse(text.replace(/^\s*\/\/.*$/gm, ''));
+  it('runs the Worker first for the SPA, so its HTML gets the security headers', () => {
+    for (const path of ['/studio', '/studio/*', '/v1/*', '/assistant/*', '/'])
+      expect(config.assets.run_worker_first).toContain(path);
+    expect(config.assets.not_found_handling).toBe('single-page-application');
+  });
 });

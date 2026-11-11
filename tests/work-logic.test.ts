@@ -5,6 +5,7 @@ import {
   changedFields,
   formatPrice,
   formatSize,
+  isDraft,
   missingFacts,
   missingText,
   parseDollars,
@@ -110,4 +111,19 @@ describe('filters and queue', () => {
   });
   it('review goes oldest first, drafts only', () =>
     expect(draftQueue([w('b', {}), w('a', {}), w('c', {public: true})]).map(x => x.id)).toEqual(['a', 'b']));
+});
+
+describe('drafts', () => {
+  it('not public and not archived', () => {
+    expect(isDraft({public: false, status: 'available'})).toBe(true);
+    expect(isDraft({public: true, status: 'available'})).toBe(false);
+    expect(isDraft({public: false, status: 'archived'})).toBe(false);
+  });
+  it('the review queue skips archived works', () =>
+    expect(
+      draftQueue([
+        {id: 'a', public: false, status: 'archived', createdAt: '1'},
+        {id: 'b', public: false, status: 'sold', createdAt: '2'},
+      ]).map(x => x.id),
+    ).toEqual(['b']));
 });

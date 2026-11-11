@@ -29,6 +29,7 @@ import {
   unpublishWork,
   updateWork,
 } from '../lib/artworks';
+import {coverPalette} from '../lib/cover-palette';
 import {prepareImage} from '../lib/images';
 import {pictureUrl} from '../lib/pictures';
 import {attachToArtwork, uploadPrepared} from '../lib/upload';
@@ -61,6 +62,8 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
   let watching = false;
   let busy = false;
   let notice = '';
+  /** The latest drawn screen: late callbacks read this, never an old draw's closures. */
+  let current: {pending: () => {art: Partial<ArtworkInput>; alt: boolean} | null} | null = null;
 
   async function show(art?: ArtworkDetail): Promise<void> {
     if (!el.isConnected && art) return;
@@ -79,10 +82,12 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
     draw(a, collections);
   }
 
-  function draw(a: ArtworkDetail, collections: string[]) {
-    const drafted = new Set<string>(a.draftedFields ?? []);
-    const cover = a.images[0] ?? null;
+  function draw(art: ArtworkDetail, collections: string[]) {
+    // `a` and `cover` follow the server after a partial save, so a retry uses the right versions.
+    let a = art;
+    let cover = a.images[0] ?? null;
     const others = a.images.slice(1);
+    const drafted = new Set<string>(a.draftedFields ?? []);
 
     // ---- fields
     const title = textField('Title', a.title, {required: true});
@@ -106,7 +111,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
     if (drafted.has('altText')) markDrafted(alt);
 
     /** Reads every field; null if one is not usable. */
-    const readAll = (): {art: Partial<ArtworkInput>; alt: string} | null => {
+    const readAll = (focus = true): {art: Partial<ArtworkInput>; alt: string} | null => {
       const t = title.read(),
         d = description.read(),
         c = collection.read(),
@@ -128,7 +133,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
       ];
       for (const [v, f] of checks) {
         if (v === INVALID) {
-          f.focus();
+          if (focus && el.isConnected) f.focus();
           return null;
         }
       }
@@ -154,8 +159,8 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
       };
     };
 
-    const pending = () => {
-      const r = readAll();
+    const pending = (focus = true) => {
+      const r = readAll(focus);
       if (!r) return null;
       return {
         art: changedFields(editable(a), r.art),
@@ -171,16 +176,31 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
       try {
         if (Object.keys(p.art).length) await updateWork(a.id, p.art, a.version);
         if (p.alt && cover) await setAltText(cover, p.altText);
-        return await getWork(id);
+        const fresh = await getWork(id);
+        follow(fresh);
+        return fresh;
       } catch (e) {
         if (isConflict(e)) {
           notice = CONFLICT_MESSAGE;
           await show();
           return null;
         }
+        await refresh(); // part of it may have been saved: keep the versions current
         problem.textContent = plainError(e, "Your changes weren't saved. Try again.");
         problem.hidden = false;
         return null;
+      }
+    }
+
+    function follow(fresh: ArtworkDetail) {
+      a = fresh;
+      cover = fresh.images[0] ?? null;
+    }
+    async function refresh() {
+      try {
+        follow(await getWork(id));
+      } catch {
+        // offline: the retry will say so
       }
     }
 
@@ -218,6 +238,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
         } catch (e) {
           problem.textContent = plainError(e, "This work couldn't be published. Try again.");
           problem.hidden = isConflict(e);
+          if (!isConflict(e)) await refresh();
           if (isConflict(e)) {
             notice = CONFLICT_MESSAGE;
             await show();
@@ -307,10 +328,18 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
       });
     async function reorder(ids: string[]) {
       try {
+        const oldCover = a.images[0]?.id;
         await reorderPictures(a.id, ids);
         let fresh = await getWork(id);
-        if (fresh.images[0] && fresh.primaryFileId !== fresh.images[0].id) {
-          await updateWork(fresh.id, {primaryFileId: fresh.images[0].id}, fresh.version);
+        const newCover = fresh.images[0];
+        const changes: Partial<ArtworkInput> = {};
+        if (newCover && fresh.primaryFileId !== newCover.id) changes.primaryFileId = newCover.id;
+        if (newCover && newCover.id !== oldCover) {
+          const palette = await coverPalette(newCover.id); // null: keep the old colours quietly
+          if (palette) changes.palette = palette;
+        }
+        if (Object.keys(changes).length) {
+          await updateWork(fresh.id, changes, fresh.version);
           fresh = await getWork(id);
         }
         await show(fresh);
@@ -391,6 +420,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
     });
 
     // ---- the draft being written
+    current = {pending: () => pending(false)};
     const waiting = draftingNow(a.id);
     if (waiting && !watching) {
       watching = true;
@@ -402,7 +432,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
             toast('The draft is taking longer than usual. Check back in a moment.');
             return void show();
           }
-          const p = busy ? null : pending();
+          const p = busy ? null : current?.pending(); // the screen as it is now, not as it was drawn
           if (p && !Object.keys(p.art).length && !p.alt) {
             toast('The draft is ready.');
             return void show(fresh);

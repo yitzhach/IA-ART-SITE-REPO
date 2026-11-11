@@ -12,3 +12,7 @@ it.each([
 ])('matches %s', (path, name) => expect(match(path)?.route.name).toBe(name));
 it('extracts :id', () => expect(match('/studio/works/01ABC')?.params).toEqual({id: '01ABC'}));
 it('no match', () => expect(match('/nope')).toBeNull());
+it('a malformed % escape is no match, not a crash', () => {
+  expect(() => match('/studio/works/%E0%A4%A')).not.toThrow();
+  expect(match('/studio/works/%E0%A4%A')).toBeNull();
+});

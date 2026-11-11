@@ -21,14 +21,14 @@ import {
   setAltText,
   updateWork,
 } from '../lib/artworks';
-import {changedFields, missingFacts, missingText} from '../lib/work-logic';
+import {changedFields, isDraft, missingFacts, missingText} from '../lib/work-logic';
 import type {Params} from '../router';
 import type {ArtworkDetail, ArtworkInput} from '../types';
 import {h, toast} from '../ui';
 
 /** The drafts to go through: not public, oldest first. */
-export const draftQueue = <T extends {public: boolean; createdAt: string}>(works: T[]): T[] =>
-  works.filter(w => !w.public).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+export const draftQueue = <T extends {public: boolean; status: string; createdAt: string}>(works: T[]): T[] =>
+  works.filter(isDraft).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 
 export async function render(el: HTMLElement, params: Params): Promise<void> {
   mount(el, h('h1', null, 'Review drafts'), h('p', {class: 'muted'}, 'Loading your drafts…'));
@@ -99,7 +99,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
       );
       return;
     }
-    if (a.public) return next(false); // published somewhere else meanwhile
+    if (!isDraft(a)) return next(false); // published somewhere else meanwhile
     draw(a, notice);
   }
 
@@ -110,9 +110,11 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
     void showCurrent();
   };
 
-  function draw(a: ArtworkDetail, notice: string) {
+  function draw(art: ArtworkDetail, notice: string) {
+    // `a` and `cover` follow the server after a partial success, so a retry uses the right versions.
+    let a = art;
+    let cover = a.images[0] ?? null;
     const drafted = new Set<string>(a.draftedFields ?? []);
-    const cover = a.images[0] ?? null;
     const description = textField('Description', a.description, {multiline: true, rows: 6});
     const tags = tagField(a.tags);
     const collection = collectionField(a.collection, collections);
@@ -182,6 +184,12 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
       } catch (e) {
         setBusy(false);
         if (isConflict(e)) return void showCurrent(CONFLICT_MESSAGE);
+        try {
+          a = await getWork(a.id); // part of it may have been saved
+          cover = a.images[0] ?? null;
+        } catch {
+          // offline: the retry will say so
+        }
         problem.textContent = plainError(e, "This work couldn't be approved. Nothing was lost. Try again.");
         problem.hidden = false;
         return;

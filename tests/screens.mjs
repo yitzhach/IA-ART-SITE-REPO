@@ -193,7 +193,14 @@ await new Promise(r => server.listen(0, '127.0.0.1', r));
 const origin = `http://127.0.0.1:${server.address().port}`;
 
 // ---- mocks
+const meBody = {
+  user: {id: 'U1', email: 'isaac@example.com', name: 'Isaac'},
+  memberships: [{studioId: 'S1', studioName: 'Booth Studio', role: 'owner', clientId: null}],
+  activeStudioId: 'S1',
+  hasPassword: false,
+};
 async function mock(page, {signedIn = true} = {}) {
+  const auth = {signedIn};
   const state = works.map(w => ({...w})); // fresh per page
   const json = (route, body, status = 200) =>
     route.fulfill({status, contentType: 'application/json', body: JSON.stringify(body)});
@@ -216,8 +223,12 @@ async function mock(page, {signedIn = true} = {}) {
     const path = url.pathname.replace('/v1', '');
     const method = req.method();
     const body = req.postData() ? JSON.parse(req.postData()) : {};
+    if (path === '/auth/password/login') {
+      auth.signedIn = true;
+      return json(route, meBody);
+    }
     if (path === '/me')
-      return signedIn
+      return auth.signedIn
         ? json(route, {
             user: {id: 'U1', email: 'isaac@example.com', name: 'Isaac'},
             memberships: [
@@ -368,6 +379,26 @@ for (const [w, h] of sizes)
   await page.goto(origin + '/studio/works');
   await page.waitForSelector('text=No works yet');
   check(await page.locator('a[href="/studio/import"]').isVisible(), 'empty state links to the import');
+  await ctx.close();
+}
+
+{
+  // Opened signed out: after signing in, links, Add and Back must still work (the router starts either way).
+  const ctx = await browser.newContext({viewport: {width: 390, height: 844}});
+  const page = await ctx.newPage();
+  await mock(page, {signedIn: false});
+  await page.goto(origin + '/studio/review');
+  await page.waitForSelector('text=Studio sign-in');
+  await page.click('text=Sign in with password');
+  await page.fill('#email', 'isaac@example.com');
+  await page.fill('#pw', 'secret');
+  await page.click('button:has-text("Sign in")');
+  await page.waitForSelector('.review-head');
+  await page.click('nav >> text=Add');
+  await page.waitForSelector('text=Take or choose photos');
+  await page.goBack();
+  await page.waitForSelector('.review-head');
+  check(true, '');
   await ctx.close();
 }
 
