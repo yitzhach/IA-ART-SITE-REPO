@@ -12,6 +12,8 @@ export interface SiteEnv {
   API: Fetcher;
   /** The studio this site shows (D-117). */
   STUDIO_SLUG?: string;
+  /** This deploy's id: a new deploy (new templates) must not be answered from pages the last one cached. */
+  CF_VERSION_METADATA?: {id: string};
 }
 
 const HTML = {
@@ -33,19 +35,26 @@ export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContex
   try {
     const studio = await data.studio();
     if (url.pathname === '/sitemap.xml')
-      return await cached(request, studio.catalogueVersion, ctx, () => sitemap(url.origin, data));
+      return await cached(request, `${studio.catalogueVersion}.${env.CF_VERSION_METADATA?.id ?? 'dev'}`, ctx, () =>
+        sitemap(url.origin, data),
+      );
     const route = match(url.pathname);
-    return await cached(request, studio.catalogueVersion, ctx, async () => {
-      const pc: PageCtx = {url, data, studio, photos: await data.sitePhotos()};
-      let page: Page;
-      try {
-        page = route ? await route.render(pc, route.params) : notFound();
-      } catch (e) {
-        if (!(e instanceof NotFound)) throw e;
-        page = notFound();
-      }
-      return new Response(layout(pc, page), {status: page.status ?? 200, headers: HTML});
-    });
+    return await cached(
+      request,
+      `${studio.catalogueVersion}.${env.CF_VERSION_METADATA?.id ?? 'dev'}`,
+      ctx,
+      async () => {
+        const pc: PageCtx = {url, data, studio, photos: await data.sitePhotos()};
+        let page: Page;
+        try {
+          page = route ? await route.render(pc, route.params) : notFound();
+        } catch (e) {
+          if (!(e instanceof NotFound)) throw e;
+          page = notFound();
+        }
+        return new Response(layout(pc, page), {status: page.status ?? 200, headers: HTML});
+      },
+    );
   } catch (e) {
     console.error('site', url.pathname, e);
     return new Response(

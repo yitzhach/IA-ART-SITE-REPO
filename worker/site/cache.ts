@@ -14,7 +14,7 @@ function toBrowser(res: Response, state: 'hit' | 'miss', head: boolean): Respons
 
 export async function cached(
   request: Request,
-  version: number,
+  version: number | string,
   ctx: ExecutionContext | undefined,
   produce: () => Promise<Response>,
 ): Promise<Response> {

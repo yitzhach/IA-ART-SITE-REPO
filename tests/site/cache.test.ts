@@ -120,3 +120,12 @@ describe('site() with the cache', () => {
     expect((await get()).headers.get('x-site-cache')).toBe('miss');
   });
 });
+
+describe('a new deploy', () => {
+  it("never answers from the last deploy's pages", async () => {
+    const at = (id: string) => site(new Request('https://site.test/works'), {...env, CF_VERSION_METADATA: {id}});
+    expect((await at('one')).headers.get('x-site-cache')).toBe('miss');
+    expect((await at('one')).headers.get('x-site-cache')).toBe('hit');
+    expect((await at('two')).headers.get('x-site-cache')).toBe('miss');
+  });
+});

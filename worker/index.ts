@@ -9,6 +9,7 @@ export interface Env {
   ASSETS: Fetcher;
   /** The studio the public site shows (D-117). */
   STUDIO_SLUG?: string;
+  CF_VERSION_METADATA?: {id: string};
 }
 
 export const CSP = [
