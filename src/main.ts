@@ -12,8 +12,8 @@ function showSignIn() {
   me = null;
   renderSignIn(root, user => {
     me = user;
+    // One draw: navigate() redraws through the router, whether or not the path changes.
     navigate(location.pathname.startsWith('/studio') ? location.pathname : '/studio', true);
-    draw();
   });
 }
 
@@ -45,7 +45,7 @@ function header(user: Me) {
 }
 
 async function draw() {
-  if (!me) return;
+  if (!me) return showSignIn();
   const m = match(location.pathname);
   const main = h('main');
   root.replaceChildren(header(me), main);
@@ -70,7 +70,6 @@ async function draw() {
 async function boot() {
   setUnauthorizedHandler(showSignIn);
   me = await currentUser().catch(() => null);
-  if (!me) return showSignIn();
-  startRouter(draw);
+  startRouter(draw); // always, so sign-in, links and Back/Forward work however the app was opened
 }
 boot();

@@ -21,7 +21,15 @@ export function match(pathname: string, table: Route[] = routes): {route: Route;
     const params: Params = {};
     const ok = pat.every((p, i) => {
       const part = parts[i] ?? '';
-      if (p.startsWith(':')) return part !== '' && ((params[p.slice(1)] = decodeURIComponent(part)), true);
+      if (p.startsWith(':')) {
+        if (part === '') return false;
+        try {
+          params[p.slice(1)] = decodeURIComponent(part);
+        } catch {
+          return false; // malformed %-escape: not a route
+        }
+        return true;
+      }
       return p === part;
     });
     if (ok) return {route, params};

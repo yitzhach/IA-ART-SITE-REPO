@@ -8,7 +8,7 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/v1/*", "/assistant/*", "/"]
+    "run_worker_first": ["/v1/*", "/assistant/*", "/", "/studio", "/studio/*"]
   },
   // The studio platform (yitzhach/Art-Talk-Back): its API as /v1/*, its assistant as /assistant/*, on this origin.
   "services": [
