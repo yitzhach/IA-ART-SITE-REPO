@@ -1,1 +1,262 @@
-{}
+{
+  "abstract-1": {
+    "description": "A dense charcoal mass rises along the right edge and pulls against a field of pale sand and off-white on the left. The surface is broken and layered, with scraped passages, dark specks and worn patches where the top layers have been pulled back. Heavy and quiet, the composition holds its weight at the lower edge.",
+    "tags": ["charcoal", "sand", "off-white", "layered", "textured", "dark", "contrast", "weathered", "quiet"],
+    "collection": "Abstract",
+    "altText": "Abstract surface with a dark charcoal mass on the right and pale sand and off-white on the left, broken and textured."
+  },
+  "abstract-10": {
+    "description": "A warm umber and grey field, mottled and softly layered, lightens toward the top into a hazy cloud. A dark vertical line runs down the right side, and a deep band along the bottom meets the field at a thin line of amber light. The surface is worn and uneven, with scraped marks and small pale flecks.",
+    "tags": ["umber", "grey", "amber", "horizon", "dark band", "haze", "worn surface", "quiet"],
+    "collection": "Abstract",
+    "altText": "Mottled brown and grey abstract field, lighter haze at the top, a dark band along the bottom edge with a thin line of amber light."
+  },
+  "abstract-11": {
+    "description": "A pale, misty upper field fades into a dark, broken lower band of charcoal and blue-grey. In the centre, a soft grey shape with a few flecks of red-orange rises out of the haze, half lost in the light. The surface is scraped and layered, with the darkest marks gathered along the bottom edge.",
+    "tags": ["white", "charcoal", "blue-grey", "haze", "red accent", "dark band", "layered", "soft"],
+    "collection": "Abstract",
+    "altText": "Pale misty abstract with a dark textured band across the bottom and a faint grey shape with touches of red-orange at the centre."
+  },
+  "abstract-12": {
+    "description": "Two upright fields sit side by side, each divided into a bright, heavily textured upper area and a cooler blue-grey lower area. The surface is broken into crusted ridges and pale hollows, with a faint diagonal ridge crossing the right field. A soft shadow falls across the left field, so the two read as one horizon.",
+    "tags": ["diptych", "white", "blue-grey", "pale", "textured", "horizon", "relief", "shadow"],
+    "collection": "Abstract",
+    "altText": "Two upright abstract fields side by side, pale textured tops fading to cool blue-grey lower areas, with a soft shadow across the left one."
+  },
+  "abstract-2": {
+    "description": "Nine rectangular fields stand side by side in a grid, each carrying raised ridges, diagonal folds and shallow shadows. Pale grey and off-white dominate, with the edges between fields picked out in darker lines. The surface reads as a record of many small movements, held in an even, measured order.",
+    "tags": ["grey", "off-white", "grid", "relief", "texture", "diagonal", "shadow", "measured", "tactile"],
+    "collection": "Abstract",
+    "altText": "Nine-part grid of pale grey relief fields with raised ridges, diagonal folds and soft shadows."
+  },
+  "abstract-3": {
+    "description": "A deep slate-blue field fills the upper part, darkening toward the top edge. A thin golden streak floats across the middle, its bright surface catching the light. Below, a pale, luminous band gives way to a dark horizon line at the base. The mood is night-sky and open, with a single point of warmth.",
+    "tags": ["slate blue", "charcoal", "golden", "horizon", "luminous", "night", "texture", "quiet", "layered"],
+    "collection": "Abstract",
+    "altText": "Dark blue-grey abstract with a golden streak across the middle, a pale band near the bottom and a dark horizon."
+  },
+  "abstract-4": {
+    "description": "A broad, pale upper field is softly textured, with faint cracks and a few warm, tan marks. Below it a narrow band of warm grey-brown runs across, and two dark horizontal bars sit at the base, divided by a raised ridge. The division between light and dark is sharp and horizontal, giving the work a steady, grounded presence.",
+    "tags": ["off-white", "warm grey", "dark brown", "horizontal", "ridge", "texture", "minimal", "grounded", "quiet"],
+    "collection": "Abstract",
+    "altText": "Pale textured upper field over a warm grey band and two dark horizontal bars divided by a raised ridge."
+  },
+  "abstract-5": {
+    "description": "A soft grey field fills most of the work, marked with faint scratches and a worn, uneven texture. A small inset rectangle near the upper left holds a single dark tree-like form against a pale ground. A band of dark, ragged tone runs along the base, anchoring the composition.",
+    "tags": ["grey", "pale", "inset", "tree", "dark band", "worn", "texture", "calm", "minimal"],
+    "collection": "Abstract",
+    "altText": "Soft grey textured abstract with a small inset rectangle showing a dark tree-like shape and a dark band along the bottom."
+  },
+  "abstract-6": {
+    "description": "Grey and white layers are broken by ochre and yellow patches at the upper left, and a dark, rounded shape sits on the right. A soft green-grey area glows low in the centre, while the lower edges warm into brown. The surface is rough and scraped, with energy in the brushed marks and calm in the wide grey ground.",
+    "tags": ["grey", "ochre", "yellow", "navy", "green-grey", "brown", "scraped", "energetic", "layered"],
+    "collection": "Abstract",
+    "altText": "Grey and white abstract with ochre and yellow patches at upper left, a dark rounded shape on the right and soft green-grey below."
+  },
+  "abstract-7": {
+    "description": "A pale off-white field sweeps across the upper part, marked with faint brushed lines and soft warm stains. Below, a broad dark band shifts from charcoal to deep green, with a vertical trace of green near its upper edge. The meeting of pale and dark is clean and low, so the work reads as open sky above a dark ground.",
+    "tags": ["off-white", "charcoal", "deep green", "horizon", "brushed", "warm stain", "minimal", "open", "calm"],
+    "collection": "Abstract",
+    "altText": "Pale off-white abstract over a dark charcoal and deep green band along the bottom."
+  },
+  "abstract-7-b": {
+    "description": "A wide crop of a night-toned field: slate blue at the top gives way to a pale, luminous band of grey-white. Along the lower edge, a dark horizon is scratched with fine pale lines. The cropped format tightens the composition and pushes the light into a narrow, glowing strip.",
+    "tags": ["slate blue", "grey-white", "luminous", "horizon", "dark", "scratched", "wide", "quiet", "cool"],
+    "collection": "Abstract",
+    "altText": "Wide view of a slate-blue abstract with a pale luminous band and a dark, lightly scratched horizon along the bottom."
+  },
+  "abstract-8": {
+    "description": "Raised, irregular shapes cover the centre of the work, set in a sandy, pale surface that breaks open at the edges. Small specks of blue are scattered through the lower part, and a warm, ochre tone lingers at the top. The textured pattern reads as close and layered, like a surface seen up close.",
+    "tags": ["sand", "off-white", "blue flecks", "relief", "pattern", "textured", "warm", "close", "layered"],
+    "collection": "Abstract",
+    "altText": "Close view of a pale, textured abstract with raised irregular shapes and small blue flecks."
+  },
+  "abstract-9": {
+    "description": "A pale, luminous area glows at the upper centre and fades into warm brown toward the sides. Below, the surface drifts through soft grey into a band of golden light, then falls into deep charcoal at the base. The gradients are veiled and worn, giving the piece a hazy, early-light atmosphere.",
+    "tags": ["pale", "warm brown", "grey", "golden", "charcoal", "hazy", "gradient", "luminous", "atmospheric"],
+    "collection": "Abstract",
+    "altText": "Hazy vertical abstract, pale at the top, warm brown at the sides, with a golden glow above a dark charcoal base."
+  },
+  "available-3": {
+    "description": "A weathered, pale grey surface holds a recessed inset in its upper centre, where a dark, branching silhouette stands against a pale sky over a shadowed ground. Below, a dark band gives way to a strip of warm brown streaked with marks. The surface is pitted and rough, and the mood is quiet and still.",
+    "tags": ["grey", "pale", "recess", "silhouette", "warm brown", "dark band", "weathered", "quiet"],
+    "collection": "Sculptural",
+    "altText": "Weathered grey surface with a recessed inset showing a dark branching silhouette against a pale sky, above a dark band and a warm brown strip."
+  },
+  "available-4": {
+    "description": "A pale grey upper field, flecked and textured, opens into a band of soft peach light near the middle. A thin, broken seam of deep red-brown runs along the edge where the peach band meets a heavy, dark grey lower field. The overall mood is calm and quietly warm.",
+    "tags": ["grey", "peach", "horizon", "dark grey", "textured", "warm light", "seam", "calm"],
+    "collection": "Abstract",
+    "altText": "Textured grey abstract with a glowing peach band across the middle and a dark grey lower area below a broken red-brown line."
+  },
+  "available-5": {
+    "description": "A grey field, mottled and streaked with lighter marks, sits above a deep charcoal band that fills the lower part. The upper area fades from pale to smoky grey, and the lower band carries a faint sheen and scraped texture. The mood is still and cool.",
+    "tags": ["grey", "charcoal", "horizon", "smoky", "streaked", "cool", "still", "layered"],
+    "collection": "Abstract",
+    "altText": "Grey abstract with a mottled, streaked upper area fading to smoky tones, over a deep charcoal band across the bottom."
+  },
+  "available-6": {
+    "description": "A near-black upper field, softly worn and scratched, rests on a deeper black band along the bottom. A faint lighter haze crosses the top edge. Pale flecks show where the surface has been rubbed, and the overall mood is quiet and low in light.",
+    "tags": ["charcoal", "black", "dark band", "worn", "quiet", "low light", "scratched", "monochrome"],
+    "collection": "Abstract",
+    "altText": "Near-black abstract with a worn upper area over a deeper black band along the bottom edge."
+  },
+  "available-7": {
+    "description": "A creamy white field, softly mottled and cracked in patches toward the top, fades warm toward the horizon. A thin line of ochre light sits along the edge where the warm band meets a heavy dark grey base. The surface is fine and dry, quiet and luminous.",
+    "tags": ["cream", "white", "ochre", "dark grey", "horizon", "cracked", "luminous", "quiet"],
+    "collection": "Abstract",
+    "altText": "Cream abstract with cracked texture in the upper area, a warm ochre glow at the horizon and a dark grey base across the bottom."
+  },
+  "available-8": {
+    "description": "A grey-brown upper field, scraped and streaked with pale marks, deepens into a dark slate-grey lower area. Across the middle, a faint mauve-tinged band sits between the two tones, its edge broken and smoky. The surface is worn and scratched, moody and still.",
+    "tags": ["grey-brown", "slate", "mauve", "scratched", "horizon", "moody", "smoky", "layered"],
+    "collection": "Abstract",
+    "altText": "Grey-brown abstract with a scratched, streaked surface and a darker lower area divided by a faint smoky band."
+  },
+  "figurative-1": {
+    "description": "An off-white field fills the picture, rough and worn across its whole surface. At its centre, an upright recessed form with a rounded top reads as a standing figure, worked in grey and darker tones with broken, crumbling texture. Faint warm streaks run down from the top edge, and the mood is quiet and solemn.",
+    "tags": ["off-white", "grey", "figure", "recess", "rounded", "crumbling", "quiet", "solemn"],
+    "collection": "Figurative",
+    "altText": "Off-white textured abstract with an upright recessed grey form, rounded at the top, reading as a standing figure at the centre."
+  },
+  "figurative-10": {
+    "description": "A head in profile rises from a mottled grey surface, its brow and nose sharply modelled. Dry, golden stalks spread from the crown and fan upward above it. The head rests on a dark, weathered base with a flat foot, and the composition feels still and contemplative.",
+    "tags": ["profile", "head", "grey", "ochre", "dark base", "stalks", "contemplative", "still", "textured"],
+    "collection": "Figurative",
+    "altText": "Head in profile with a mottled grey surface, topped by fanning dry golden stalks and set on a dark, weathered base."
+  },
+  "figurative-11": {
+    "description": "A head-like form tilts forward, its surface mottled grey and brown with a warm patch near the top. It rests on a pale rectangular block, and a flat wedge juts out to one side, giving the shape an off-balance poise. The forms are blunt and worn, and the mood is restless.",
+    "tags": ["head", "grey", "brown", "ochre", "block", "off-balance", "blunt", "textured", "worn"],
+    "collection": "Figurative",
+    "altText": "Mottled grey head-like form tilted on a pale rectangular block, with a flat wedge projecting to one side and a warm patch near the top."
+  },
+  "figurative-12": {
+    "description": "A head in profile, with deep-set, narrowed eyes and closed lips, is shown in rust-brown and grey tones. Heavy ridges mark the brow and cheek, and the surface is pitted and worn. It sits on a dark, angular base, and the expression is calm and inward.",
+    "tags": ["profile", "head", "rust-brown", "grey", "ridged", "pitted", "calm", "inward", "dark base"],
+    "collection": "Figurative",
+    "altText": "Head in profile in rust-brown and grey tones, with narrowed eyes, closed lips and a pitted, ridged surface, set on a dark angular base."
+  },
+  "figurative-2": {
+    "description": "A tall, narrow figure rises in relief from a pale, textured ground, its ridged surface catching the light along one edge. Above it the field is off-white and scored with soft strokes, with ochre runs down the left side. A band of charcoal grey sits low across the base, grounding the upright form in a quiet, austere composition.",
+    "tags": ["figure", "relief", "off-white", "charcoal", "vertical", "textured", "quiet", "ochre"],
+    "collection": "Figurative",
+    "altText": "Pale, tall figure in raised relief against an off-white textured surface, with a dark grey band across the bottom."
+  },
+  "figurative-3": {
+    "description": "A pale, upright figure is pressed into a rectangular field of cracked off-white surface. Its outline is soft and its interior broken into many small ridges. The lower third turns dark grey, with flecks of warm ochre along the edge, and the whole piece reads as calm and weathered.",
+    "tags": ["figure", "pale", "cracked", "off-white", "charcoal", "ochre", "vertical", "weathered", "calm"],
+    "collection": "Figurative",
+    "altText": "Upright rectangle with a pale upright figure in low relief on a cracked off-white surface; the lower part is dark grey with ochre flecks."
+  },
+  "figurative-4": {
+    "description": "A close crop of brushed charcoal and white marks, with two eye-like hollows set high in the field. Dense, mottled strokes break across the middle, and lighter streaks rise through the centre. The features are suggested rather than stated, and the energy is restless and layered.",
+    "tags": ["face", "monochrome", "charcoal", "white", "brushed", "restless", "layered", "close crop", "gestural"],
+    "collection": "Figurative",
+    "altText": "Close view of charcoal and white brushed marks forming a face, with two eye-like hollows and dense, mottled strokes through the centre."
+  },
+  "figurative-6": {
+    "description": "A face fills an oval field in dark grey, its surface ridged and flecked with pale specks. A scraped line marks the brow, and a lighter edge frames the head against the grey ground. The lower face sinks into shadow, and the surface feels worn and heavy.",
+    "tags": ["face", "dark grey", "oval", "flecked", "ridged", "heavy", "shadow", "monochrome", "worn"],
+    "collection": "Figurative",
+    "altText": "Dark grey oval face with a ridged, flecked surface and a lighter grey border, the lower features sunk in shadow."
+  },
+  "figurative-7": {
+    "description": "A face is pressed into a grey-toned surface, its brow, eyes and downturned mouth drawn in raised, scored lines. Silver highlights catch the edges of the marks while the ground around them stays dark and even. The expression reads as stern and watchful.",
+    "tags": ["face", "grey", "monochrome", "silver", "relief", "stern", "watchful", "scored", "portrait"],
+    "collection": "Figurative",
+    "altText": "Grey-toned face with raised, scored lines for brow, eyes and mouth, set in a dark, even surface with silvery highlights."
+  },
+  "figurative-8": {
+    "description": "A pale face rises in soft relief from an off-white field, its brow and heavy-lidded eyes softened by light grey shadow. The mouth is a single firm line, and the edges of the head dissolve into the surrounding surface. The overall tone is weary and quiet.",
+    "tags": ["face", "off-white", "grey", "relief", "soft", "weary", "quiet", "pale", "textured"],
+    "collection": "Figurative",
+    "altText": "Pale face in soft relief on an off-white textured surface, with grey shadows around the heavy-lidded eyes and a firm mouth line."
+  },
+  "figurative-9": {
+    "description": "A tall figure stands in relief against a pale, weathered upper field, its body shaded in dark grey and marked with fine scratches. The lower band is near-black and meets the upright form in a sharp edge. Faint warm tones along the edges give the piece a sense of age.",
+    "tags": ["figure", "vertical", "grey", "charcoal", "relief", "weathered", "scratched", "pale", "stillness"],
+    "collection": "Figurative",
+    "altText": "Tall, shaded figure in relief against a pale weathered field, with a near-black band across the bottom and fine scratch marks on the figure."
+  },
+  "sculptural-1": {
+    "description": "A pale grey upper field gives way to a dark slate lower band, with a small rectangular opening at left holding a dark tree silhouette against a warm, bright ground. The horizon is low and the composition is quiet and spare. The surface texture is soft and worn throughout.",
+    "tags": ["grey", "charcoal", "pale", "horizon", "solitary tree", "quiet", "minimal", "worn texture", "warm inset"],
+    "collection": "Sculptural",
+    "altText": "Pale grey textured surface with a dark lower band and a small rectangular inset showing a dark tree silhouette on a warm, pale ground."
+  },
+  "sculptural-11": {
+    "description": "A pale grey field is marked by a patch of cracked blue-grey at the left and a horizontal gold-toned bar across the centre. The lower section is a deep slate, dark and textured. The contrast of cool tones and the single bright line gives the work a precise, quiet focus.",
+    "tags": ["grey", "slate", "blue", "gold tone", "crackle texture", "contrast", "horizontal", "precise", "quiet"],
+    "collection": "Sculptural",
+    "altText": "Pale grey textured surface with a cracked blue patch at left, a gold-toned horizontal bar at centre and a dark slate lower band."
+  },
+  "sculptural-2": {
+    "description": "A wide, horizontal landscape of misty cream and grey, with rust-brown banks rising at either side. A luminous pale band runs through the centre, reflecting light over a cool blue-grey base. The layers feel soft, hazy and open.",
+    "tags": ["horizon", "rust", "cream", "luminous", "misty", "blue-grey", "layered", "calm", "landscape"],
+    "collection": "Sculptural",
+    "altText": "Wide horizontal view of a pale misty sky, rust-brown banks at each side, a glowing pale band across the centre and a cool blue-grey base."
+  },
+  "sculptural-3": {
+    "description": "A tall, dark composition split by a warm horizontal bar. Above it, glowing ochre, cream and touches of blue suggest a dusky sky; below, a charcoal field is eroded into deep, textured ridges. The contrast between warmth and darkness is strong and atmospheric.",
+    "tags": ["ochre", "charcoal", "glow", "dusk", "contrast", "eroded texture", "horizon", "moody", "warm bar"],
+    "collection": "Sculptural",
+    "altText": "Tall dark composition with a glowing ochre and cream upper section, a warm horizontal bar at the centre and a textured charcoal lower field."
+  },
+  "sculptural-4": {
+    "description": "A pale, textured upper field holds a recessed dark-grey opening, set above a band of slate-blue at the base. A thin warm strip runs along the lower edge. The arrangement is spare and geometric, with a sense of threshold and stillness.",
+    "tags": [
+      "white",
+      "slate blue",
+      "threshold",
+      "geometric",
+      "stillness",
+      "textured",
+      "muted",
+      "rectangle",
+      "warm accent"
+    ],
+    "collection": "Sculptural",
+    "altText": "Pale textured surface with a recessed dark rectangle, a slate-blue lower band and a thin warm strip along the bottom edge."
+  },
+  "sculptural-5": {
+    "description": "A cream, weathered upper field holds a recessed rectangle in soft grey and warm beige. The lower ground shifts into sandy tones, with a rough, uneven surface. The mood is quiet, warm and worn.",
+    "tags": ["cream", "sand", "beige", "weathered", "rectangle", "warm neutrals", "quiet", "uneven texture"],
+    "collection": "Sculptural",
+    "altText": "Cream textured surface with a recessed rectangle in grey and beige, above a rough sandy lower band."
+  },
+  "sculptural-6": {
+    "description": "A stark white upper field has a dark, recessed opening topped by a rust-orange edge and scattered faint blue marks. Below, a charcoal band runs the full width. The cracked, layered surface gives the piece a sharp contrast of light and dark.",
+    "tags": [
+      "white",
+      "charcoal",
+      "rust",
+      "blue accent",
+      "cracked texture",
+      "stark",
+      "contrast",
+      "rectangle",
+      "layered"
+    ],
+    "collection": "Sculptural",
+    "altText": "Stark white textured surface with a dark recessed rectangle topped by a rust-orange edge, above a charcoal lower band."
+  },
+  "sculptural-7": {
+    "description": "A pale, creamy field fades softly into a grey lower area, where a horizontal band of charcoal is warmed by faint rust tones. The surface shows gentle wear and scattered grey patches. The composition reads as a low horizon at dusk.",
+    "tags": ["cream", "grey", "charcoal", "rust", "horizon", "soft", "worn texture", "minimal"],
+    "collection": "Sculptural",
+    "altText": "Pale cream textured surface with grey patches, a soft grey lower area and a dark band near the bottom with faint rust tones."
+  },
+  "sculptural-8": {
+    "description": "A wide, pale grey field is crossed by a single dark horizontal line. A small rectangle left of centre holds a warm sepia scene of a lone tree on a rise. The surface is textured and softly weathered, with calm, open space around the inset.",
+    "tags": ["grey", "horizon line", "sepia", "solitary tree", "minimal", "calm", "textured", "open space"],
+    "collection": "Sculptural",
+    "altText": "Wide pale grey textured field with a dark horizontal line and a small warm sepia inset showing a lone tree."
+  },
+  "sculptural-9": {
+    "description": "A tall, pale cream surface is heavily textured, with soft shifting light near the centre. Near the bottom, a warm amber glow sits above a deep charcoal base. The effect is atmospheric and luminous, like a sky at the edge of night.",
+    "tags": ["cream", "amber", "charcoal", "glow", "atmospheric", "luminous", "textured", "dusk", "soft"],
+    "collection": "Sculptural",
+    "altText": "Tall cream textured surface with a soft glow near the lower centre above a dark charcoal base."
+  }
+}

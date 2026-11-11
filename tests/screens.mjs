@@ -220,7 +220,15 @@ async function mock(page, {signedIn = true} = {}) {
       return signedIn
         ? json(route, {
             user: {id: 'U1', email: 'isaac@example.com', name: 'Isaac'},
-            memberships: [{studioId: 'S1', studioName: 'Booth Studio', role: 'owner', clientId: null}],
+            memberships: [
+              {
+                studioId: 'S1',
+                studioName: 'Isaac Anderson Art',
+                studioSlug: 'isaac-anderson-art-abc123',
+                role: 'owner',
+                clientId: null,
+              },
+            ],
             activeStudioId: 'S1',
             hasPassword: false,
           })

@@ -1,12 +1,12 @@
 {
   "sha": "f89c3f0dc94a1c909cb96b099a1c56e060129078",
-  "generatedAt": "2026-11-11T01:13:03.028Z",
+  "generatedAt": "2026-11-11T01:14:18.052Z",
   "works": [
     {
       "key": "abstract-1",
       "title": "Abstract",
       "titleFrom": "page",
-      "collection": "abstract",
+      "collection": "Abstract",
       "status": "available",
       "width": 18,
       "height": 27,
@@ -35,14 +35,14 @@
         "images/abstract-1-full.webp and images/abstract-1.webp look the same (picture fingerprints differ in 1 of 64 places; shapes 0.677 and 0.676)"
       ],
       "importedFrom": "collection-abstract.html#abstract-1",
-      "alsoInCollections": ["sculptural"],
+      "alsoInCollections": ["Sculptural"],
       "alsoOn": ["collection-sculptural.html#sculptural-10", "available.html#available-10"]
     },
     {
       "key": "abstract-2",
       "title": "Abstract No. 2",
       "titleFrom": "made",
-      "collection": "abstract",
+      "collection": "Abstract",
       "source": {
         "path": "images/abstract-2-full.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/abstract-2-full.webp",
@@ -62,7 +62,7 @@
       "key": "abstract-3",
       "title": "Abstract No. 3",
       "titleFrom": "made",
-      "collection": "abstract",
+      "collection": "Abstract",
       "source": {
         "path": "images/abstract-3-full.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/abstract-3-full.webp",
@@ -82,7 +82,7 @@
       "key": "abstract-4",
       "title": "Embedded Steel Base",
       "titleFrom": "page",
-      "collection": "abstract",
+      "collection": "Abstract",
       "status": "sold",
       "width": 18,
       "height": 27,
@@ -110,14 +110,14 @@
         "images/abstract-4-full.webp and images/abstract-4.webp look the same (picture fingerprints differ in 1 of 64 places; shapes 0.660 and 0.661)"
       ],
       "importedFrom": "collection-abstract.html#abstract-4",
-      "alsoInCollections": ["sculptural"],
+      "alsoInCollections": ["Sculptural"],
       "alsoOn": ["collection-sculptural.html#sculptural-12", "available.html#available-12"]
     },
     {
       "key": "abstract-5",
       "title": "Abstract No. 5",
       "titleFrom": "made",
-      "collection": "abstract",
+      "collection": "Abstract",
       "source": {
         "path": "images/abstract-5-full.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/abstract-5-full.webp",
@@ -137,7 +137,7 @@
       "key": "abstract-6",
       "title": "Abstract No. 6",
       "titleFrom": "made",
-      "collection": "abstract",
+      "collection": "Abstract",
       "source": {
         "path": "images/abstract-6-full.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/abstract-6-full.webp",
@@ -157,7 +157,7 @@
       "key": "abstract-7",
       "title": "Green Horizon",
       "titleFrom": "page",
-      "collection": "abstract",
+      "collection": "Abstract",
       "status": "available",
       "width": 34,
       "height": 48,
@@ -183,7 +183,7 @@
       "key": "abstract-7-b",
       "title": "Abstract No. 7 (second picture)",
       "titleFrom": "made",
-      "collection": "abstract",
+      "collection": "Abstract",
       "source": {
         "path": "images/abstract-7.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/abstract-7.webp",
@@ -204,7 +204,7 @@
       "key": "abstract-8",
       "title": "Abstract No. 8",
       "titleFrom": "made",
-      "collection": "abstract",
+      "collection": "Abstract",
       "source": {
         "path": "images/abstract-8-full.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/abstract-8-full.webp",
@@ -220,14 +220,14 @@
         "images/abstract-8-full.webp and images/figurative-5.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.750 and 0.751)"
       ],
       "importedFrom": "collection-abstract.html#abstract-8",
-      "alsoInCollections": ["figurative"],
+      "alsoInCollections": ["Figurative"],
       "alsoOn": ["collection-figurative.html#figurative-5"]
     },
     {
       "key": "abstract-9",
       "title": "Abstract No. 9",
       "titleFrom": "made",
-      "collection": "abstract",
+      "collection": "Abstract",
       "source": {
         "path": "images/abstract-9-full.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/abstract-9-full.webp",
@@ -247,7 +247,7 @@
       "key": "abstract-10",
       "title": "Abstract No. 10",
       "titleFrom": "made",
-      "collection": "abstract",
+      "collection": "Abstract",
       "source": {
         "path": "images/abstract-10-full.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/abstract-10-full.webp",
@@ -267,7 +267,7 @@
       "key": "abstract-11",
       "title": "Abstract No. 11",
       "titleFrom": "made",
-      "collection": "abstract",
+      "collection": "Abstract",
       "source": {
         "path": "images/abstract-11.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/abstract-11.webp",
@@ -285,7 +285,7 @@
       "key": "abstract-12",
       "title": "Abstract No. 12",
       "titleFrom": "made",
-      "collection": "abstract",
+      "collection": "Abstract",
       "source": {
         "path": "images/abstract-12-full.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/abstract-12-full.webp",
@@ -440,7 +440,7 @@
       "key": "figurative-1",
       "title": "Figurative No. 1",
       "titleFrom": "made",
-      "collection": "figurative",
+      "collection": "Figurative",
       "source": {
         "path": "images/figurative-1-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/figurative-1-hi.webp",
@@ -460,7 +460,7 @@
       "key": "figurative-2",
       "title": "Figurative No. 2",
       "titleFrom": "made",
-      "collection": "figurative",
+      "collection": "Figurative",
       "source": {
         "path": "images/figurative-2-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/figurative-2-hi.webp",
@@ -480,7 +480,7 @@
       "key": "figurative-3",
       "title": "Figurative No. 3",
       "titleFrom": "made",
-      "collection": "figurative",
+      "collection": "Figurative",
       "source": {
         "path": "images/figurative-3-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/figurative-3-hi.webp",
@@ -500,7 +500,7 @@
       "key": "figurative-4",
       "title": "Figurative No. 4",
       "titleFrom": "made",
-      "collection": "figurative",
+      "collection": "Figurative",
       "source": {
         "path": "images/figurative-4.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/figurative-4.webp",
@@ -518,7 +518,7 @@
       "key": "figurative-6",
       "title": "Figurative No. 6",
       "titleFrom": "made",
-      "collection": "figurative",
+      "collection": "Figurative",
       "source": {
         "path": "images/figurative-6-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/figurative-6-hi.webp",
@@ -538,7 +538,7 @@
       "key": "figurative-7",
       "title": "Figurative No. 7",
       "titleFrom": "made",
-      "collection": "figurative",
+      "collection": "Figurative",
       "source": {
         "path": "images/figurative-7-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/figurative-7-hi.webp",
@@ -558,7 +558,7 @@
       "key": "figurative-8",
       "title": "Figurative No. 8",
       "titleFrom": "made",
-      "collection": "figurative",
+      "collection": "Figurative",
       "source": {
         "path": "images/figurative-8-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/figurative-8-hi.webp",
@@ -578,7 +578,7 @@
       "key": "figurative-9",
       "title": "Figurative No. 9",
       "titleFrom": "made",
-      "collection": "figurative",
+      "collection": "Figurative",
       "source": {
         "path": "images/figurative-9-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/figurative-9-hi.webp",
@@ -598,7 +598,7 @@
       "key": "figurative-10",
       "title": "Figurative No. 10",
       "titleFrom": "made",
-      "collection": "figurative",
+      "collection": "Figurative",
       "source": {
         "path": "images/figurative-10-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/figurative-10-hi.webp",
@@ -618,7 +618,7 @@
       "key": "figurative-11",
       "title": "Figurative No. 11",
       "titleFrom": "made",
-      "collection": "figurative",
+      "collection": "Figurative",
       "source": {
         "path": "images/figurative-11.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/figurative-11.webp",
@@ -636,7 +636,7 @@
       "key": "figurative-12",
       "title": "Figurative No. 12",
       "titleFrom": "made",
-      "collection": "figurative",
+      "collection": "Figurative",
       "source": {
         "path": "images/figurative-12.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/figurative-12.webp",
@@ -654,7 +654,7 @@
       "key": "sculptural-1",
       "title": "Sculptural No. 1",
       "titleFrom": "made",
-      "collection": "sculptural",
+      "collection": "Sculptural",
       "source": {
         "path": "images/sculptural-1-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/sculptural-1-hi.webp",
@@ -674,7 +674,7 @@
       "key": "sculptural-2",
       "title": "Sculptural No. 2",
       "titleFrom": "made",
-      "collection": "sculptural",
+      "collection": "Sculptural",
       "source": {
         "path": "images/sculptural-2-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/sculptural-2-hi.webp",
@@ -694,7 +694,7 @@
       "key": "sculptural-3",
       "title": "Rising Above",
       "titleFrom": "page",
-      "collection": "sculptural",
+      "collection": "Sculptural",
       "status": "sold",
       "width": 24,
       "height": 36,
@@ -721,7 +721,7 @@
       "key": "sculptural-4",
       "title": "Sculptural No. 4",
       "titleFrom": "made",
-      "collection": "sculptural",
+      "collection": "Sculptural",
       "source": {
         "path": "images/sculptural-4.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/sculptural-4.webp",
@@ -739,7 +739,7 @@
       "key": "sculptural-5",
       "title": "Sculptural No. 5",
       "titleFrom": "made",
-      "collection": "sculptural",
+      "collection": "Sculptural",
       "source": {
         "path": "images/sculptural-5-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/sculptural-5-hi.webp",
@@ -759,7 +759,7 @@
       "key": "sculptural-6",
       "title": "Sculptural No. 6",
       "titleFrom": "made",
-      "collection": "sculptural",
+      "collection": "Sculptural",
       "source": {
         "path": "images/sculptural-6-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/sculptural-6-hi.webp",
@@ -779,7 +779,7 @@
       "key": "sculptural-7",
       "title": "Green Horizon",
       "titleFrom": "page",
-      "collection": "sculptural",
+      "collection": "Sculptural",
       "status": "sold",
       "width": 34,
       "height": 48,
@@ -806,7 +806,7 @@
       "key": "sculptural-8",
       "title": "Sculptural No. 8",
       "titleFrom": "made",
-      "collection": "sculptural",
+      "collection": "Sculptural",
       "source": {
         "path": "images/sculptural-8-hi.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/sculptural-8-hi.webp",
@@ -826,7 +826,7 @@
       "key": "sculptural-9",
       "title": "Sculptural No. 9",
       "titleFrom": "made",
-      "collection": "sculptural",
+      "collection": "Sculptural",
       "source": {
         "path": "images/sculptural-9.webp",
         "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/sculptural-9.webp",
@@ -844,7 +844,7 @@
       "key": "sculptural-11",
       "title": "Embedded Brass Bar",
       "titleFrom": "page",
-      "collection": "sculptural",
+      "collection": "Sculptural",
       "status": "sold",
       "width": 16,
       "height": 28,

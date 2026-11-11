@@ -25,7 +25,7 @@ function header(user: Me) {
   return h(
     'header',
     {class: 'hdr'},
-    h('div', {class: 'brand'}, 'Isaac Anderson Art — Studio', name ? h('small', null, name) : null),
+    h('div', {class: 'brand'}, name ?? 'Isaac Anderson Art', h('small', null, 'Studio')),
     h(
       'nav',
       null,

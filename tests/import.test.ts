@@ -96,7 +96,7 @@ describe('grouping', () => {
       key: 'abstract-7',
       title: 'Green Horizon',
       titleFrom: 'page',
-      collection: 'abstract',
+      collection: 'Abstract',
       status: 'sold',
       width: 34,
     });

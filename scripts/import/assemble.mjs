@@ -50,7 +50,7 @@ export function assemble({files, slots, sha, repo = 'yitzhach/IA-ART-Claude-Code
       key: first.id,
       title: titled ? titled.title : `${cap(first.collection ?? 'available')} No. ${first.number}`,
       titleFrom: titled ? 'page' : 'made',
-      ...(collections[0] ? {collection: collections[0]} : {}),
+      ...(collections[0] ? {collection: cap(collections[0])} : {}),
       ...(sold ? {status: 'sold'} : onAvailable ? {status: 'available'} : {}),
       ...(width != null
         ? {width, height: pick('height'), ...(pick('sizeUnit') ? {sizeUnit: pick('sizeUnit')} : {})}
@@ -67,7 +67,7 @@ export function assemble({files, slots, sha, repo = 'yitzhach/IA-ART-Claude-Code
       mergedBecause: c.reasons,
       importedFrom: `${first.page}#${first.id}`,
     };
-    if (collections.length > 1) w.alsoInCollections = collections.slice(1);
+    if (collections.length > 1) w.alsoInCollections = collections.slice(1).map(cap);
     const others = mine.filter(s => s !== first);
     if (others.length) w.alsoOn = others.map(s => `${s.page}#${s.id}`);
     works.push(w);
