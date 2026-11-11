@@ -1,0 +1,32 @@
+name: CI
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  check:
+    runs-on: ubuntu-24.04  # Playwright 1.56.1 has no Chromium build for 26.04 (Art-Talk-Back CI note)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Chromium for the screens test
+        run: |
+          npm install --no-save playwright@1.56.1
+          # The runner image already has Chromium's libraries; when apt's mirrors can't be reached, install the browser alone.
+          npx playwright@1.56.1 install --with-deps chromium || npx playwright@1.56.1 install chromium
+      - name: Screens (390 and 1280 px, light and dark, no sideways scroll)
+        run: SKIP_BUILD=1 npm run test:screens
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screens
+          path: test-results/screens
