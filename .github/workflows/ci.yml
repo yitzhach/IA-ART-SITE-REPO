@@ -17,4 +17,14 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
-      # - run: npm run test:screens   # the screens test, added with the screens
+      - name: Chromium for the screens test
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright@1.56.1 install --with-deps chromium
+      - name: Screens (390 and 1280 px, light and dark, no sideways scroll)
+        run: SKIP_BUILD=1 npm run test:screens
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screens
+          path: test-results/screens
