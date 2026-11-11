@@ -4,6 +4,7 @@ import {ApiError, get, post} from './api';
 export type Membership = {
   studioId: string;
   studioName: string;
+  studioSlug?: string;
   role: 'owner' | 'staff' | 'client';
   clientId: string | null;
 };

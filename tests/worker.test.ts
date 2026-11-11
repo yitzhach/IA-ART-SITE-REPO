@@ -13,10 +13,10 @@ describe('worker', () => {
   it('routes /v1/* to API', async () => expect(await (await call('/v1/me')).text()).toBe('api:/v1/me'));
   it('routes /assistant/* to ASSISTANT', async () =>
     expect(await (await call('/assistant/chat')).text()).toBe('assistant:/assistant/chat'));
-  it('redirects / to /studio', async () => {
+  it('serves the public site at / (not set up without STUDIO_SLUG)', async () => {
     const r = await call('/');
-    expect(r.status).toBe(302);
-    expect(r.headers.get('location')).toBe('https://x.test/studio');
+    expect(r.status).toBe(503);
+    expect(r.headers.get('content-security-policy')).toContain("default-src 'self'");
   });
   it('adds the CSP and security headers to HTML', async () => {
     const r = await call('/studio');
@@ -24,6 +24,11 @@ describe('worker', () => {
     expect(r.headers.get('content-security-policy')).toContain('https://raw.githubusercontent.com');
     expect(r.headers.get('x-content-type-options')).toBe('nosniff');
     expect(r.headers.get('referrer-policy')).toBe('strict-origin-when-cross-origin');
+  });
+  it('redirects the old /index.html to /', async () => {
+    const r = await call('/index.html');
+    expect(r.status).toBe(301);
+    expect(r.headers.get('location')).toBe('https://x.test/');
   });
   it('leaves API responses alone', async () =>
     expect((await call('/v1/me')).headers.get('content-security-policy')).toBeNull());
@@ -38,9 +43,44 @@ describe('worker', () => {
 describe('wrangler.jsonc', () => {
   const text = readFileSync('wrangler.jsonc', 'utf8');
   const config = JSON.parse(text.replace(/^\s*\/\/.*$/gm, ''));
-  it('runs the Worker first for the SPA, so its HTML gets the security headers', () => {
-    for (const path of ['/studio', '/studio/*', '/v1/*', '/assistant/*', '/'])
-      expect(config.assets.run_worker_first).toContain(path);
+  it('runs the Worker first for everything but the built files, so every page gets the security headers', () => {
+    expect(config.assets.run_worker_first).toEqual(['/*', '!/assets/*', '!/fonts/*', '!/site/*']);
     expect(config.assets.not_found_handling).toBe('single-page-application');
+  });
+  it("staging shows Isaac's staging studio", () =>
+    expect(config.env.staging.vars.STUDIO_SLUG).toBe('isaac-anderson-art-sbtwkm'));
+});
+
+describe('pictures at the edge', () => {
+  const pic = '/v1/public/studios/s/images/01M75HGD35H9DMP2CRXEMSH6MZ/960.webp';
+  it('keeps a 200 picture and answers the next request from the edge', async () => {
+    const store = new Map<string, Response>();
+    (globalThis as any).caches = {
+      default: {
+        match: async (r: Request) => store.get(r.url)?.clone(),
+        put: async (r: Request, res: Response) => void store.set(r.url, res),
+      },
+    };
+    let calls = 0;
+    const api = {
+      fetch: async () => (calls++, new Response('img', {headers: {'content-type': 'image/webp'}})),
+    } as unknown as Fetcher;
+    const e: Env = {...env, API: api};
+    await worker.fetch(new Request('https://x.test' + pic), e);
+    const second = await worker.fetch(new Request('https://x.test' + pic), e);
+    expect(await second.text()).toBe('img');
+    expect(calls).toBe(1);
+    expect(store.get('https://x.test' + pic)?.headers.get('cache-control')).toBe('public, max-age=86400');
+    delete (globalThis as any).caches;
+  });
+  it('never keeps a 404', async () => {
+    const store = new Map<string, Response>();
+    (globalThis as any).caches = {
+      default: {match: async () => undefined, put: async (r: Request, res: Response) => void store.set(r.url, res)},
+    };
+    const api = {fetch: async () => new Response('no', {status: 404})} as unknown as Fetcher;
+    expect((await worker.fetch(new Request('https://x.test' + pic), {...env, API: api})).status).toBe(404);
+    expect(store.size).toBe(0);
+    delete (globalThis as any).caches;
   });
 });

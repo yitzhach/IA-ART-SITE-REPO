@@ -9,6 +9,7 @@ export const routes: Route[] = [
   {name: 'add', pattern: '/studio/add', load: () => import('./screens/add')},
   {name: 'work', pattern: '/studio/works/:id', load: () => import('./screens/work')},
   {name: 'review', pattern: '/studio/review', load: () => import('./screens/review')},
+  {name: 'site', pattern: '/studio/site', load: () => import('./screens/site')},
   {name: 'import', pattern: '/studio/import', load: () => import('./screens/import')},
 ];
 

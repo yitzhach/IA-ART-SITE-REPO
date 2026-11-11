@@ -109,6 +109,12 @@ describe('filters and queue', () => {
     expect(applyFilter(works, {kind: 'collection', name: 'Abstract'}).map(x => x.id)).toEqual(['2']);
     expect(applyFilter(works, {kind: 'all'})).toHaveLength(3);
   });
+  it('keeps site photos out of every list but their own', () => {
+    const all = [...works, w('4', {kind: 'site_photo'})];
+    expect(applyFilter(all, {kind: 'all'}).map(x => x.id)).toEqual(['3', '2', '1']);
+    expect(applyFilter(all, {kind: 'drafts'}).map(x => x.id)).toEqual(['2']);
+    expect(applyFilter(all, {kind: 'site'}).map(x => x.id)).toEqual(['4']);
+  });
   it('review goes oldest first, drafts only', () =>
     expect(draftQueue([w('b', {}), w('a', {}), w('c', {public: true})]).map(x => x.id)).toEqual(['a', 'b']));
 });

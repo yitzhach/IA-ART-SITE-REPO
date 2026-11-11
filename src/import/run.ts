@@ -137,6 +137,7 @@ function createBody(w: ManifestWork, palette: Prepared['palette'], sha: string) 
   const [page, slot] = w.importedFrom.split('#');
   return {
     title: w.title,
+    ...(w.sitePhoto ? {kind: 'site_photo'} : {}),
     ...(w.collection ? {collection: w.collection} : {}),
     status: w.status ?? 'available',
     ...(w.width != null ? {width: w.width} : {}),

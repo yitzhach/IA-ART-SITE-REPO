@@ -55,6 +55,8 @@ export interface Artwork extends BaseRecord {
   editionSize: number | null;
   public: boolean;
   publishedAt: string | null;
+  /** "site_photo": a picture for the site's pages, kept out of the works list. Absent on older records = work. */
+  kind?: 'work' | 'site_photo';
   draftedFields: DraftableField[];
 }
 
@@ -92,4 +94,5 @@ export interface ArtworkInput {
   description: string;
   editionSize: number | null;
   slug: string;
+  kind: 'work' | 'site_photo';
 }

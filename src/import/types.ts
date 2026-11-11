@@ -12,6 +12,8 @@ export interface ManifestWork {
   medium?: string;
   year?: number;
   source: {path: string; url: string; pixels: {width: number; height: number}; bytes: number};
+  /** A photo from the old site's pages that was not shown as a work: it becomes a site photo. */
+  sitePhoto?: boolean;
   alsoFrom: string[];
   mergedBecause: string[];
   /** "<page>.html#<slot id>" */
