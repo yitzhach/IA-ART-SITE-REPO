@@ -463,7 +463,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
         a.public
           ? h('button', {class: 'act', type: 'button', onclick: onUnpublish}, 'Unpublish')
           : h('button', {class: 'primary act', type: 'button', onclick: onPublish}, 'Approve and publish'),
-        h('button', {class: 'act', type: 'button', onclick: onRedo}, 'Redo the draft'),
+        a.public ? null : h('button', {class: 'act', type: 'button', onclick: onRedo}, 'Redo the draft'),
         h('button', {class: 'act danger', type: 'button', onclick: onDelete}, 'Delete'),
       ),
     );
