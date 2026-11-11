@@ -5,7 +5,7 @@ import {attachToArtwork, uploadPrepared} from '../lib/upload';
 import {h} from '../ui';
 import type {Params} from '../router';
 import type {Drafts, Manifest} from '../import/types';
-import {listEveryWork, plan, runImport, type ImportProgress, type ImportResult} from '../import/run';
+import {keysToRecord, listEveryWork, plan, runImport, type ImportProgress, type ImportResult} from '../import/run';
 
 const api = {get, post: <T>(p: string, b?: unknown) => post<T>(p, b), patch};
 
@@ -32,6 +32,23 @@ async function draft(artworkId: string, prepared?: Drafts[string]): Promise<'sta
   }
 }
 
+interface Settings {
+  version: number;
+  meta?: Record<string, unknown> & {siteImport?: {keys?: string[]}};
+}
+const recordedKeys = (s: Settings) => new Set(s.meta?.siteImport?.keys ?? []);
+
+/** Remember what came in, so a photo deleted later is never brought back. */
+async function record(manifest: Manifest): Promise<void> {
+  try {
+    const s = await get<Settings>('/settings');
+    const keys = keysToRecord(await listEveryWork(api), recordedKeys(s));
+    await patch('/settings', {meta: {...s.meta, siteImport: {sha: manifest.sha, keys}}}, s.version);
+  } catch {
+    // Not fatal: the next run checks again.
+  }
+}
+
 const photos = (n: number) => `${n} photo${n === 1 ? '' : 's'}`;
 
 export async function render(el: HTMLElement, _params: Params): Promise<void> {
@@ -40,13 +57,14 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
   );
   const root = el.firstElementChild as HTMLElement;
 
-  let manifest: Manifest, drafts: Drafts, pending: ReturnType<typeof plan>;
+  let manifest: Manifest, drafts: Drafts, pending: ReturnType<typeof plan>, settings: Settings;
   try {
     // the list of photos is big, so it is only loaded on this screen
     const [m, d] = await Promise.all([import('../import/manifest.json'), import('../import/drafts.json')]);
     manifest = m.default as unknown as Manifest;
-    drafts = d.default as Drafts;
-    pending = plan(manifest, await listEveryWork(api));
+    drafts = d.default as unknown as Drafts;
+    settings = await get<Settings>('/settings');
+    pending = plan(manifest, await listEveryWork(api), recordedKeys(settings));
   } catch (e) {
     root.replaceChildren(
       h('h1', null, 'Bring in your old photos'),
@@ -67,9 +85,15 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
     h(
       'p',
       {class: 'lede'},
-      'Bring in the photographs from your current website as drafts. Nothing is made public: you approve each work.',
+      'Every photograph from your current website comes in as a draft. Nothing is made public: you approve each work, and delete the photos you don’t want.',
     ),
-    h('p', {class: 'counts'}, `${total} works found, ${pending.alreadyThere} already imported.`),
+    h(
+      'p',
+      {class: 'counts'},
+      `${total} photos on your current site, ${pending.alreadyThere} already in` +
+        (pending.removed ? `, ${pending.removed} you deleted (they stay out)` : '') +
+        '.',
+    ),
   ];
 
   if (left === 0) {
@@ -126,6 +150,7 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
         signal: controller.signal,
       });
       showResult(result);
+      await record(manifest);
       start.textContent = 'Import again';
       start.hidden = !result.failed.length && !result.stopped;
     } catch (e) {
@@ -142,6 +167,11 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
       controller = null;
     }
   });
+  // Opened by the studio's first visit (works screen): start without a tap.
+  if (new URLSearchParams(location.search).has('auto')) {
+    status.replaceChildren(h('p', null, 'Starting by itself. You can keep this screen open or tap Stop.'));
+    start.click();
+  }
   stop.addEventListener('click', () => {
     controller?.abort();
     stop.disabled = true;

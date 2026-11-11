@@ -7,6 +7,8 @@ import {plainError} from '../lib/artworks';
 import type {Params} from '../router';
 import type {Artwork} from '../types';
 import {h} from '../ui';
+import {get} from '../api';
+import {navigate} from '../router';
 
 type Filter = {kind: 'all' | 'drafts' | 'public' | 'sold'} | {kind: 'collection'; name: string};
 let filter: Filter = {kind: 'all'};
@@ -58,6 +60,7 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
     );
     return;
   }
+  if (await shouldStartImport(works)) return navigate('/studio/import?auto=1', true);
 
   if (!works.length) {
     mount(
@@ -126,4 +129,22 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
     bar,
     grid,
   );
+}
+
+/**
+ * The first time the studio opens with none of the current site's photos in, the import starts by itself
+ * (Isaac, 2026-11-11). Once a run has been recorded (settings.meta.siteImport) it never starts again on its own,
+ * and at most once per visit, so a failed run never loops.
+ */
+async function shouldStartImport(works: Artwork[]): Promise<boolean> {
+  try {
+    if (sessionStorage.getItem('studio.importAutoStarted')) return false;
+    if (works.some(w => (w.meta as {importedFrom?: unknown} | undefined)?.importedFrom)) return false;
+    const s = await get<{meta?: {siteImport?: unknown}}>('/settings');
+    if (s.meta?.siteImport) return false;
+    sessionStorage.setItem('studio.importAutoStarted', '1');
+    return true;
+  } catch {
+    return false;
+  }
 }

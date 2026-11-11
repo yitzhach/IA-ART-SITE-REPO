@@ -1,7 +1,30 @@
 {
   "sha": "f89c3f0dc94a1c909cb96b099a1c56e060129078",
-  "generatedAt": "2026-11-11T01:14:18.052Z",
+  "generatedAt": "2026-11-11T01:48:14.391Z",
   "works": [
+    {
+      "key": "about-studio",
+      "title": "About-page photo: studio",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/about-studio.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/about-studio.webp",
+        "pixels": {
+          "width": 1200,
+          "height": 919
+        },
+        "bytes": 202490
+      },
+      "alsoFrom": ["images/show-hero-1.webp"],
+      "mergedBecause": [
+        "images/about-studio.webp and images/show-hero-1.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 1.306 and 1.306)"
+      ],
+      "importedFrom": "site-photo#about-studio",
+      "alsoOn": ["site-photo#show-hero-1"],
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
     {
       "key": "abstract-1",
       "title": "Abstract",
@@ -25,18 +48,20 @@
         "images/available-10-hi.webp",
         "images/available-10.webp",
         "images/sculptural-10-hi.webp",
-        "images/sculptural-10.webp"
+        "images/sculptural-10.webp",
+        "images/thumb-014.webp"
       ],
       "mergedBecause": [
         "images/abstract-1-full.webp and images/available-10-hi.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.677 and 0.677)",
         "images/abstract-1-full.webp and images/sculptural-10-hi.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.677 and 0.677)",
+        "images/abstract-1-full.webp and images/thumb-014.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.677 and 0.674)",
         "images/abstract-1.webp and images/available-10.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.676 and 0.676)",
         "images/abstract-1.webp and images/sculptural-10.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.676 and 0.676)",
         "images/abstract-1-full.webp and images/abstract-1.webp look the same (picture fingerprints differ in 1 of 64 places; shapes 0.677 and 0.676)"
       ],
       "importedFrom": "collection-abstract.html#abstract-1",
       "alsoInCollections": ["Sculptural"],
-      "alsoOn": ["collection-sculptural.html#sculptural-10", "available.html#available-10"]
+      "alsoOn": ["collection-sculptural.html#sculptural-10", "available.html#available-10", "site-photo#thumb-014"]
     },
     {
       "key": "abstract-2",
@@ -202,8 +227,8 @@
     },
     {
       "key": "abstract-8",
-      "title": "Abstract No. 8",
-      "titleFrom": "made",
+      "title": "Hero image: macro 5",
+      "titleFrom": "page",
       "collection": "Abstract",
       "source": {
         "path": "images/abstract-8-full.webp",
@@ -214,14 +239,15 @@
         },
         "bytes": 380326
       },
-      "alsoFrom": ["images/abstract-8.webp", "images/figurative-5.webp"],
+      "alsoFrom": ["images/abstract-8.webp", "images/figurative-5.webp", "images/hero-macro-5.webp"],
       "mergedBecause": [
         "images/abstract-8-full.webp and images/abstract-8.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.750 and 0.751)",
-        "images/abstract-8-full.webp and images/figurative-5.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.750 and 0.751)"
+        "images/abstract-8-full.webp and images/figurative-5.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.750 and 0.751)",
+        "images/abstract-8-full.webp and images/hero-macro-5.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.750 and 0.750)"
       ],
       "importedFrom": "collection-abstract.html#abstract-8",
       "alsoInCollections": ["Figurative"],
-      "alsoOn": ["collection-figurative.html#figurative-5"]
+      "alsoOn": ["collection-figurative.html#figurative-5", "site-photo#hero-macro-5"]
     },
     {
       "key": "abstract-9",
@@ -265,26 +291,29 @@
     },
     {
       "key": "abstract-11",
-      "title": "Abstract No. 11",
-      "titleFrom": "made",
+      "title": "Process photo: 02 formwork",
+      "titleFrom": "page",
       "collection": "Abstract",
       "source": {
-        "path": "images/abstract-11.webp",
-        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/abstract-11.webp",
+        "path": "images/process-02-formwork.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/process-02-formwork.webp",
         "pixels": {
-          "width": 505,
-          "height": 608
+          "width": 772,
+          "height": 930
         },
-        "bytes": 44556
+        "bytes": 76450
       },
-      "alsoFrom": [],
-      "mergedBecause": [],
-      "importedFrom": "collection-abstract.html#abstract-11"
+      "alsoFrom": ["images/abstract-11.webp"],
+      "mergedBecause": [
+        "images/abstract-11.webp and images/process-02-formwork.webp look the same (picture fingerprints differ in 2 of 64 places; shapes 0.831 and 0.830)"
+      ],
+      "importedFrom": "collection-abstract.html#abstract-11",
+      "alsoOn": ["site-photo#process-02-formwork"]
     },
     {
       "key": "abstract-12",
-      "title": "Abstract No. 12",
-      "titleFrom": "made",
+      "title": "Process photo: hero 3",
+      "titleFrom": "page",
       "collection": "Abstract",
       "source": {
         "path": "images/abstract-12-full.webp",
@@ -295,11 +324,13 @@
         },
         "bytes": 227762
       },
-      "alsoFrom": ["images/abstract-12.webp"],
+      "alsoFrom": ["images/abstract-12.webp", "images/process-hero-3.webp"],
       "mergedBecause": [
-        "images/abstract-12-full.webp and images/abstract-12.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 1.546 and 1.546)"
+        "images/abstract-12-full.webp and images/abstract-12.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 1.546 and 1.546)",
+        "images/abstract-12-full.webp and images/process-hero-3.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 1.546 and 1.546)"
       ],
-      "importedFrom": "collection-abstract.html#abstract-12"
+      "importedFrom": "collection-abstract.html#abstract-12",
+      "alsoOn": ["site-photo#process-hero-3"]
     },
     {
       "key": "available-3",
@@ -435,6 +466,29 @@
         "images/available-8-hi.webp and images/available-8.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.801 and 0.801)"
       ],
       "importedFrom": "available.html#available-8"
+    },
+    {
+      "key": "commission-intro",
+      "title": "Commissions-page photo: intro",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/hero-macro.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/hero-macro.webp",
+        "pixels": {
+          "width": 1200,
+          "height": 1017
+        },
+        "bytes": 160832
+      },
+      "alsoFrom": ["images/commission-intro.webp"],
+      "mergedBecause": [
+        "images/commission-intro.webp and images/hero-macro.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 1.180 and 1.180)"
+      ],
+      "importedFrom": "site-photo#commission-intro",
+      "alsoOn": ["site-photo#hero-macro"],
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
     },
     {
       "key": "figurative-1",
@@ -651,9 +705,399 @@
       "importedFrom": "collection-figurative.html#figurative-12"
     },
     {
-      "key": "sculptural-1",
-      "title": "Sculptural No. 1",
+      "key": "hero-macro-2",
+      "title": "Hero image: macro 2",
       "titleFrom": "made",
+      "source": {
+        "path": "images/hero-macro-2.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/hero-macro-2.webp",
+        "pixels": {
+          "width": 890,
+          "height": 1200
+        },
+        "bytes": 216198
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#hero-macro-2",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "hero-macro-3",
+      "title": "Hero image: macro 3",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/hero-macro-3.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/hero-macro-3.webp",
+        "pixels": {
+          "width": 900,
+          "height": 1200
+        },
+        "bytes": 122110
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#hero-macro-3",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "hero-macro-6",
+      "title": "Hero image: macro 6",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/hero-macro-6.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/hero-macro-6.webp",
+        "pixels": {
+          "width": 829,
+          "height": 1200
+        },
+        "bytes": 275222
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#hero-macro-6",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "insitu-collection",
+      "title": "A work installed in a room: collection",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/insitu-collection.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/insitu-collection.webp",
+        "pixels": {
+          "width": 722,
+          "height": 552
+        },
+        "bytes": 42874
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#insitu-collection",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "insitu-hospitality",
+      "title": "A work installed in a room: hospitality",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/insitu-hospitality.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/insitu-hospitality.webp",
+        "pixels": {
+          "width": 539,
+          "height": 722
+        },
+        "bytes": 53944
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#insitu-hospitality",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "insitu-lobby",
+      "title": "A work installed in a room: lobby",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/insitu-lobby.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/insitu-lobby.webp",
+        "pixels": {
+          "width": 423,
+          "height": 726
+        },
+        "bytes": 55626
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#insitu-lobby",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "object-014",
+      "title": "Object detail image on the gallery page: 014",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/object-014.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/object-014.webp",
+        "pixels": {
+          "width": 1088,
+          "height": 726
+        },
+        "bytes": 51362
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#object-014",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "process-01-material",
+      "title": "Process photo: 01 material",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/process-01-material.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/process-01-material.webp",
+        "pixels": {
+          "width": 640,
+          "height": 640
+        },
+        "bytes": 93330
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#process-01-material",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "process-03-cast",
+      "title": "Process photo: 03 cast",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/process-03-cast.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/process-03-cast.webp",
+        "pixels": {
+          "width": 522,
+          "height": 804
+        },
+        "bytes": 53548
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#process-03-cast",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "process-hero",
+      "title": "Process photo: hero",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/process-hero.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/process-hero.webp",
+        "pixels": {
+          "width": 1200,
+          "height": 900
+        },
+        "bytes": 183858
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#process-hero",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "process-hero-2",
+      "title": "Process photo: hero 2",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/process-hero-2.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/process-hero-2.webp",
+        "pixels": {
+          "width": 1200,
+          "height": 592
+        },
+        "bytes": 148620
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#process-hero-2",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "process-hero-b",
+      "title": "Process photo: hero b",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/process-hero-b.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/process-hero-b.webp",
+        "pixels": {
+          "width": 360,
+          "height": 282
+        },
+        "bytes": 4008
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#process-hero-b",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "ref-1",
+      "title": "Reference image on the Available page: 1",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/ref-1.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/ref-1.webp",
+        "pixels": {
+          "width": 972,
+          "height": 1400
+        },
+        "bytes": 227912
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#ref-1",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "ref-2",
+      "title": "Reference image on the Available page: 2",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/ref-2-hi.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/ref-2-hi.webp",
+        "pixels": {
+          "width": 1799,
+          "height": 2400
+        },
+        "bytes": 961604
+      },
+      "alsoFrom": ["images/ref-2.webp"],
+      "mergedBecause": [
+        "images/ref-2-hi.webp and images/ref-2.webp look the same (picture fingerprints differ in 4 of 64 places; shapes 0.750 and 0.749)"
+      ],
+      "importedFrom": "site-photo#ref-2",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "ref-3",
+      "title": "Reference image on the Available page: 3",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/ref-3-hi.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/ref-3-hi.webp",
+        "pixels": {
+          "width": 2400,
+          "height": 2399
+        },
+        "bytes": 1480134
+      },
+      "alsoFrom": ["images/ref-3.webp"],
+      "mergedBecause": [
+        "images/ref-3-hi.webp and images/ref-3.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 1.000 and 1.001)"
+      ],
+      "importedFrom": "site-photo#ref-3",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "ref-4",
+      "title": "Reference image on the Available page: 4",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/ref-4-hi.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/ref-4-hi.webp",
+        "pixels": {
+          "width": 1862,
+          "height": 2792
+        },
+        "bytes": 1074230
+      },
+      "alsoFrom": ["images/ref-4.webp"],
+      "mergedBecause": [
+        "images/ref-4-hi.webp and images/ref-4.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.667 and 0.667)"
+      ],
+      "importedFrom": "site-photo#ref-4",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "ref-5",
+      "title": "Reference image on the Available page: 5",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/ref-5-hi.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/ref-5-hi.webp",
+        "pixels": {
+          "width": 1643,
+          "height": 2400
+        },
+        "bytes": 1015964
+      },
+      "alsoFrom": ["images/ref-5.webp"],
+      "mergedBecause": [
+        "images/ref-5-hi.webp and images/ref-5.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.685 and 0.685)"
+      ],
+      "importedFrom": "site-photo#ref-5",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "ref-6",
+      "title": "Reference image on the Available page: 6",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/ref-6.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/ref-6.webp",
+        "pixels": {
+          "width": 1172,
+          "height": 2800
+        },
+        "bytes": 1214474
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#ref-6",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "ref-7",
+      "title": "Reference image on the Available page: 7",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/ref-7-hi.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/ref-7-hi.webp",
+        "pixels": {
+          "width": 1256,
+          "height": 3000
+        },
+        "bytes": 1390042
+      },
+      "alsoFrom": ["images/ref-7.webp"],
+      "mergedBecause": [
+        "images/ref-7-hi.webp and images/ref-7.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.419 and 0.419)"
+      ],
+      "importedFrom": "site-photo#ref-7",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "sculptural-1",
+      "title": "Hero image: macro 4",
+      "titleFrom": "page",
       "collection": "Sculptural",
       "source": {
         "path": "images/sculptural-1-hi.webp",
@@ -664,16 +1108,18 @@
         },
         "bytes": 319058
       },
-      "alsoFrom": ["images/sculptural-1.webp"],
+      "alsoFrom": ["images/hero-macro-4.webp", "images/sculptural-1.webp"],
       "mergedBecause": [
+        "images/hero-macro-4.webp and images/sculptural-1-hi.webp look the same (picture fingerprints differ in 1 of 64 places; shapes 1.954 and 1.956)",
         "images/sculptural-1-hi.webp and images/sculptural-1.webp look the same (picture fingerprints differ in 1 of 64 places; shapes 1.956 and 1.957)"
       ],
-      "importedFrom": "collection-sculptural.html#sculptural-1"
+      "importedFrom": "collection-sculptural.html#sculptural-1",
+      "alsoOn": ["site-photo#hero-macro-4"]
     },
     {
       "key": "sculptural-2",
-      "title": "Sculptural No. 2",
-      "titleFrom": "made",
+      "title": "Process photo: hero 4",
+      "titleFrom": "page",
       "collection": "Sculptural",
       "source": {
         "path": "images/sculptural-2-hi.webp",
@@ -684,11 +1130,13 @@
         },
         "bytes": 854020
       },
-      "alsoFrom": ["images/sculptural-2.webp"],
+      "alsoFrom": ["images/process-hero-4.webp", "images/sculptural-2.webp"],
       "mergedBecause": [
-        "images/sculptural-2-hi.webp and images/sculptural-2.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 1.784 and 1.783)"
+        "images/process-hero-4.webp and images/sculptural-2-hi.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 1.783 and 1.784)",
+        "images/process-hero-4.webp and images/sculptural-2.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 1.783 and 1.783)"
       ],
-      "importedFrom": "collection-sculptural.html#sculptural-2"
+      "importedFrom": "collection-sculptural.html#sculptural-2",
+      "alsoOn": ["site-photo#process-hero-4"]
     },
     {
       "key": "sculptural-3",
@@ -865,6 +1313,88 @@
       ],
       "importedFrom": "collection-sculptural.html#sculptural-11",
       "alsoOn": ["available.html#available-11"]
+    },
+    {
+      "key": "show-hero-2",
+      "title": "Art-show photo: hero 2",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/show-hero-2.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/show-hero-2.webp",
+        "pixels": {
+          "width": 1200,
+          "height": 785
+        },
+        "bytes": 145536
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#show-hero-2",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "shows-1",
+      "title": "Art-show photo: 1",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/shows-1-full.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/shows-1-full.webp",
+        "pixels": {
+          "width": 2147,
+          "height": 2400
+        },
+        "bytes": 947406
+      },
+      "alsoFrom": ["images/shows-1.webp"],
+      "mergedBecause": [
+        "images/shows-1-full.webp and images/shows-1.webp look the same (picture fingerprints differ in 0 of 64 places; shapes 0.895 and 0.895)"
+      ],
+      "importedFrom": "site-photo#shows-1",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "thumb-009",
+      "title": "Thumbnail on the gallery page: 009",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/thumb-009.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/thumb-009.webp",
+        "pixels": {
+          "width": 102,
+          "height": 144
+        },
+        "bytes": 6436
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#thumb-009",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
+    },
+    {
+      "key": "thumb-021",
+      "title": "Thumbnail on the gallery page: 021",
+      "titleFrom": "made",
+      "source": {
+        "path": "images/thumb-021.webp",
+        "url": "https://raw.githubusercontent.com/yitzhach/IA-ART-Claude-Code/f89c3f0dc94a1c909cb96b099a1c56e060129078/images/thumb-021.webp",
+        "pixels": {
+          "width": 96,
+          "height": 144
+        },
+        "bytes": 2248
+      },
+      "alsoFrom": [],
+      "mergedBecause": [],
+      "importedFrom": "site-photo#thumb-021",
+      "status": "not_for_sale",
+      "sitePhoto": true,
+      "notes": ["A photo from the current site that was not shown as a work: keep it, or delete it."]
     }
   ],
   "skipped": [
@@ -873,44 +1403,12 @@
       "reason": "library item \"Untitled (Figure)\": its file is not in the repo"
     },
     {
-      "path": "images/about-studio.webp",
-      "reason": "about-page photo, not a work"
-    },
-    {
       "path": "images/chicago-old-town-art-show.webp",
       "reason": "library item \"Chicago Old Town Art Show\": its file is not in the repo"
     },
     {
-      "path": "images/commission-intro.webp",
-      "reason": "commissions-page photo, not a work"
-    },
-    {
       "path": "images/final-6003512.webp",
       "reason": "library item \"Beverly Hills Office\": its file is not in the repo"
-    },
-    {
-      "path": "images/hero-macro-2.webp",
-      "reason": "hero (banner) image, not a work"
-    },
-    {
-      "path": "images/hero-macro-3.webp",
-      "reason": "hero (banner) image, not a work"
-    },
-    {
-      "path": "images/hero-macro-4.webp",
-      "reason": "hero (banner) image, not a work"
-    },
-    {
-      "path": "images/hero-macro-5.webp",
-      "reason": "hero (banner) image, not a work"
-    },
-    {
-      "path": "images/hero-macro-6.webp",
-      "reason": "hero (banner) image, not a work"
-    },
-    {
-      "path": "images/hero-macro.webp",
-      "reason": "hero (banner) image, not a work"
     },
     {
       "path": "images/img-6658.webp",
@@ -919,130 +1417,6 @@
     {
       "path": "images/img-6673-2.webp",
       "reason": "library item \"Img 6673\": its file is not in the repo"
-    },
-    {
-      "path": "images/insitu-collection.webp",
-      "reason": "a work installed in a room, not a work"
-    },
-    {
-      "path": "images/insitu-hospitality.webp",
-      "reason": "a work installed in a room, not a work"
-    },
-    {
-      "path": "images/insitu-lobby.webp",
-      "reason": "a work installed in a room, not a work"
-    },
-    {
-      "path": "images/object-014.webp",
-      "reason": "object detail image on the gallery page, not a work"
-    },
-    {
-      "path": "images/process-01-material.webp",
-      "reason": "process photo, not a work"
-    },
-    {
-      "path": "images/process-02-formwork.webp",
-      "reason": "process photo, not a work"
-    },
-    {
-      "path": "images/process-03-cast.webp",
-      "reason": "process photo, not a work"
-    },
-    {
-      "path": "images/process-hero-2.webp",
-      "reason": "process photo, not a work"
-    },
-    {
-      "path": "images/process-hero-3.webp",
-      "reason": "process photo, not a work"
-    },
-    {
-      "path": "images/process-hero-4.webp",
-      "reason": "process photo, not a work"
-    },
-    {
-      "path": "images/process-hero-b.webp",
-      "reason": "process photo, not a work"
-    },
-    {
-      "path": "images/process-hero.webp",
-      "reason": "process photo, not a work"
-    },
-    {
-      "path": "images/ref-1.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/ref-2-hi.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/ref-2.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/ref-3-hi.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/ref-3.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/ref-4-hi.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/ref-4.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/ref-5-hi.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/ref-5.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/ref-6.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/ref-7-hi.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/ref-7.webp",
-      "reason": "reference image on the Available page, not a work"
-    },
-    {
-      "path": "images/show-hero-1.webp",
-      "reason": "art-show photo, not a work"
-    },
-    {
-      "path": "images/show-hero-2.webp",
-      "reason": "art-show photo, not a work"
-    },
-    {
-      "path": "images/shows-1-full.webp",
-      "reason": "art-show photo, not a work"
-    },
-    {
-      "path": "images/shows-1.webp",
-      "reason": "art-show photo, not a work"
-    },
-    {
-      "path": "images/thumb-009.webp",
-      "reason": "thumbnail on the gallery page, not a work"
-    },
-    {
-      "path": "images/thumb-014.webp",
-      "reason": "thumbnail on the gallery page, not a work"
-    },
-    {
-      "path": "images/thumb-021.webp",
-      "reason": "thumbnail on the gallery page, not a work"
     }
   ],
   "voice": "Five stages, in order. The first two are mine to control; the last three belong partly to the material. That division is the whole subject of the work.\nCustom wood panels are prepared and layered with gypsum, lime, and cementitious plasters, creating the foundation for each piece and establishing the physical depth of the work.\nSuccessive layers of mineral-based materials are applied, carved, and rebuilt. Each addition and subtraction creates a stratified surface that records the history of its own making.\nHand-mixed pigments are worked directly into the plaster, while subtle copper or brass gilding catches changing light, revealing new depth and texture as the surface evolves.\nThe surface is sanded, scraped, and excavated, exposing hidden layers beneath. Rather than covering imperfections, the process embraces them as part of the final composition.\nEach piece becomes a tactile convergence of architecture, material, and time — a contemporary work shaped through traditional techniques and guided by the balance between control and discovery.\nLet's connect to discuss a current piece, future project, or commissioned work.\nSite-specific work in cement, plaster, and steel — developed with architects, designers, and private collectors from first sketch to final install. Interior or exterior, one piece or a full program.\nEvery commission begins with a conversation about the space, the aesthetic, and the experience the finished piece is meant to create."

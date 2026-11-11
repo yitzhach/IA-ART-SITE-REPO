@@ -66,6 +66,15 @@ const SKIP_REASONS = [
   [/^library/, 'image-library placeholder, not a work'],
   [/^object-/, 'object detail image on the gallery page, not a work'],
 ];
+/** "process-01-material" + "process photo, not a work" → "Process photo: 01 material". */
+function sitePhotoTitle(stem, why) {
+  const kind = why.split(',')[0].replace(/\s*\(.*\)/, '');
+  const words = stem
+    .replace(/^(hero|process|insitu|about|ref|shows?|thumb|commission|object)-?/, '')
+    .replace(/-/g, ' ')
+    .trim();
+  return `${kind.charAt(0).toUpperCase()}${kind.slice(1)}${words ? `: ${words}` : ''}`;
+}
 const isWorkFile = f => /^(abstract|figurative|sculptural|available)-\d+(-hi|-full)?\.webp$/.test(f);
 const imageDir = path.join(site, 'images');
 const names = fs
@@ -77,9 +86,14 @@ for (const f of names) {
   const rel = `images/${f}`;
   const libraryFile = slots.some(s => s.page === 'library.state.json' && `${s.id}.webp` === f);
   if (!isWorkFile(f) && !libraryFile) {
+    // Isaac (2026-11-11): bring in every photo of the current site, and he removes what he doesn't want.
+    // A photo that isn't a work on a page still comes in, as a draft "site photo" (not for sale), unless it is the
+    // same picture as a work (then it merges into that work like any other copy).
     const why = SKIP_REASONS.find(([re]) => re.test(f))?.[1] ?? 'not a collection or Available image';
-    skipped.push({path: rel, reason: why});
-    continue;
+    const stem = f.replace(/\.webp$/, '').replace(/-(hi|full)$/, '');
+    if (!slots.some(s => s.id === stem)) {
+      slots.push({id: stem, page: 'site-photo', sitePhoto: true, title: sitePhotoTitle(stem, why)});
+    }
   }
   const file = path.join(imageDir, f);
   const meta = await sharp(file).metadata();
@@ -94,6 +108,13 @@ for (const f of names) {
 }
 
 const {works, skipped: orphans} = assemble({files, slots, sha: SHA});
+for (const w of works) {
+  if (!w.importedFrom.startsWith('site-photo#')) continue;
+  w.titleFrom = 'made';
+  w.status = 'not_for_sale';
+  w.sitePhoto = true;
+  w.notes = [...(w.notes ?? []), 'A photo from the current site that was not shown as a work: keep it, or delete it.'];
+}
 skipped.push(...orphans);
 skipped.sort((a, b) => a.path.localeCompare(b.path));
 

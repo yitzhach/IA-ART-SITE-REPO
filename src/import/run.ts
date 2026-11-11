@@ -94,7 +94,15 @@ export async function listEveryWork(api: ImportApi): Promise<StoredWork[]> {
 export type Plan = {work: ManifestWork; existing: StoredWork | null}[];
 
 /** What is left to do: works not there yet, and works there without a picture (an interrupted run). */
-export function plan(manifest: Manifest, existing: StoredWork[]): {todo: Plan; alreadyThere: number} {
+/**
+ * `recorded`: keys an earlier run brought in (settings.meta.siteImport.keys). One recorded but no longer listed was
+ * deleted by the artist on purpose, so it never comes back (Isaac: "we will add or remove").
+ */
+export function plan(
+  manifest: Manifest,
+  existing: StoredWork[],
+  recorded: ReadonlySet<string> = new Set(),
+): {todo: Plan; alreadyThere: number; removed: number} {
   const byKey = new Map<string, StoredWork>();
   for (const w of existing) {
     const k = importedKey(w);
@@ -102,12 +110,14 @@ export function plan(manifest: Manifest, existing: StoredWork[]): {todo: Plan; a
   }
   const todo: Plan = [];
   let alreadyThere = 0;
+  let removed = 0;
   for (const work of manifest.works) {
     const have = byKey.get(work.key) ?? null;
-    if (!have || !have.primaryFileId) todo.push({work, existing: have});
+    if (!have && recorded.has(work.key)) removed++;
+    else if (!have || !have.primaryFileId) todo.push({work, existing: have});
     else alreadyThere++;
   }
-  return {todo, alreadyThere};
+  return {todo, alreadyThere, removed};
 }
 
 export function plainMessage(e: unknown): string {
@@ -242,4 +252,14 @@ async function words(d: Pick<ImportDeps, 'drafts' | 'draft'>, work: ManifestWork
   } catch {
     // The assistant being away (503) or slow is fine: the work is saved, and "Redo the draft" is on its screen.
   }
+}
+
+/** The keys now in the studio plus those recorded before: what to remember as brought in. */
+export function keysToRecord(existing: StoredWork[], recorded: ReadonlySet<string>): string[] {
+  const keys = new Set(recorded);
+  for (const w of existing) {
+    const k = importedKey(w);
+    if (k && w.primaryFileId) keys.add(k);
+  }
+  return [...keys].sort();
 }

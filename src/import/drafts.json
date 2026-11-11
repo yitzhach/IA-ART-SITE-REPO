@@ -1,4 +1,10 @@
 {
+  "about-studio": {
+    "description": "An outdoor view of several works set against a bright white wall under a clear blue sky, with palm trees behind and a green lawn in front. Two tall, pale, textured upright forms frame the group, and one of them holds a single block of saturated yellow. The scene is calm and sunlit, with strong shadows across the grass.",
+    "tags": ["outdoor", "sunlight", "blue sky", "yellow", "grey", "white wall", "green lawn", "calm", "textured"],
+    "collection": null,
+    "altText": "Several textured artworks on a white wall in a sunny garden, with two tall pale pillars framing the group and a bright yellow square on the right."
+  },
   "abstract-1": {
     "description": "A dense charcoal mass rises along the right edge and pulls against a field of pale sand and off-white on the left. The surface is broken and layered, with scraped passages, dark specks and worn patches where the top layers have been pulled back. Heavy and quiet, the composition holds its weight at the lower edge.",
     "tags": ["charcoal", "sand", "off-white", "layered", "textured", "dark", "contrast", "weathered", "quiet"],
@@ -113,6 +119,12 @@
     "collection": "Abstract",
     "altText": "Grey-brown abstract with a scratched, streaked surface and a darker lower area divided by a faint smoky band."
   },
+  "commission-intro": {
+    "description": "A large horizontal work hangs above a low, weathered bench in a bright, quiet room. Its upper field is pale cream, with a thin warm ochre line near the middle, and its lower band is deep slate grey. An olive tree in a tall, rough vessel stands at the left, and soft light falls across the pale walls and warm floor.",
+    "tags": ["quiet", "cream", "grey", "horizon", "soft light", "warm tones", "stillness", "layered"],
+    "collection": null,
+    "altText": "A wide horizontal artwork with a pale cream upper area and dark grey lower band, hung above a low bench beside an olive tree in a bright room."
+  },
   "figurative-1": {
     "description": "An off-white field fills the picture, rough and worn across its whole surface. At its centre, an upright recessed form with a rounded top reads as a standing figure, worked in grey and darker tones with broken, crumbling texture. Faint warm streaks run down from the top edge, and the mood is quiet and solemn.",
     "tags": ["off-white", "grey", "figure", "recess", "rounded", "crumbling", "quiet", "solemn"],
@@ -178,6 +190,120 @@
     "tags": ["figure", "vertical", "grey", "charcoal", "relief", "weathered", "scratched", "pale", "stillness"],
     "collection": "Figurative",
     "altText": "Tall, shaded figure in relief against a pale weathered field, with a near-black band across the bottom and fine scratch marks on the figure."
+  },
+  "hero-macro-2": {
+    "description": "A tall, upright composition in pale grey and cream, with cool blue shadows drifting down the right side and a soft rust-brown glow on the left. The surface is worked with scraped marks and soft ridges, and a dark band settles along the bottom edge. The mood is hazy, open and quiet, like a horizon seen at dusk.",
+    "tags": ["pale", "grey", "blue", "rust", "dusk", "haze", "textured", "vertical", "horizon"],
+    "collection": "Abstract",
+    "altText": "A tall pale grey and cream artwork with soft blue shading at the sides, a rust-brown glow on the left and a dark band along the bottom."
+  },
+  "hero-macro-3": {
+    "description": "A vertical work on a white wall, with a mottled grey field broken by pale, lifted patches. The tones soften into cream towards the lower middle, then stop at a heavy charcoal band along the base. A soft shadow falls along the right edge, giving the piece a quiet, weathered presence.",
+    "tags": ["grey", "cream", "charcoal", "weathered", "mottled", "vertical", "shadow", "quiet"],
+    "collection": "Abstract",
+    "altText": "A vertical grey artwork with pale mottled patches, fading to cream and ending in a dark charcoal band at the base, on a white wall."
+  },
+  "hero-macro-6": {
+    "description": "A close, full-frame view of a textured surface in pale blue-grey and off-white. Fine cracks and scratched lines run through the upper field, and a patch of lighter haze floats in the middle. A dense charcoal band anchors the bottom edge, with a faint warm tint where the tones meet.",
+    "tags": ["blue-grey", "off-white", "charcoal", "cracked", "textured", "hazy", "vertical", "layered"],
+    "collection": "Abstract",
+    "altText": "A full-frame textured artwork in pale blue-grey and white, with fine cracks and a dark charcoal band along the bottom edge."
+  },
+  "insitu-collection": {
+    "description": "A dining room with a long, rich-brown table and cream upholstered chairs on a grey rug. A horizontal work hangs above the table, grey and textured, with a pale band across its middle and a dark base. Through the glass doors at the right, a pool and greenery glow in soft daylight.",
+    "tags": ["dining room", "grey", "cream", "rich brown", "daylight", "interior", "calm", "pool"],
+    "collection": null,
+    "altText": "A dining room with a long brown table and cream chairs, under a grey horizontal artwork, with a pool visible through glass doors."
+  },
+  "insitu-hospitality": {
+    "description": "A living room with a tall, pale work hung on a cream wall above a low shelf and a grey sofa. The work is cream and off-white, with a darker grey vertical form running down its centre, rough with ridged texture. Warm light falls through the side window onto a round, light-toned coffee table and a textured rug.",
+    "tags": ["living room", "cream", "grey", "textured", "vertical", "warm light", "calm", "neutral"],
+    "collection": null,
+    "altText": "A living room with a tall cream artwork with a darker central form above a grey sofa, a low shelf and a light round coffee table."
+  },
+  "insitu-lobby": {
+    "description": "Two works hang on a textured grey wall where a hard diagonal shadow cuts across the surface. On the left, a charcoal field sits above a darker lower band, with a small pale triangle of light at its foot. On the right, a pale grey work carries a small dark-edged inset with a bare tree and a deep base band.",
+    "tags": ["charcoal", "pale grey", "shadow", "diagonal light", "bare tree", "contrast", "quiet", "dark base"],
+    "collection": null,
+    "altText": "Two artworks on a grey wall in strong diagonal shadow: a dark charcoal work on the left and a pale work with a small tree inset on the right."
+  },
+  "object-014": {
+    "description": "A dim lounge with a deep grey tufted sofa on the left and a long grey-toned sideboard beneath a dark work. The work has a glowing pale centre, a charcoal upper band and a warm brown lower band. A white-topped low table and dark upholstered chairs with slim warm-toned frames complete the calm, shadowed room.",
+    "tags": ["lounge", "charcoal", "dark", "pale glow", "warm brown", "tufted", "shadowed", "calm"],
+    "collection": null,
+    "altText": "A dim lounge with a grey tufted sofa and a dark textured artwork with a pale glowing centre above a long sideboard."
+  },
+  "process-01-material": {
+    "description": "A man in a blue shirt leans into a large grey work, pressing its upper edge against a bright white curved wall. The work shows a pale grey surface that darkens toward its lower edge and a deep black side. Beside him stand a tall olive tree and two large pale vessels on a glossy floor, all lit by strong sunlight.",
+    "tags": ["grey", "white", "sunlight", "blue shirt", "curved wall", "pale vessels", "olive tree", "action"],
+    "collection": null,
+    "altText": "A man in a blue shirt presses a large grey artwork against a white curved wall, beside an olive tree and two pale tall vessels."
+  },
+  "process-03-cast": {
+    "description": "A close view of a work filling the whole frame, with a soft grey upper field that warms to pale ochre near the horizon. A thin, bright amber seam runs across the middle, and the lower section is a deep charcoal field with faint streaks. The surface is calm and evenly lit, with a quiet sense of dusk.",
+    "tags": ["grey", "ochre", "amber", "charcoal", "horizon", "dusk", "calm", "soft gradient"],
+    "collection": "Abstract",
+    "altText": "A close view of an artwork with a soft grey upper field, a warm ochre glow, a thin bright amber line at the horizon and a dark charcoal base."
+  },
+  "process-hero": {
+    "description": "A close, angled view of a textured surface in pale grey and sandy tones, with a smooth, reflective strip running along the top edge. A broken, bright amber seam crosses the lower middle, and beneath it the surface turns blue-grey with fine scraped grooves. The mood is tactile and raw, shown in close detail.",
+    "tags": ["close-up", "pale grey", "sandy", "amber", "blue-grey", "reflective", "texture", "tactile"],
+    "collection": null,
+    "altText": "A close-up of a textured pale surface with a bright amber seam across its lower middle and a smooth reflective strip along the top edge."
+  },
+  "process-hero-2": {
+    "description": "Three tall upright sections sit side by side against a dark ground. Their upper areas are pale, mottled grey and white, warming to rust and brown toward a thin, light horizon line. Below it the surface turns to deep charcoal.",
+    "tags": ["triptych", "grey", "white", "rust", "charcoal", "horizon", "mottled", "quiet"],
+    "collection": null,
+    "altText": "Three tall upright sections side by side, pale grey and white above, dark charcoal below, with a light horizon line."
+  },
+  "process-hero-b": {
+    "description": "A close corner view of a pale, mottled surface meeting a narrow grey edge along the left side. The texture is soft and uneven, with faint darker flecks and a gentle shadow where the surface turns back from the edge.",
+    "tags": ["pale grey", "close view", "mottled", "soft shadow", "texture", "quiet", "edge", "light"],
+    "collection": null,
+    "altText": "Close view of a pale, mottled grey surface with a narrow grey edge along its left side, lit softly."
+  },
+  "ref-1": {
+    "description": "A tall, single surface with a pale grey and warm taupe upper area, softly worked and layered. Across the lower part a dark charcoal band sits under a thin line of warm brown, giving a quiet sense of a horizon. The texture is subtle, with fine marks visible across the light areas.",
+    "tags": ["grey", "taupe", "charcoal", "horizon", "warm brown", "layered", "quiet", "texture"],
+    "collection": "Abstract",
+    "altText": "Tall pale grey and taupe surface, softened at the top, with a dark charcoal band across the bottom and a thin warm line above it."
+  },
+  "ref-2": {
+    "description": "A close view of a single surface, mottled in warm beige and taupe with small darker flecks across it. A bright white band runs along the lower edge, its ragged top breaking into the warm ground above. The contrast is soft but clear, and the texture stays visible throughout.",
+    "tags": ["beige", "taupe", "white", "mottled", "ragged edge", "warm", "texture", "quiet"],
+    "collection": "Abstract",
+    "altText": "Close view of a warm beige, mottled surface with a bright white band along the bottom edge, its top edge ragged."
+  },
+  "ref-3": {
+    "description": "A square-format work with a deep charcoal field, edged in warm peach and pale grey. A pale head, softly modelled, rises from the dark centre with its eyes lowered. The word FOREVER is marked into the dark field at right, and the worked surface shows many small marks.",
+    "tags": ["charcoal", "peach", "pale grey", "face", "dark field", "quiet", "mood", "texture"],
+    "collection": "Figurative",
+    "altText": "Square work with a pale head with lowered eyes rising from a dark field, edged in peach and grey, with the word FOREVER at right."
+  },
+  "ref-4": {
+    "description": "A tall upright surface with a pale cream top that softens and drifts downward. A faint vertical shape stands near the centre of the light area. Below a soft horizon, olive, slate and gold tones run down in streaks, with bright light ridges between them.",
+    "tags": ["cream", "olive", "slate", "gold", "streaked", "vertical", "horizon", "atmospheric"],
+    "collection": "Abstract",
+    "altText": "Tall upright surface, pale cream above and olive, slate and gold streaks below a soft horizon."
+  },
+  "ref-5": {
+    "description": "A tall upright surface of pale white, roughly worked, with a central grey-brown column-like form rising from a lower band. Small rust-coloured marks sit along the column's edges. The lower area breaks into mottled grey and white, and a dark edge runs along the bottom.",
+    "tags": ["white", "grey", "rust", "column", "mottled", "vertical", "texture", "quiet"],
+    "collection": "Abstract",
+    "altText": "Pale, textured upright surface with a central grey column-like form, small rust marks, and mottled grey below."
+  },
+  "ref-6": {
+    "description": "A tall, narrow upright work with a saturated red-orange ground. A pale grey figure stands in the centre, its head dark at one side and its long form ridged with worked lines. Dark charcoal marks shade the figure's left side and the outer edges.",
+    "tags": ["red", "coral", "pale grey", "figure", "charcoal", "vertical", "texture", "standing"],
+    "collection": "Figurative",
+    "altText": "Tall narrow work on a red-orange ground with a pale grey standing figure and dark shading at its left side."
+  },
+  "ref-7": {
+    "description": "A tall upright work with a red-orange ground and a pale grey standing figure, lit by warm light from the upper left. The light picks out ochre and gold in the red and softens the dark marks on the figure's left side. Ridged texture runs down the figure's right side.",
+    "tags": ["red-orange", "pale grey", "warm light", "figure", "ochre", "charcoal", "vertical", "glow"],
+    "collection": "Figurative",
+    "altText": "Tall red-orange work with a pale grey standing figure, lit warmly from the upper left."
   },
   "sculptural-1": {
     "description": "A pale grey upper field gives way to a dark slate lower band, with a small rectangular opening at left holding a dark tree silhouette against a warm, bright ground. The horizon is low and the composition is quiet and spare. The surface texture is soft and worn throughout.",
@@ -258,5 +384,38 @@
     "tags": ["cream", "amber", "charcoal", "glow", "atmospheric", "luminous", "textured", "dusk", "soft"],
     "collection": "Sculptural",
     "altText": "Tall cream textured surface with a soft glow near the lower centre above a dark charcoal base."
+  },
+  "show-hero-2": {
+    "description": "An outdoor show with white display walls under trees and a row of tents. Several paintings hang on the walls, mostly pale grey and warm taupe with dark bands along their lower edges. Visitors walk past on the pavement, and a folding chair sits at the front of one booth.",
+    "tags": ["outdoor show", "pale grey", "taupe", "dark band", "visitors", "daylight", "street", "display"],
+    "collection": null,
+    "altText": "Outdoor art show with white display walls, pale grey and taupe paintings with dark lower bands, and visitors walking past."
+  },
+  "shows-1": {
+    "description": "A corner of an outdoor show, with white display walls and paintings hung at several heights. The largest work is pale grey and white above a warm brown and dark lower edge. Smaller works show dark charcoal and a muted green band, and a brick building and green tree stand behind the booth.",
+    "tags": [
+      "outdoor show",
+      "white walls",
+      "pale grey",
+      "charcoal",
+      "muted green",
+      "warm brown",
+      "daylight",
+      "display"
+    ],
+    "collection": null,
+    "altText": "Outdoor booth with white walls and paintings in pale grey, warm brown and charcoal, with a green tree and brick building behind."
+  },
+  "thumb-009": {
+    "description": "A small, close view of a single surface. Its upper area is pale grey, mottled and textured, with a faint warm line near the lower edge. A broad charcoal band sits across the bottom and meets the lighter area softly.",
+    "tags": ["pale grey", "charcoal", "mottled", "warm line", "horizon", "texture", "quiet", "simple"],
+    "collection": "Abstract",
+    "altText": "Small view of a mottled pale grey surface with a dark charcoal band across the bottom and a faint warm line above it."
+  },
+  "thumb-021": {
+    "description": "A tall, pale work with a mottled, creamy surface that deepens to grey and warm gold toward the lower half. A dark band sits along its lower edge. The image is small, so the finer texture is hard to make out.",
+    "tags": ["cream", "grey", "gold", "tall", "mottled", "dark band", "soft", "quiet"],
+    "collection": null,
+    "altText": "Tall pale mottled work with warm gold and grey tones and a dark lower edge."
   }
 }
