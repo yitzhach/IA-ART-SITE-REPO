@@ -2,6 +2,7 @@
 // forwards /v1/* to studio-api and /assistant/* to studio-assistant through service bindings. It holds no data
 // and no secrets.
 import {site} from './site/index';
+import {askChat, forwardAssistant, forwardV1} from './site/visitor';
 
 export interface Env {
   API: Fetcher;
@@ -62,8 +63,10 @@ export default {
     const url = new URL(request.url);
     const p = url.pathname;
     if (PICTURE.test(p) && request.method === 'GET') return picture(request, env, ctx);
-    if (under(p, '/v1')) return env.API.fetch(request);
-    if (under(p, '/assistant')) return env.ASSISTANT.fetch(request);
+    if (p === '/ask/chat') return askChat(request, env);
+    if (p.startsWith('/ask/')) return Response.json({error: {code: 'not_found', message: 'Not found'}}, {status: 404});
+    if (under(p, '/v1')) return forwardV1(request, env);
+    if (under(p, '/assistant')) return forwardAssistant(request, env);
     if (under(p, '/studio')) return secured(await env.ASSETS.fetch(request));
     if (STATIC.test(p)) {
       const res = await env.ASSETS.fetch(request);

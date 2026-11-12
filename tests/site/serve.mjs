@@ -67,6 +67,44 @@ export async function start(port = 8790) {
         });
         return res.end(readFileSync(file));
       }
+      if (url.pathname.startsWith('/v1/') && req.method === 'GET') {
+        const a = await mod.api.fetch(`https://studio-api${url.pathname}${url.search}`);
+        res.writeHead(a.status, {'content-type': 'application/json'});
+        return res.end(await a.text());
+      }
+      if (url.pathname === '/ask/chat' && req.method === 'POST') {
+        const w = mod.fixture.works[0];
+        res.writeHead(200, {'content-type': 'application/json'});
+        return res.end(
+          JSON.stringify({
+            threadId: 'T1',
+            text: 'Here is one that fits.',
+            works: [
+              {
+                slug: w.slug,
+                title: w.title,
+                medium: w.medium,
+                year: w.year,
+                width: w.width,
+                height: w.height,
+                depth: null,
+                sizeUnit: w.sizeUnit,
+                status: w.status,
+                priceCents: w.priceCents,
+                currency: w.currency,
+                collection: w.collection,
+                tags: [],
+                palette: [],
+                blurb: null,
+                image: w.images[0].sizes[0].url,
+              },
+            ],
+            replies: ['Tell me more'],
+            askArtist: false,
+            limited: null,
+          }),
+        );
+      }
       const r = await mod.get(url.pathname + url.search, {method: req.method});
       const headers = Object.fromEntries(r.res.headers);
       res.writeHead(r.status, headers);

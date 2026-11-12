@@ -16,7 +16,7 @@ const root = new URL('../..', import.meta.url).pathname;
 const out = join(root, 'test-results', 'site-checks');
 mkdirSync(out, {recursive: true});
 
-const PAGES = ['/', '/works', '/works/work-1', '/commissions', '/process', '/about'];
+const PAGES = ['/', '/works', '/works/work-1', '/commissions', '/process', '/about', '/ask', '/inquiry', '/contact'];
 const LH_PAGES = ['/', '/works', '/works/work-1'];
 const SCRIPT_BUDGET = 50 * 1024;
 const IMAGE_BUDGET = 200 * 1024;
@@ -42,7 +42,9 @@ try {
       const title = await page.title();
       const h1 = await page.locator('h1').count();
       const text = (await page.locator('body').innerText()).trim().length;
-      const links = await Promise.all(['sms:', 'mailto:', 'tel:'].map(s => page.locator(`a[href^="${s}"]`).count()));
+      const links = await Promise.all(
+        ['a[data-contact="sms"]', 'a[href^="mailto:"]', 'a[data-contact="tel"]'].map(sel => page.locator(sel).count()),
+      );
       record(p, 'no-JS: status 200', res.status(), res.status() === 200);
       record(p, 'no-JS: title', title ? 'yes' : 'none', !!title);
       record(p, 'no-JS: h1', h1, h1 >= 1);
@@ -64,6 +66,54 @@ try {
         );
       }
     }
+    await ctx.close();
+  }
+
+  // a2. scripts on: Ask opens the sheet (focus kept inside, no sideways scroll), a question gets cards, Esc closes;
+  // the inquiry list shows the piece; the number only appears after a tap.
+  for (const scheme of ['light', 'dark']) {
+    const ctx = await browser.newContext({viewport: {width: 390, height: 844}, colorScheme: scheme});
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on('pageerror', e => errors.push(String(e)));
+    await page.goto(server.url + '/works/work-1');
+    const before = await page.evaluate(() => document.documentElement.outerHTML.includes('15551234567'));
+    record('/works/work-1', 'number not in the page', before ? 'found' : 'absent', !before);
+    await page.locator('.ask-btn').click();
+    await page.waitForSelector('.sheet [role=dialog], .sheet', {timeout: 5000}).catch(() => {});
+    await page.waitForSelector('.chat-log .msg', {timeout: 5000}).catch(() => {});
+    const open = await page.locator('[role=dialog]').count();
+    record('/works/work-1', `sheet opens (${scheme})`, open, open === 1);
+    await page.locator('#q').fill('something green');
+    await page.locator('.sheet-ask button[type=submit]').click();
+    await page.waitForSelector('.acard', {timeout: 5000}).catch(() => {});
+    const cards = await page.locator('.acard').count();
+    record('/works/work-1', `answer shows a card (${scheme})`, cards, cards === 1);
+    const sw = await page.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth]);
+    record('/works/work-1', `sheet: no sideways scroll (${scheme})`, sw.join('<='), sw[0] <= sw[1]);
+    await page.locator('.acard .add').click();
+    const stored = await page.evaluate(() => localStorage.getItem('inquiry'));
+    record(
+      '/works/work-1',
+      `add to inquiry (${scheme})`,
+      stored ? 'stored' : 'empty',
+      !!stored && stored.includes('work-1'),
+    );
+    await page.locator('.sheet-btns button', {hasText: 'Ask Isaac'}).first().click();
+    await page.locator('.sheet-btns button', {hasText: 'Text'}).click();
+    await page.waitForSelector('.the-number', {timeout: 3000}).catch(() => {});
+    const sms = await page.locator('.sheet a[href^="sms:"]').count();
+    record('/works/work-1', `Text shows number and sms link after a tap (${scheme})`, sms, sms === 1);
+    await page.keyboard.press('Escape');
+    const closed = await page.locator('[role=dialog]').count();
+    record('/works/work-1', `Esc closes the sheet (${scheme})`, closed, closed === 0);
+    await page.goto(server.url + '/inquiry');
+    await page.waitForSelector('.inq-item', {timeout: 5000}).catch(() => {});
+    const items = await page.locator('.inq-item').count();
+    record('/inquiry', `list shows the piece (${scheme})`, items, items === 1);
+    const sw2 = await page.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth]);
+    record('/inquiry', `390px ${scheme}: no sideways scroll`, sw2.join('<='), sw2[0] <= sw2[1]);
+    record('(scripts)', `no page errors (${scheme})`, errors.length, errors.length === 0, errors[0] ?? '');
     await ctx.close();
   }
 

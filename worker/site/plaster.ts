@@ -59,6 +59,9 @@ section{margin:0 0 56px}
 .theme-switch{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin-right:-10px;border:0;background:none;color:var(--ink);cursor:pointer;border-radius:50%}
 .theme-switch:hover{background:var(--card)}
 .theme-switch[hidden]{display:none}
+.hdr-tools{display:flex;align-items:center;gap:8px}
+.ask-btn{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid var(--ink);color:var(--ink);font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.08em;text-decoration:none}
+.ask-btn:hover{background:var(--ink);color:var(--bg)}
 .eyebrow,.no,.chip,.hours,.caption{font:400 12px/1.4 var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
 .no b{font-weight:400;color:var(--accent)}
 .lede{font:italic 400 1.2rem/1.5 var(--serif);max-width:38em;margin:0 0 1em}
@@ -137,6 +140,7 @@ article.split{margin-bottom:40px}
 .inq-bar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;padding:8px var(--gut) max(8px,env(safe-area-inset-bottom));background:var(--ink);color:var(--bg);font-weight:600}
 .inq-bar a,.inq-bar button{display:inline-flex;align-items:center;min-height:44px;color:var(--bg);background:none;border:0;font:600 14px var(--body);text-decoration:underline;cursor:pointer;padding:0 4px}
 .inq-bar button{margin-left:auto;font-weight:400}
+.inq-bar span a{margin-left:0}
 .inq-bar[hidden]{display:none}
 .lb{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:rgba(10,9,8,.94);padding:56px 12px}
 .lb img{max-width:100%;max-height:100%;object-fit:contain;background:none}
@@ -145,7 +149,7 @@ article.split{margin-bottom:40px}
 .lb-open{overflow:hidden}
 @media(min-width:760px){
 .site-hdr nav{order:0;width:auto;margin-left:auto}
-.theme-switch{order:2}
+.hdr-tools{order:2}
 .grid{grid-template-columns:repeat(3,1fr);gap:36px 24px}
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);overflow:visible;margin-left:0;margin-right:0;padding:0}
 .hero img{aspect-ratio:2/1}

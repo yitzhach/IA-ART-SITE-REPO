@@ -22,6 +22,7 @@ export interface SiteProfile {
   hours?: {from: string; to: string};
   pages?: Record<string, unknown>;
   photos?: Record<string, string[]>;
+  assistant?: unknown;
 }
 
 export const DEFAULT_HOURS = {from: '09:00', to: '18:00'} as const; // Isaac: calls 9 to 6
@@ -139,11 +140,15 @@ async function listAll(api: ImportApi): Promise<ListedWork[]> {
 
 const message = (e: unknown) => (e instanceof Error && e.message ? e.message : 'It could not be published.');
 
+/** A site profile that holds anything besides the assistant's words (which the app fills on its own, D-139). */
+const hasProfile = (site: unknown): boolean =>
+  !!site && typeof site === 'object' && Object.keys(site).some(k => k !== 'assistant');
+
 /** Has the step already run, or does Isaac already have a profile? Reads settings only. */
 export async function siteStepState(api: ImportApi): Promise<'todo' | 'already-done' | 'has-profile'> {
   const s = await api.get<Settings>('/settings');
   if (s.meta?.siteImport?.siteStep) return 'already-done';
-  if (s.meta?.site) return 'has-profile';
+  if (hasProfile(s.meta?.site)) return 'has-profile';
   return 'todo';
 }
 
@@ -151,7 +156,7 @@ export async function runSiteStep(d: SiteStepDeps): Promise<SiteStepResult> {
   const {api} = d;
   const settings = await api.get<Settings>('/settings');
   if (settings.meta?.siteImport?.siteStep) return empty('already-done');
-  if (settings.meta?.site) return empty('has-profile'); // never overwrite what Isaac has
+  if (hasProfile(settings.meta?.site)) return empty('has-profile'); // never overwrite what Isaac has
 
   const result = empty();
   result.ran = true;
@@ -170,7 +175,13 @@ export async function runSiteStep(d: SiteStepDeps): Promise<SiteStepResult> {
 
   // (b) (c) the profile with its places
   const {photos, skipped} = buildPlaces(d.text.places, d.manifest, works);
-  const site: SiteProfile = {...buildProfile(d.text), ...(Object.keys(photos).length ? {photos} : {})};
+  // The assistant's words (D-139) may already be there on their own; they stay.
+  const assistant = (settings.meta?.site as {assistant?: unknown} | undefined)?.assistant;
+  const site: SiteProfile = {
+    ...buildProfile(d.text),
+    ...(Object.keys(photos).length ? {photos} : {}),
+    ...(assistant ? {assistant} : {}),
+  };
   result.placesSet = Object.keys(photos).length;
   result.skippedPaths = skipped;
 

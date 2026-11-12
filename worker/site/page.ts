@@ -34,6 +34,8 @@ export interface Page {
   /** Pictures to preload with high priority (the largest above the fold). */
   preload?: PublicImage | null;
   noindex?: boolean;
+  /** Extra stylesheets this page links, paths under /site/ (e.g. '/site/ask.css'). */
+  styles?: string[];
 }
 
 export type Render = (ctx: PageCtx, params: Record<string, string>) => Promise<Page>;

@@ -86,3 +86,50 @@ export interface PublicCollections {
   items: {name: string; count: number}[];
   catalogueVersion: number;
 }
+
+/** The chat sheet's opening (studio-api PublicAssistant). */
+export interface PublicAssistant {
+  name: string;
+  artistName: string;
+  greeting: string;
+  suggestions: string[];
+  replyTime: string | null;
+  answers: Record<string, string>;
+  /** false: the chat is off or the month's budget is spent; the page shows search and Ask the artist. */
+  available: boolean;
+  catalogueVersion: number;
+}
+
+/** One public work as the digest lists it (studio-api DigestWork). `image` is the cover at 480 px, a path. */
+export interface DigestWork {
+  slug: string;
+  title: string;
+  medium: string | null;
+  year: number | null;
+  width: number | null;
+  height: number | null;
+  depth: number | null;
+  sizeUnit: 'in' | 'cm';
+  status: ArtworkStatus;
+  priceCents: number | null;
+  currency: string | null;
+  collection: string | null;
+  tags: string[];
+  palette: {hex: string; share: number}[];
+  blurb: string | null;
+  image: string | null;
+}
+export interface PublicDigest {
+  works: DigestWork[];
+  catalogueVersion: number;
+}
+
+/** A page a visitor made from the pieces the assistant suggested (studio-api PublicVisitorPage). */
+export interface PublicVisitorPage {
+  token: string;
+  title: string;
+  question: string | null;
+  works: PublicArtwork[];
+  createdAt: string;
+  catalogueVersion: number;
+}

@@ -11,7 +11,7 @@ describe('commissions, process, about', () => {
     expect(text).toContain('COMM1');
     expect(text).toMatch(/<span class="n">01<\/span>\s*<div class="prose">\s*<h3>Consultation<\/h3>/);
     expect(text).toContain('Start a commission');
-    expect(text.match(/class="btn" href="sms:/g)?.length).toBe(1);
+    expect(text.match(/class="btn" href="\/contact" data-contact="sms"/g)?.length).toBe(1);
     expect(text).toMatch(/aria-current="page">Commissions/);
   });
   it('process: hero, five stages numbered 01–05 with photos, closing block', async () => {

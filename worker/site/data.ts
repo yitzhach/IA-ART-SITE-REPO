@@ -1,6 +1,15 @@
 // Everything the public pages know comes from studio-api's public routes, through the API service binding.
 // The studio is the Worker's setting (STUDIO_SLUG, D-117), never anything in the request.
-import type {PublicArtwork, PublicArtworkList, PublicCollections, PublicSitePhotos, PublicStudio} from './types';
+import type {
+  PublicArtwork,
+  PublicArtworkList,
+  PublicAssistant,
+  PublicCollections,
+  PublicDigest,
+  PublicSitePhotos,
+  PublicStudio,
+  PublicVisitorPage,
+} from './types';
 
 export class NotFound extends Error {}
 
@@ -31,6 +40,11 @@ export interface SiteData {
   work(slug: string): Promise<PublicArtwork | null>;
   collections(): Promise<PublicCollections>;
   sitePhotos(): Promise<PublicSitePhotos>;
+  /** The chat's greeting and the artist's name; null when studio-api can't say (the page still works). */
+  assistant(): Promise<PublicAssistant | null>;
+  digest(): Promise<PublicDigest>;
+  /** A made page; throws NotFound for an unknown token. */
+  visitorPage(token: string): Promise<PublicVisitorPage>;
 }
 
 export function siteData(api: Fetcher, slug: string): SiteData {
@@ -66,5 +80,8 @@ export function siteData(api: Fetcher, slug: string): SiteData {
       ),
     collections: () => get('/collections'),
     sitePhotos: () => get('/site-photos'),
+    assistant: () => get<PublicAssistant>('/assistant').catch(() => null),
+    digest: () => get('/digest'),
+    visitorPage: token => get(`/pages/${encodeURIComponent(token)}`),
   };
 }

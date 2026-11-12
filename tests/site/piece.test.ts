@@ -14,11 +14,12 @@ describe('a piece', () => {
     expect(text).toContain('36 × 24 in (91.4 × 61 cm)');
     expect(text).toContain('Cement, plaster');
     expect(text).toContain('$4,800');
-    const sms = /href="(sms:[^"]+)"/.exec(text)![1]!.replace(/&amp;/g, '&');
-    expect(sms.startsWith('sms:+15551234567?&body=')).toBe(true);
-    const msg = decodeURIComponent(sms.split('body=')[1]!);
-    expect(msg).toContain('Strata');
-    expect(msg).toContain('https://site.test/works/work-1');
+    expect(text).not.toContain('sms:');
+    expect(text).toContain(
+      '<a class="btn" href="/contact?w=work-1" data-contact="sms" data-title="Strata" data-url="https://site.test/works/work-1">Text</a>',
+    );
+    expect(text).toMatch(/<a\s+class="btn alt"\s+href="\/ask\?piece=work-1"\s+data-ask\s+data-piece="work-1"/);
+    expect(text).toMatch(/<button[^>]*hidden[^>]*data-hold/);
     expect(text).toMatch(/href="mailto:studio@example.com\?subject=About%20Strata/);
     expect(text).toMatch(/<button[^>]*hidden[^>]*data-inquiry/);
     expect(text).toContain('/site/lightbox.js');

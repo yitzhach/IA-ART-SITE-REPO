@@ -1,5 +1,5 @@
 // Bits shared by the pages: plain text → HTML (never inserted raw), contact buttons, picture links, work cards.
-import {mailHref, smsHref, telHref, type About} from '../contact';
+import {contactHref, mailHref, type About} from '../contact';
 import {availability, blocks, sizeLine} from '../format';
 import {html, raw, type Raw} from '../html';
 import {picture} from '../picture';
@@ -25,16 +25,28 @@ export const pageOf = (ctx: PageCtx, key: SitePageKey): SitePage | undefined => 
 export const sectionOf = (p: SitePage | undefined, key: string): SiteSection | undefined =>
   p?.sections?.find(s => s.key === key);
 
-/** Text / Email / Call as plain links; a missing phone or email leaves that link out. */
-export function buttons(ctx: PageCtx, about: About = {}): Raw {
-  const s = ctx.studio;
-  const sms = smsHref(s, about);
+/** Text / Email / Call, each leaving the page only after a tap on the contact sheet. Without scripts Text and Call go to
+ * /contact (a one-question check; the number is never in the page) and Email to mailto:. `cls`: button classes. */
+export function contactLinks(
+  s: PageCtx['studio'],
+  about: About = {},
+  cls: [string, string, string] | null = null,
+): Raw[] {
   const mail = mailHref(s, about);
-  const tel = telHref(s);
-  if (!sms && !mail && !tel) return html``;
-  return html`<p class="btns">
-    ${sms && html`<a class="btn" href="${sms}">Text</a>`}${mail && html`<a class="btn alt" href="${mail}">Email</a>`}${tel && html`<a class="btn alt" href="${tel}">Call</a>`}
-  </p>`;
+  const at = html`${about.slug ? html` data-title="${about.subject}" data-url="${about.url}"` : ''}`;
+  const c = (i: number) => (cls ? html` class="${cls[i]}"` : '');
+  return [
+    s.phone && html`<a${c(0)} href="${contactHref(about)}" data-contact="sms"${at}>Text</a>`,
+    mail && html`<a${c(1)} href="${mail}" data-contact="email"${at}>Email</a>`,
+    s.phone && html`<a${c(2)} href="${contactHref(about)}" data-contact="tel"${at}>Call</a>`,
+  ].filter((x): x is Raw => !!x);
+}
+
+/** Text / Email / Call as links; a missing phone or email leaves that link out. */
+export function buttons(ctx: PageCtx, about: About = {}): Raw {
+  const links = contactLinks(ctx.studio, about, ['btn', 'btn alt', 'btn alt']);
+  if (!links.length) return html``;
+  return html`<p class="btns">${links}</p>`;
 }
 
 /** The closing "Start a conversation" block; `sec` gives its own words when the page has them. */
@@ -57,7 +69,7 @@ export function photo(p: PublicSitePhoto, sizes: string, eager = false): Raw {
 export const indexNo = (n: number) => `No. ${String(n).padStart(2, '0')}`;
 
 /** The chip on a card: the price (only when the studio shows one), Price on request, Sold, Reserved. */
-export function chip(w: PublicArtwork): Raw {
+export function chip(w: Pick<PublicArtwork, 'status' | 'priceCents' | 'currency'>): Raw {
   const a = availability(w);
   if (w.status === 'sold') return html`<span class="chip">Sold</span>`;
   if (w.status === 'reserved') return html`<span class="chip">Reserved</span>`;

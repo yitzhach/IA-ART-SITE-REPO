@@ -24,7 +24,10 @@ export function priceLine(a: Pick<PublicArtwork, 'priceCents' | 'currency'>): st
 }
 
 /** What the piece page says about buying it. */
-export function availability(a: PublicArtwork): {label: string; price: string | null} {
+export function availability(a: Pick<PublicArtwork, 'status' | 'priceCents' | 'currency'>): {
+  label: string;
+  price: string | null;
+} {
   if (a.status === 'sold') return {label: 'Sold — commission one like this', price: null};
   if (a.status === 'reserved') return {label: 'Reserved', price: null};
   if (a.status === 'available') {

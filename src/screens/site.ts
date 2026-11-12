@@ -5,6 +5,7 @@ import {get, patch} from '../api';
 import {picture} from '../components/picture';
 import {mount} from '../components/mount';
 import {runSiteImportInto} from '../import/site-ui';
+import {TOPICS, fromFields, toFields, usageLine, type Assistant, type Usage} from '../lib/assistant-form';
 import {isConflict, listAll, plainError, publishWork} from '../lib/artworks';
 import {
   PAGES,
@@ -41,6 +42,7 @@ interface Site {
   hours?: {from: string; to: string};
   pages?: Partial<Record<PageKey, Page>>;
   photos?: Record<string, string[]>;
+  assistant?: Assistant;
 }
 interface Settings {
   version: number;
@@ -186,6 +188,7 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
       needsImport ? importCard(redo) : null,
       addressCard(st),
       contactCard(st.settings, site, persist, currentSite),
+      assistantCard(site.assistant, persist, currentSite),
       h('h2', null, 'Pages'),
       h('p', {class: 'muted'}, 'The words on each page of your site. Each page saves on its own.'),
       ...PAGES.map(p => pageCard(p.key, p.label, site.pages?.[p.key], persist, currentSite)),
@@ -361,6 +364,92 @@ function contactCard(settings: Settings, site: Site, persist: Persist, current: 
     const ok = await persist(form, next, tz);
     button.removeAttribute('disabled');
     if (ok) phone.value = next.phone ?? '';
+  });
+  return el;
+}
+
+// ---- Assistant (the visitor chat: D-125, D-126, D-130, D-136)
+function assistantCard(saved: Assistant | undefined, persist: Persist, current: () => Site): HTMLElement {
+  const form = makeForm();
+  const f = toFields(saved);
+  const text = (v: string, o: Record<string, string> = {}) => {
+    const i = h('input', {type: 'text', autocomplete: 'off', ...o});
+    i.value = v;
+    return i;
+  };
+  const artist = text(f.artistName),
+    reply = text(f.replyTime),
+    budget = text(f.budgetDollars, {inputmode: 'decimal'});
+  const greeting = textarea(f.greeting, 3);
+  const sugs = f.suggestions.map(s => text(s));
+  const answers = TOPICS.map(t => ({key: t.key, label: t.label, el: textarea(f.answers[t.key] ?? '', 2)}));
+  const on = h('input', {type: 'checkbox', id: uid('f'), class: 'switch'});
+  on.checked = f.enabled;
+
+  const usage = h('p', {class: 'muted', 'aria-live': 'polite'});
+  get<Usage>('/site/assistant-usage').then(
+    u => (usage.textContent = usageLine(u)),
+    () => (usage.hidden = true),
+  );
+
+  const sugErr = h('p', {class: 'field-err', hidden: true});
+  sugs.forEach((el, i) => {
+    form.bind(`assistant.suggestions.${i}`, sugErr, el);
+  });
+  form.bind('assistant.suggestions', sugErr, sugs[0]!);
+  const answersErr = h('p', {class: 'field-err', hidden: true});
+  form.bind('assistant.answers', answersErr, answers[0]!.el);
+  const button = h('button', {class: 'primary', type: 'submit'}, 'Save the assistant');
+
+  const el = h(
+    'form',
+    {class: 'card site-card', novalidate: true, 'aria-labelledby': 'site-assistant'},
+    h('h2', {id: 'site-assistant'}, 'Assistant'),
+    h('p', {class: 'muted'}, 'The chat on your site. It answers from your works and from the words below.'),
+    usage,
+    h('div', {class: 'switch-row'}, on, h('label', {for: on.id}, 'Chat is on')),
+    form.field('Your name (what the assistant calls you)', artist, 'assistant.artistName'),
+    form.field('Greeting', greeting, 'assistant.greeting'),
+    h(
+      'div',
+      {class: 'field'},
+      h('p', {class: 'label-like'}, 'Three suggested questions'),
+      ...sugs.map((i, n) => {
+        i.setAttribute('aria-label', `Suggested question ${n + 1}`);
+        return i;
+      }),
+      sugErr,
+    ),
+    form.field('Reply-time line', reply, 'assistant.replyTime'),
+    form.field('Monthly budget (dollars)', budget, 'assistant.budgetCents'),
+    h('h3', null, 'Answers'),
+    h('p', {class: 'muted'}, 'Leave a topic empty and the assistant hands that question to you.'),
+    ...answers.map(a => form.field(a.label, a.el, `assistant.answers.${a.key}`)),
+    answersErr,
+    form.general,
+    h('div', {class: 'row'}, button, form.status),
+  );
+  el.addEventListener('submit', async ev => {
+    ev.preventDefault();
+    form.clear();
+    const r = fromFields({
+      enabled: on.checked,
+      artistName: artist.value,
+      greeting: greeting.value,
+      suggestions: sugs.map(i => i.value),
+      replyTime: reply.value,
+      budgetDollars: budget.value,
+      answers: Object.fromEntries(answers.map(a => [a.key, a.el.value])),
+    });
+    if ('error' in r) {
+      form.show({'assistant.budgetCents': r.error}, r.error);
+      return;
+    }
+    const next = current();
+    next.assistant = r.value;
+    button.setAttribute('disabled', '');
+    await persist(form, next);
+    button.removeAttribute('disabled');
   });
   return el;
 }

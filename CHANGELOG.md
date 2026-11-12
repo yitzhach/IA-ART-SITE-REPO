@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+- Site 3.0 stage 3 (cards D and F): an Ask button in every page's header and "Ask about this piece" / "Hold for 48
+  hours" on a piece open a bottom sheet (loaded on a tap, `/site/ask.js`): the assistant's greeting and questions, answers
+  with up to six cards (Add to inquiry), "Open these as a page" (`/p/{token}`, noindex), Ask Isaac / Send to Isaac leads,
+  hold requests, Keep this chat (email code), and plain search when the chat is off or capped. `/ask` works without
+  scripts (search form). `/inquiry` is the list like a cart (note, Email form with up to 5 pictures, Download as PDF, PNG or
+  JPEG). Text / Call / Email everywhere open one contact sheet; the phone number is never whole in any page (two reversed
+  halves assembled on a tap; `/contact` without scripts asks one question first). The Worker sets the `sv` visitor cookie
+  and the `x-visitor-key` / studio / address headers for `/v1`, `/ask/chat` and `/assistant/visitor`. Tests:
+  `tests/site/worker-visitor.test.ts`, `tests/site/visitor-pages.test.ts`, new checks in `npm run test:site`.
+- Site 3.0 stage 3 (card E): a Leads screen at `/studio/leads` (newest first, Open or All; a lead's page with tap to
+  email / text / call, the pieces, their note and pictures, and the chat it came from; Approve hold (48 hours),
+  Decline and Done, each after a plain-words confirm and sent with `If-Match`), a count of new leads on the
+  navigation item, and a Site screen section "Assistant" (name, greeting, three questions, reply time, monthly
+  budget, on/off, the answers by topic, this month's spend). On start the app fills the assistant's starting words
+  once if the studio has none (D-139; never overwrites). The import's words step now treats a site that holds only
+  the assistant as having no profile yet. Tests: `tests/leads.test.ts`, `tests/assistant-defaults.test.ts`.
 - Works page no longer jumps while fonts load (CI measured layout shift 0.22, Lighthouse performance 88): the
   filter rows stay on one line (they scroll sideways if a studio has many collections), and the layout preloads
   the header's Archivo 600 and Plex Mono as well.
