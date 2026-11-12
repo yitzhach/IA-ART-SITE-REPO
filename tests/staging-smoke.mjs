@@ -186,6 +186,54 @@ for (const kind of ['PNG', 'JPEG']) {
   });
 }
 
+await check('See it on your wall: true size within 2% on a test photo, and the live model builds', async () => {
+  // Stage 5. Uses a made-up wall photo (never a real one) with a 36 in bar drawn 12 px to the inch.
+  await page.goto(base + '/works', {waitUntil: 'load'});
+  const hrefs = await page
+    .locator('a[href^="/works/"]')
+    .evaluateAll(as => [...new Set(as.map(a => a.getAttribute('href')).filter(h => /^\/works\/[a-z0-9-]+$/.test(h)))]);
+  let found = null;
+  for (const h of hrefs.slice(0, 12)) {
+    await page.goto(base + h, {waitUntil: 'load'});
+    if (await page.locator('[data-wall]').count()) {
+      found = h;
+      break;
+    }
+  }
+  if (!found) throw new Error('no piece with a size and a picture among the first 12');
+  const b = await page.locator('[data-wall]').evaluate(e => ({...e.dataset}));
+  const live = await page.evaluate(async () => {
+    const d = document.querySelector('[data-wall]');
+    d.click();
+    for (let i = 0; i < 50 && !window.StudioWall; i++) await new Promise(r => setTimeout(r, 100));
+    const blob = await window.StudioWall.build(d.dataset, window.StudioWallCore.pieceSize(d.dataset));
+    return blob.size;
+  });
+  const sharp = (await import('sharp')).default;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200"><rect width="100%" height="100%" fill="#d8d2c4"/><line x1="200" y1="900" x2="632" y2="900" stroke="#c33" stroke-width="6"/></svg>`;
+  await page.setInputFiles('#wall-file', {
+    name: 'wall.jpg',
+    mimeType: 'image/jpeg',
+    buffer: await sharp(Buffer.from(svg)).jpeg().toBuffer(),
+  });
+  await page.waitForFunction(() => document.querySelector('.wall-img')?.complete, null, {timeout: 10000});
+  await page.locator('.wall-img').scrollIntoViewIfNeeded();
+  const box = await page.locator('.wall-img').boundingBox();
+  const s = box.width / 1600;
+  await page.mouse.click(box.x + 200 * s, box.y + 900 * s);
+  await page.mouse.click(box.x + 632 * s, box.y + 900 * s);
+  await page.locator('#wall-len').fill('36');
+  await page.locator('.wall-len button').click();
+  await page.waitForSelector('.wall-piece:not([hidden])', {timeout: 5000});
+  const pb = await page.locator('.wall-piece').boundingBox();
+  const size = await page.evaluate(d => window.StudioWallCore.pieceSize(d), b);
+  const err = Math.abs(pb.width / (size.widthIn * 12 * s) - 1);
+  await page.screenshot({path: `${out}/wall.png`, fullPage: false});
+  if (err >= 0.02) throw new Error(`width off by ${(err * 100).toFixed(2)}%`);
+  await page.keyboard.press('Escape');
+  return `${found}: ${(err * 100).toFixed(2)}% off, model ${Math.round(live / 1024)} KB`;
+});
+
 await check('no script errors on any page', async () => {
   if (errors.length) throw new Error(errors.slice(0, 3).join(' | '));
 });

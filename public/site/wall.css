@@ -1,0 +1,20 @@
+/* "See it on your wall" (stage 5), loaded with /site/wall.js on a tap, after the sheet's own ask.css. */
+.wall-sheet{max-width:760px}
+.wall-way{margin:6px 0 8px;font-size:1rem}
+.wall-live{margin:0 0 18px}
+.wall-ar{display:inline-block;margin:0 0 8px}
+.wall-ar img{display:block;width:300px;max-width:100%;height:auto}
+.wall-file{position:absolute;width:1px;height:1px;opacity:0}
+.wall-say{margin:0 0 10px;font-weight:600}
+.wall-stage{position:relative;overflow:hidden;margin:0 0 12px;line-height:0;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.wall-img{display:block;width:100%;height:auto;cursor:crosshair}
+.wall-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.wall-svg line{stroke:var(--accent);stroke-width:3;stroke-dasharray:6 4}
+.wall-mark{position:absolute;left:-22px;top:-22px;width:44px;height:44px;touch-action:none;cursor:grab;will-change:transform}
+.wall-mark::after{content:"";position:absolute;left:15px;top:15px;width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px #fff}
+.wall-piece{position:absolute;left:0;top:0;background:center/100% 100% no-repeat;box-shadow:.3em .5em 1.2em rgba(0,0,0,.35);touch-action:none;cursor:grab;will-change:transform}
+.wall-piece.held,.wall-mark.held{cursor:grabbing}
+.wall-piece:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.wall-len{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.wall-len input{width:7em;min-height:48px;padding:10px 12px;border:1px solid var(--ink);border-radius:0;background:var(--card);color:var(--ink);font-size:16px}
+.wall-len select{min-height:48px;padding:0 10px;border:1px solid var(--ink);border-radius:0;background:var(--card);color:var(--ink);font-size:16px}
