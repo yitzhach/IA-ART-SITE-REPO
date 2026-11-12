@@ -316,26 +316,34 @@ function run(cmd, args, env, timeout = 240000) {
 const chrome = chromium.executablePath();
 for (const p of LH_PAGES) {
   const name = (p === '/' ? 'home' : p.slice(1).replace(/\//g, '-')) + '.json';
-  const file = join(out, `lighthouse-${name}`);
-  // Async, not spawnSync: the site's server runs in this process and must keep answering Lighthouse.
-  const r = await run(
-    'npx',
-    [
-      '-y',
-      'lighthouse@12.8.2',
-      server.url + p,
-      '--quiet',
-      '--chrome-flags=--headless=new --no-sandbox',
-      '--output=json',
-      `--output-path=${file}`,
-    ],
-    {...process.env, CHROME_PATH: chrome},
-  );
-  if (r.status !== 0 || !existsSync(file)) {
-    record(p, 'lighthouse ran', 'failed', false, (r.stderr || '').trim().split('\n').slice(-2).join(' '));
-    continue;
+  // Three runs, scored on the one with the median LCP (Lighthouse's own advice for run-to-run variance: the same build
+  // measured 1.65 s and 2.1 s on different runners).
+  const runs = [];
+  for (let i = 0; i < 3; i++) {
+    const file = join(out, `lighthouse-${i}-${name}`);
+    // Async, not spawnSync: the site's server runs in this process and must keep answering Lighthouse.
+    const r = await run(
+      'npx',
+      [
+        '-y',
+        'lighthouse@12.8.2',
+        server.url + p,
+        '--quiet',
+        '--chrome-flags=--headless=new --no-sandbox',
+        '--output=json',
+        `--output-path=${file}`,
+      ],
+      {...process.env, CHROME_PATH: chrome},
+    );
+    if (r.status !== 0 || !existsSync(file)) {
+      record(p, 'lighthouse ran', 'failed', false, (r.stderr || '').trim().split('\n').slice(-2).join(' '));
+      break;
+    }
+    runs.push(JSON.parse(readFileSync(file, 'utf8')));
   }
-  const lh = JSON.parse(readFileSync(file, 'utf8'));
+  if (runs.length < 3) continue;
+  const lcpOf = lh => lh.audits['largest-contentful-paint'].numericValue;
+  const lh = [...runs].sort((a, b) => lcpOf(a) - lcpOf(b))[1];
   for (const [id, c] of Object.entries(lh.categories)) {
     const score = Math.round((c.score ?? 0) * 100);
     const failing = c.auditRefs
@@ -353,7 +361,19 @@ for (const p of LH_PAGES) {
     record(p, `lighthouse ${id}`, score, score >= LH_MIN || onlySkipped, failing.slice(0, 4).join(', '));
   }
   const lcp = Math.round(lh.audits['largest-contentful-paint'].numericValue);
-  record(p, 'lighthouse LCP (ms)', lcp, lcp <= LCP_MAX);
+  // When it fails, say where the time went (LCP phases), so a slow run can be told from a slower page.
+  const phases = (lh.audits['lcp-breakdown-insight']?.details?.items ?? [])
+    .flatMap(i => i.items ?? [i])
+    .filter(i => i && (i.subpart || i.phase || i.label) && typeof (i.duration ?? i.timing) === 'number')
+    .map(i => `${i.subpart ?? i.phase ?? i.label} ${Math.round(i.duration ?? i.timing)}`)
+    .join(', ');
+  record(
+    p,
+    'lighthouse LCP (ms), median of 3',
+    lcp,
+    lcp <= LCP_MAX,
+    runs.map(x => Math.round(lcpOf(x))).join(' / ') + (lcp > LCP_MAX && phases ? ` · ${phases}` : ''),
+  );
 }
 await server.close();
 
