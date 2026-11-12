@@ -367,6 +367,15 @@ for (const p of LH_PAGES) {
     .filter(i => i && (i.subpart || i.phase || i.label) && typeof (i.duration ?? i.timing) === 'number')
     .map(i => `${i.subpart ?? i.phase ?? i.label} ${Math.round(i.duration ?? i.timing)}`)
     .join(', ');
+  if (lcp > LCP_MAX) {
+    // What the page asked for, in order, and which element was the LCP: enough to see what holds it back.
+    const el = lh.audits['largest-contentful-paint-element']?.details?.items?.[0]?.items?.[0]?.node?.snippet;
+    console.log(`LCP-DEBUG ${p} element: ${el}`);
+    for (const r of lh.audits['network-requests']?.details?.items ?? [])
+      console.log(
+        `LCP-DEBUG ${p} ${r.resourceType} ${r.priority} ${Math.round(r.networkRequestTime)}-${Math.round(r.networkEndTime)} ${r.transferSize} ${r.url.replace(server.url, '')}`,
+      );
+  }
   record(
     p,
     'lighthouse LCP (ms), median of 3',
