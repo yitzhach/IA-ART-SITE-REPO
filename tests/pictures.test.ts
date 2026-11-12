@@ -7,7 +7,7 @@ const link = (url: string, at: number) => ({url, expiresAt: new Date(at).toISOSt
 describe('picture links', () => {
   it('caches until a minute before expiry, then asks again', async () => {
     let t = 0;
-    const fetchLink = vi.fn(async (id: string, w: number) =>
+    const fetchLink = vi.fn(async (id: string, w: number | null) =>
       link(`/p/${id}/${w}/${fetchLink.mock.calls.length}`, 15 * 60_000),
     );
     const load = createPictureLoader(fetchLink, () => t);
@@ -26,18 +26,27 @@ describe('picture links', () => {
     expect(fetchLink).toHaveBeenCalledTimes(1);
   });
   it('keeps sizes apart', async () => {
-    const fetchLink = vi.fn(async (_: string, w: number) => link('/p' + w, Date.now() + 900_000));
+    const fetchLink = vi.fn(async (_: string, w: number | null) => link('/p' + w, Date.now() + 900_000));
     const load = createPictureLoader(fetchLink);
     expect(await load('F', 480)).toBe('/p480');
     expect(await load('F', 960)).toBe('/p960');
   });
   it('falls back to 480 when the size is missing', async () => {
-    const fetchLink = vi.fn(async (_: string, w: number) => {
+    const fetchLink = vi.fn(async (_: string, w: number | null) => {
       if (w !== 480) throw new ApiError(404, 'not_found', 'no');
       return link('/small', Date.now() + 900_000);
     });
     const load = createPictureLoader(fetchLink);
     expect(await load('F', 1600)).toBe('/small');
+  });
+  it('falls back to the original when a picture has no sizes (a lead picture)', async () => {
+    const fetchLink = vi.fn(async (_: string, w: number | null) => {
+      if (w !== null) throw new ApiError(404, 'not_found', 'no');
+      return link('/original', Date.now() + 900_000);
+    });
+    const load = createPictureLoader(fetchLink);
+    expect(await load('F', 1600)).toBe('/original');
+    expect(await load('G', 480)).toBe('/original');
   });
   it('does not hide other errors', async () => {
     const load = createPictureLoader(async () => {

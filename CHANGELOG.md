@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Leads: a visitor's own pictures showed "Couldn't load" (they have no WebP sizes, so the 480 px link was a 404). The
+  picture loader now falls back to the original file.
 - The Ask sheet's thank-you after a lead or hold starts with a capital ("Thank you. The artist will reply…") while the
   studio has no artist name yet.
 - Site 3.0 stage 3 (cards D and F): an Ask button in every page's header and "Ask about this piece" / "Hold for 48
