@@ -42,6 +42,10 @@
   function fmt(v) {
     return String(Math.round(v * 10) / 10);
   }
+  /** Height first, as the piece page writes sizes. */
+  function dims(size) {
+    return fmt(size.heightIn) + ' in high × ' + fmt(size.widthIn) + ' in wide';
+  }
   function loadImage(src) {
     return new Promise(function (ok, no) {
       var i = new Image();
@@ -173,10 +177,8 @@
         box.insertBefore(a, status);
         status.textContent =
           'Point your camera at the wall and move it slowly until the piece appears. It shows at its true size, ' +
-          fmt(size.widthIn) +
-          ' × ' +
-          fmt(size.heightIn) +
-          ' in.';
+          dims(size) +
+          '.';
       },
       function () {
         status.textContent = 'The live view couldn’t be made just now. The photo way below still works.';
@@ -410,13 +412,7 @@
       later();
     }
     function placedTools(v, unit) {
-      say.textContent =
-        d.title +
-        ' at its true size, ' +
-        fmt(size.widthIn) +
-        ' × ' +
-        fmt(size.heightIn) +
-        ' in. Drag it where you like.';
+      say.textContent = d.title + ' at its true size, ' + dims(size) + '. Drag it where you like.';
       var keep = lenRow;
       tools.textContent = '';
       lenRow = keep; // the marks can still be dragged; the length stays
@@ -514,9 +510,7 @@
     hdr.appendChild(h);
     hdr.appendChild(x);
     var main = el('div', 'sheet-main');
-    main.appendChild(
-      el('p', 'sheet-note', d.title + ' · ' + fmt(size.widthIn) + ' × ' + fmt(size.heightIn) + ' in, wide by high'),
-    );
+    main.appendChild(el('p', 'sheet-note', d.title + ' · ' + dims(size)));
     sheet.appendChild(hdr);
     sheet.appendChild(main);
     back.appendChild(sheet);
