@@ -170,6 +170,12 @@
         return (pieces[slug] = w);
       },
       function () {
+        // A first-look piece (stage 6) isn't on the public site yet: collector.js kept its title and picture here.
+        try {
+          var fl = JSON.parse(localStorage.getItem('studio-fl:' + (ds.slug || '') + ':' + slug) || 'null');
+          if (fl && fl.title)
+            return (pieces[slug] = {slug: slug, title: String(fl.title), images: fl.images || [], firstLook: true});
+        } catch (e) {}
         return (pieces[slug] = {slug: slug, title: 'A piece that is no longer on the site', images: [], gone: true});
       },
     );
@@ -251,9 +257,11 @@
           },
         });
         return el('li', {class: 'cart-item'}, [
-          w.gone ? null : el('a', {href: '/works/' + slug}, [thumb(w)]),
+          w.gone ? null : w.firstLook ? thumb(w) : el('a', {href: '/works/' + slug}, [thumb(w)]),
           el('div', {}, [
-            w.gone ? el('strong', {text: w.title}) : el('a', {href: '/works/' + slug}, [el('strong', {text: w.title})]),
+            w.gone || w.firstLook
+              ? el('strong', {text: w.title})
+              : el('a', {href: '/works/' + slug}, [el('strong', {text: w.title})]),
             w.priceCents ? el('br') : null,
             w.priceCents ? money(w.priceCents, cur) : null,
             ship ? el('br') : null,

@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Stage 6, collectors (D-163…D-168): `/c/{token}`, a collector's private page (works they own with certificates,
+  care notes, their commission on the five-stage line, first look with Add to cart when checkout is on);
+  `/c/{token}/certificate/{number}`, a certificate laid out to print; `/follow` (footer link) and `/follow/{show}` (a
+  show's QR code) with an emailed code; `/f/{token}`, a follower's page with Stop following. Studio: Collectors
+  (add a collector, their link, invite, works they own, commissions, care notes, followers, first-look email, show QR
+  codes) and a Collectors card on each work (Sold to, First look). The cart shows first-look pieces kept by the
+  collector page. Smoke: the follow page and a made-up collector link.
 - Stage 5, see it on your wall (D-157…D-160): "See it on your wall" on every piece with a size and a picture. On an
   iPhone or iPad, a live camera view at true size (a USDZ made in the browser from AR-WALLE's builder, pinch locked);
   on any device, a photo of the wall (stays in the browser) sized from two taps on something of known length (dm-t1's

@@ -13,6 +13,8 @@ export const routes: Route[] = [
   {name: 'leads', pattern: '/studio/leads', load: () => import('./screens/leads')},
   {name: 'leads', pattern: '/studio/leads/:id', load: () => import('./screens/leads')},
   {name: 'orders', pattern: '/studio/orders', load: () => import('./screens/orders')},
+  {name: 'collectors', pattern: '/studio/collectors', load: () => import('./screens/collectors')},
+  {name: 'collectors', pattern: '/studio/collectors/:id', load: () => import('./screens/collectors')},
   {name: 'import', pattern: '/studio/import', load: () => import('./screens/import')},
 ];
 

@@ -2,10 +2,18 @@
 // test uses it: render a page with `get('/works')`, change `fixture` to test edge cases.
 import siteText from '../../src/import/site-text.json';
 import {site, type SiteEnv} from '../../worker/site/index';
-import type {PublicArtwork, PublicImage, PublicSitePhoto, PublicStudio} from '../../worker/site/types';
+import type {
+  PublicArtwork,
+  PublicCollectorPage,
+  PublicFollowerPage,
+  PublicImage,
+  PublicShow,
+  PublicSitePhoto,
+  PublicStudio,
+} from '../../worker/site/types';
 
 export const SLUG = 'test-studio-abc123';
-const img = (id: string, ratio = 0.75, alt: string | null = `Alt for ${id}`): PublicImage => ({
+export const img = (id: string, ratio = 0.75, alt: string | null = `Alt for ${id}`): PublicImage => ({
   fileId: id.padEnd(26, '0').slice(0, 26).toUpperCase(),
   altText: alt,
   aspectRatio: ratio,
@@ -15,7 +23,7 @@ const img = (id: string, ratio = 0.75, alt: string | null = `Alt for ${id}`): Pu
   })),
 });
 
-const work = (n: number, over: Partial<PublicArtwork> = {}): PublicArtwork => ({
+export const work = (n: number, over: Partial<PublicArtwork> = {}): PublicArtwork => ({
   slug: `work-${n}`,
   title: `Work ${n}`,
   medium: 'Cement, plaster',
@@ -90,6 +98,9 @@ export function freshFixture() {
     calls: [] as string[],
     assistantAvailable: true,
     pages: {} as Record<string, {title: string; question: string | null; works: string[]}>,
+    collectors: {} as Record<string, PublicCollectorPage>,
+    followers: {} as Record<string, PublicFollowerPage>,
+    shows: {} as Record<string, PublicShow>,
   };
 }
 
@@ -178,6 +189,12 @@ export const api: Fetcher = {
           })
         : notFound();
     }
+    const coll = /^\/collectors\/([A-Za-z0-9_-]+)$/.exec(rest);
+    if (coll) return fixture.collectors[coll[1]!] ? json(fixture.collectors[coll[1]!]) : notFound();
+    const fol = /^\/followers\/([A-Za-z0-9_-]+)$/.exec(rest);
+    if (fol) return fixture.followers[fol[1]!] ? json(fixture.followers[fol[1]!]) : notFound();
+    const sh = /^\/shows\/([0-9A-Z]+)$/.exec(rest);
+    if (sh) return fixture.shows[sh[1]!] ? json(fixture.shows[sh[1]!]) : notFound();
     const one = /^\/artworks\/([^/]+)$/.exec(rest);
     if (one) {
       const w = fixture.works.find(x => x.slug === one[1]);

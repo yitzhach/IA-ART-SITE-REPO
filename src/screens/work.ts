@@ -36,6 +36,7 @@ import {pictureUrl} from '../lib/pictures';
 import {attachToArtwork, uploadPrepared} from '../lib/upload';
 import {changedFields, plainDate} from '../lib/work-logic';
 import type {Params} from '../router';
+import {collectorCard} from './work-collectors';
 import {navigate} from '../router';
 import type {ArtworkDetail, ArtworkInput} from '../types';
 import {confirmDialog, h, toast} from '../ui';
@@ -503,6 +504,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
         a.public ? null : h('button', {class: 'act', type: 'button', onclick: onRedo}, 'Redo the draft'),
         h('button', {class: 'act danger', type: 'button', onclick: onDelete}, 'Delete'),
       ),
+      a.kind === 'site_photo' ? null : collectorCard(a, () => show()),
     );
     notice = '';
   }
