@@ -37,12 +37,16 @@ page.on('pageerror', e => errors.push(String(e)));
 
 /** Sends a question in the open sheet and waits for a new assistant message; returns it. */
 async function askSheet(q) {
-  const msgs = page.locator('.msg.assistant');
-  const before = await msgs.count();
+  const before = await page.locator('.msg.user').count();
   await page.fill('#q', q);
   await page.press('#q', 'Enter');
   try {
-    await page.waitForFunction(n => document.querySelectorAll('.msg.assistant').length > n, before, {timeout: 45000});
+    // The sheet shows "…" (.dots) while it waits, then redraws the log with the answer.
+    await page.waitForFunction(
+      n => document.querySelectorAll('.msg.user').length > n && !document.querySelector('.sheet .dots'),
+      before,
+      {timeout: 45000},
+    );
   } catch {
     const sheet = (
       await page
@@ -52,9 +56,9 @@ async function askSheet(q) {
     )
       .replace(/\s+/g, ' ')
       .slice(0, 600);
-    throw new Error(`no new answer within 45 s; the sheet shows: ${sheet}`);
+    throw new Error(`no answer within 45 s; the sheet shows: ${sheet}`);
   }
-  return msgs.nth(before);
+  return page.locator('.msg.assistant').last();
 }
 
 let slug = '';
