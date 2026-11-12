@@ -35,6 +35,28 @@ const page = await ctx.newPage();
 const errors = [];
 page.on('pageerror', e => errors.push(String(e)));
 
+/** Sends a question in the open sheet and waits for a new assistant message; returns it. */
+async function askSheet(q) {
+  const msgs = page.locator('.msg.assistant');
+  const before = await msgs.count();
+  await page.fill('#q', q);
+  await page.press('#q', 'Enter');
+  try {
+    await page.waitForFunction(n => document.querySelectorAll('.msg.assistant').length > n, before, {timeout: 45000});
+  } catch {
+    const sheet = (
+      await page
+        .locator('.sheet')
+        .innerText()
+        .catch(() => '')
+    )
+      .replace(/\s+/g, ' ')
+      .slice(0, 600);
+    throw new Error(`no new answer within 45 s; the sheet shows: ${sheet}`);
+  }
+  return msgs.nth(before);
+}
+
 let slug = '';
 let phone = '';
 await check('home page loads with Ask in the header', async () => {
@@ -70,12 +92,10 @@ let answered = false;
 await check('Ask: a real answer with cards from the catalogue', async () => {
   await page.locator('[data-ask]').first().click();
   await page.locator('#q').waitFor({timeout: 10000});
-  await page.fill('#q', 'Something blue for a living room?');
-  await page.press('#q', 'Enter');
-  await page.locator('.msg.assistant').last().waitFor({timeout: 45000});
-  const cards = page.locator('.msg.assistant').last().locator('.acard');
-  await cards.first().waitFor({timeout: 5000});
-  const text = await page.locator('.msg.assistant').last().locator('p').first().innerText();
+  const answer = await askSheet('Something blue for a living room?');
+  const text = await answer.locator('p').first().innerText();
+  const cards = answer.locator('.acard');
+  if (!(await cards.count())) throw new Error(`no cards; it said "${text.slice(0, 300)}"`);
   const titles = await cards.locator('.ttl').allInnerTexts();
   await page.screenshot({path: `${out}/ask-answer.png`});
   answered = true;
@@ -98,7 +118,7 @@ await check('every card links to a real piece', async () => {
 
 await check('Open these as a page', async () => {
   if (!answered) throw new Error('no answer to make a page from');
-  await page.locator('.msg.assistant').last().getByRole('button', {name: 'Open these as a page'}).click();
+  await page.locator('.msg.assistant:has(.acard)').last().getByRole('button', {name: 'Open these as a page'}).click();
   const link = page.locator('.made a').last();
   await link.waitFor({timeout: 15000});
   const href = await link.getAttribute('href');
@@ -109,10 +129,7 @@ await check('Open these as a page', async () => {
 });
 
 await check('a question it cannot answer offers Text, Email and Call', async () => {
-  await page.fill('#q', 'Do you install the pieces in my home in Denver?');
-  await page.press('#q', 'Enter');
-  await page.locator('.msg.assistant').nth(1).waitFor({timeout: 45000});
-  const last = page.locator('.msg.assistant').last();
+  const last = await askSheet('Do you install the pieces in my home in Denver?');
   const text = await last.locator('p').first().innerText();
   const buttons = await last.getByRole('button').allInnerTexts();
   await page.screenshot({path: `${out}/ask-handoff.png`});
