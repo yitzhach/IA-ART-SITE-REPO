@@ -137,7 +137,7 @@ await check('a question it cannot answer offers Text, Email and Call', async () 
   const text = await last.locator('p').first().innerText();
   const buttons = await last.getByRole('button').allInnerTexts();
   await page.screenshot({path: `${out}/ask-handoff.png`});
-  if (!buttons.some(b => /Text|Email|Call|Send/.test(b)))
+  if (!buttons.some(b => /text|email|call|send/i.test(b)))
     throw new Error(`no contact buttons; said "${text.slice(0, 200)}"`);
   return `"${text.slice(0, 160)}"`;
 });
