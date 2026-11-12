@@ -6,6 +6,8 @@ import {picture} from '../components/picture';
 import {mount} from '../components/mount';
 import {runSiteImportInto} from '../import/site-ui';
 import {TOPICS, fromFields, toFields, usageLine, type Assistant, type Usage} from '../lib/assistant-form';
+import * as checkoutForm from '../lib/checkout-form';
+import * as shipForm from '../lib/shipping-logic';
 import {isConflict, listAll, plainError, publishWork} from '../lib/artworks';
 import {
   PAGES,
@@ -43,6 +45,8 @@ interface Site {
   pages?: Partial<Record<PageKey, Page>>;
   photos?: Record<string, string[]>;
   assistant?: Assistant;
+  checkout?: checkoutForm.Checkout;
+  shipping?: shipForm.ShippingSettings;
 }
 interface Settings {
   version: number;
@@ -189,6 +193,9 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
       addressCard(st),
       contactCard(st.settings, site, persist, currentSite),
       assistantCard(site.assistant, persist, currentSite),
+      checkoutCard(site.checkout, persist, currentSite),
+      shippingCard(site.shipping, persist, currentSite),
+      tierCard(),
       h('h2', null, 'Pages'),
       h('p', {class: 'muted'}, 'The words on each page of your site. Each page saves on its own.'),
       ...PAGES.map(p => pageCard(p.key, p.label, site.pages?.[p.key], persist, currentSite)),
@@ -447,6 +454,287 @@ function assistantCard(saved: Assistant | undefined, persist: Persist, current: 
     }
     const next = current();
     next.assistant = r.value;
+    button.setAttribute('disabled', '');
+    await persist(form, next);
+    button.removeAttribute('disabled');
+  });
+  return el;
+}
+
+// ---- Shipping (D-146…D-153): prices and the offer. The platform's calculator uses these; nothing is worked out here.
+function shippingCard(
+  saved: shipForm.ShippingSettings | undefined,
+  persist: Persist,
+  current: () => Site,
+): HTMLElement {
+  const form = makeForm();
+  const f = shipForm.settingsFields(saved);
+  const text = (v: string, o: Record<string, string> = {}) => {
+    const i = h('input', {type: 'text', autocomplete: 'off', ...o});
+    i.value = v;
+    return i;
+  };
+  const toggle = (checked: boolean, label: string) => {
+    const i = h('input', {type: 'checkbox', id: uid('f'), class: 'switch'});
+    i.checked = checked;
+    return {i, row: h('div', {class: 'switch-row'}, i, h('label', {for: i.id}, label))};
+  };
+  const c: Record<Exclude<keyof shipForm.SettingsFields, 'r1' | 'r2' | 'rates'>, HTMLInputElement> = {
+    tier2: text(f.tier2, {inputmode: 'decimal'}),
+    originZip: text(f.originZip, {inputmode: 'numeric', maxlength: '5'}),
+    padding: text(f.padding, {inputmode: 'decimal'}),
+    residential: text(f.residential, {inputmode: 'decimal'}),
+    cushionPercent: text(f.cushionPercent, {inputmode: 'decimal'}),
+    r2Min: text(f.r2Min, {inputmode: 'decimal'}),
+    r2Percent: text(f.r2Percent, {inputmode: 'decimal'}),
+    r2Cap: text(f.r2Cap, {inputmode: 'decimal', placeholder: 'No cap'}),
+  };
+  const r1 = toggle(f.r1, 'A medium piece ships free with any other piece');
+  const r2 = toggle(
+    f.r2,
+    'Large-work offer: a qualifying piece takes a share of its price off a large piece’s shipping',
+  );
+  const rates = h('textarea', {rows: '6', spellcheck: 'false', placeholder: 'Empty: the built-in UPS Ground rates'});
+  rates.value = f.rates;
+  const button = h('button', {class: 'primary', type: 'submit'}, 'Save shipping');
+  const el = h(
+    'form',
+    {class: 'card site-card', novalidate: true, 'aria-labelledby': 'site-shipping'},
+    h('h2', {id: 'site-shipping'}, 'Shipping'),
+    h(
+      'p',
+      {class: 'muted'},
+      'US only. Small pieces ship free; medium pieces at the flat price; large pieces get an estimate from the buyer’s ZIP (UPS Ground from your ZIP, the packing below on every side, residential, plus the cushion). Oversize boxes and tier 4 are quotes.',
+    ),
+    form.field('Medium piece shipping (dollars)', c.tier2, 'shipping.tier2Cents'),
+    form.field('Ships from (ZIP)', c.originZip, 'shipping.originZip'),
+    form.field('Packing on each side (inches)', c.padding, 'shipping.paddingIn'),
+    form.field('Residential surcharge (dollars)', c.residential, 'shipping.residentialCents'),
+    form.field('Cushion on estimates (percent)', c.cushionPercent, 'shipping.cushionBps'),
+    r1.row,
+    r2.row,
+    form.field('A qualifying piece costs at least (dollars)', c.r2Min, 'shipping.r2.minCents'),
+    form.field('Share of its price that comes off (percent)', c.r2Percent, 'shipping.r2.bps'),
+    form.field('At most off one large piece (dollars, empty: no cap)', c.r2Cap, 'shipping.r2.capCents'),
+    form.field('UPS rates (refresh each January)', rates, 'shipping.rates'),
+    form.general,
+    h('div', {class: 'row'}, button, form.status),
+  );
+  const keys: Record<keyof shipForm.SettingsFields, string> = {
+    tier2: 'shipping.tier2Cents',
+    originZip: 'shipping.originZip',
+    padding: 'shipping.paddingIn',
+    residential: 'shipping.residentialCents',
+    cushionPercent: 'shipping.cushionBps',
+    r1: 'shipping.r1',
+    r2: 'shipping.r2',
+    r2Min: 'shipping.r2.minCents',
+    r2Percent: 'shipping.r2.bps',
+    r2Cap: 'shipping.r2.capCents',
+    rates: 'shipping.rates',
+  };
+  el.addEventListener('submit', async ev => {
+    ev.preventDefault();
+    form.clear();
+    const next = current();
+    const r = shipForm.settingsFrom(next.shipping, {
+      ...Object.fromEntries(Object.entries(c).map(([k, i]) => [k, i.value])),
+      r1: r1.i.checked,
+      r2: r2.i.checked,
+      rates: rates.value,
+    } as shipForm.SettingsFields);
+    if ('error' in r) {
+      form.show({[keys[r.field]]: r.error}, r.error);
+      return;
+    }
+    next.shipping = r.value;
+    button.setAttribute('disabled', '');
+    await persist(form, next);
+    button.removeAttribute('disabled');
+  });
+  return el;
+}
+
+interface TierRow {
+  id: string;
+  title: string;
+  status: string;
+  public: boolean;
+  priceCents: number | null;
+  version: number;
+  shipping: shipForm.ArtworkShipping | null;
+  suggestion: {tier: shipForm.ShipTier | null; check: boolean; reason: string};
+}
+
+// ---- Shipping tiers (D-150): the size suggests, Isaac accepts. A piece with no tier can't be bought online.
+function tierCard(): HTMLElement {
+  const body = h('div', {}, h('p', {class: 'muted'}, 'Loading…'));
+  const el = h(
+    'section',
+    {class: 'card site-card', 'aria-labelledby': 'site-tiers'},
+    h('h2', {id: 'site-tiers'}, 'Shipping tiers'),
+    body,
+  );
+  const setTier = (r: TierRow, tier: shipForm.ShipTier) =>
+    patch(`/v1/artworks/${r.id}`, {shipping: {...(r.shipping ?? {}), tier}}, r.version);
+  async function load() {
+    let rows: TierRow[];
+    try {
+      rows = (await get<{items: TierRow[]}>('/v1/artworks/shipping')).items.filter(
+        r => r.status === 'available' || r.status === 'reserved',
+      );
+    } catch (e) {
+      mount(body, h('p', {class: 'err'}, plainError(e, "Couldn't load the tiers.")));
+      return;
+    }
+    const unset = rows.filter(r => !r.shipping?.tier);
+    const clear = unset.filter(r => r.suggestion.tier && !r.suggestion.check);
+    const acceptAll = h(
+      'button',
+      {
+        class: 'primary',
+        type: 'button',
+        onclick: async () => {
+          acceptAll.setAttribute('disabled', '');
+          try {
+            for (const r of clear) await setTier(r, r.suggestion.tier!);
+            toast(`${clear.length} tiers set`);
+          } catch (e) {
+            toast(plainError(e, 'Some tiers weren’t saved.'));
+          }
+          await load();
+        },
+      },
+      `Accept ${clear.length} clear suggestion${clear.length === 1 ? '' : 's'}`,
+    );
+    mount(
+      body,
+      h(
+        'p',
+        {class: 'muted'},
+        unset.length
+          ? `${unset.length} of ${rows.length} available pieces have no tier yet, so they can’t be bought online. The size suggests one; it counts only once you accept it. "Check" means near a line or no size recorded.`
+          : `All ${rows.length} available pieces have a tier. Change one on its work page.`,
+      ),
+      clear.length ? h('div', {class: 'row'}, acceptAll) : null,
+      unset.length
+        ? h(
+            'ul',
+            {class: 'tier-list'},
+            unset.map(r => {
+              const pick = h(
+                'select',
+                {'aria-label': `Tier for ${r.title}`},
+                h('option', {value: ''}, 'Pick a tier'),
+                ([1, 2, 3, 4] as const).map(t => h('option', {value: String(t)}, `${t} · ${shipForm.TIER_LABELS[t]}`)),
+              );
+              if (r.suggestion.tier) pick.value = String(r.suggestion.tier);
+              const save = h(
+                'button',
+                {
+                  class: 'act',
+                  type: 'button',
+                  onclick: async () => {
+                    if (!pick.value) return pick.focus();
+                    save.setAttribute('disabled', '');
+                    try {
+                      await setTier(r, Number(pick.value) as shipForm.ShipTier);
+                    } catch (e) {
+                      toast(isConflict(e) ? 'It changed elsewhere; reloaded.' : plainError(e, 'Not saved.'));
+                    }
+                    await load();
+                  },
+                },
+                'Set',
+              );
+              return h(
+                'li',
+                {},
+                h('a', {href: `/studio/works/${r.id}`}, r.title),
+                h('span', {class: 'muted'}, ` ${r.suggestion.reason}${r.suggestion.check ? ' · Check' : ''}`),
+                h('div', {class: 'row'}, pick, save),
+              );
+            }),
+          )
+        : null,
+    );
+  }
+  void load();
+  return el;
+}
+
+// ---- Checkout (buying on the site: D-144)
+function checkoutCard(saved: checkoutForm.Checkout | undefined, persist: Persist, current: () => Site): HTMLElement {
+  const form = makeForm();
+  const f = checkoutForm.toFields(saved);
+  const text = (v: string, o: Record<string, string> = {}) => {
+    const i = h('input', {type: 'text', autocomplete: 'off', ...o});
+    i.value = v;
+    return i;
+  };
+  const toggle = (checked: boolean, label: string) => {
+    const i = h('input', {type: 'checkbox', id: uid('f'), class: 'switch'});
+    i.checked = checked;
+    return {i, row: h('div', {class: 'switch-row'}, i, h('label', {for: i.id}, label))};
+  };
+  const on = toggle(f.enabled, 'Buying on the site is on');
+  const card = toggle(f.card, 'Cards through Square');
+  const venmo = text(f.venmo, {placeholder: '@Your-Name'}),
+    zelle = text(f.zelle, {placeholder: 'Email or phone'}),
+    tax = text(f.taxPercent, {inputmode: 'decimal', placeholder: 'None'}),
+    hold = text(f.holdHours, {inputmode: 'numeric'});
+  const returns = textarea(f.returns, 3);
+  const button = h('button', {class: 'primary', type: 'submit'}, 'Save checkout');
+  const el = h(
+    'form',
+    {class: 'card site-card', novalidate: true, 'aria-labelledby': 'site-checkout'},
+    h('h2', {id: 'site-checkout'}, 'Checkout'),
+    h(
+      'p',
+      {class: 'muted'},
+      'Add to cart on priced, available pieces with a shipping tier (see Shipping). Venmo and Zelle orders sell only when you tap Mark paid on Orders.',
+    ),
+    on.row,
+    card.row,
+    form.field('Venmo name (empty: no Venmo)', venmo, 'checkout.venmo'),
+    form.field('Zelle email or phone (empty: no Zelle)', zelle, 'checkout.zelle'),
+    form.field('Sales tax (percent)', tax, 'checkout.taxBps'),
+    form.field('Venmo and Zelle orders hold the piece (hours)', hold, 'checkout.manualHoldHours'),
+    form.field('Returns (shown before paying)', returns, 'checkout.returns'),
+    form.general,
+    h('div', {class: 'row'}, button, form.status),
+  );
+  const keys: Record<keyof checkoutForm.CheckoutFields, string> = {
+    enabled: 'checkout.enabled',
+    card: 'checkout.card',
+    venmo: 'checkout.venmo',
+    zelle: 'checkout.zelle',
+    shipping: 'checkout.shippingCents',
+    smallMax: 'checkout.smallMaxInches',
+    returns: 'checkout.returns',
+    taxPercent: 'checkout.taxBps',
+    holdHours: 'checkout.manualHoldHours',
+  };
+  el.addEventListener('submit', async ev => {
+    ev.preventDefault();
+    form.clear();
+    const r = checkoutForm.fromFields({
+      enabled: on.i.checked,
+      card: card.i.checked,
+      venmo: venmo.value,
+      zelle: zelle.value,
+      shipping: f.shipping,
+      smallMax: f.smallMax,
+      returns: returns.value,
+      taxPercent: tax.value,
+      holdHours: hold.value,
+    });
+    if ('error' in r) {
+      form.show({[keys[r.field]]: r.error}, r.error);
+      return;
+    }
+    const next = current();
+    next.checkout = r.value;
     button.setAttribute('disabled', '');
     await persist(form, next);
     button.removeAttribute('disabled');

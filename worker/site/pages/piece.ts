@@ -1,7 +1,7 @@
 // One work: big cover, the facts, how to ask about it (Text / Email / Call with the piece written in), more
 // pictures that open in a lightbox, and the neighbours. All text comes from the studio's record, escaped.
 import {NotFound} from '../data';
-import {availability, sizeLine} from '../format';
+import {availability, buyable, shippingLine, sizeLine} from '../format';
 import {html, type Raw} from '../html';
 import type {Render} from '../page';
 import {picture, sizeUrl} from '../picture';
@@ -73,6 +73,8 @@ export const render: Render = async (ctx, {slug}) => {
   if (size) facts.push(['Size', size]);
   if (w.medium) facts.push(['Medium', w.medium]);
   if (w.year) facts.push(['Year', w.year]);
+  const ship = w.status === 'available' && a.price ? shippingLine(w) : null;
+  if (ship) facts.push(['Shipping', ship]);
   if (w.collection) facts.push(['Collection', w.collection]);
 
   const availability_ =
@@ -111,7 +113,11 @@ export const render: Render = async (ctx, {slug}) => {
         <p class="avail">${availability_}</p>
         <div class="prose">${prose(w.description)}</div>
         <p class="btns">
-          ${links}<a
+          ${
+            buyable(w)
+              ? html`<a class="btn" href="/buy/${w.slug}" hidden data-buy data-piece="${w.slug}">Add to cart</a>`
+              : ''
+          }${links}<a
             class="btn alt"
             href="/ask?piece=${w.slug}"
             data-ask
@@ -162,6 +168,6 @@ export const render: Render = async (ctx, {slug}) => {
     body,
     nav: 'works',
     jsonLd: [jsonLd(w, ctx.url.origin, ctx.studio.name, a.price)],
-    scripts: ['/site/lightbox.js'],
+    scripts: ['/site/lightbox.js', '/site/buy.js'],
   };
 };

@@ -13,6 +13,30 @@ export function sizeLine(a: Pick<PublicArtwork, 'width' | 'height' | 'depth' | '
   return `${dims.map(n).join(' × ')} ${a.sizeUnit} (${other.map(v => n(Math.round(v * 10) / 10)).join(' × ')} ${inch ? 'cm' : 'in'})`;
 }
 
+/** What the piece page says about shipping, or null when it isn't set (D-146). */
+export function shippingLine(a: Pick<PublicArtwork, 'shipping' | 'currency'>): string | null {
+  const s = a.shipping;
+  if (!s) return null;
+  if (s.quote) return 'By quote: ask and the artist will reply with shipping';
+  if (s.estimate) return 'Worked out from your ZIP code in the cart (US)';
+  if (s.cents === 0) return 'Free in the US';
+  if (s.cents === null) return null;
+  return `${priceLine({priceCents: s.cents, currency: a.currency ?? 'USD'})} in the US`;
+}
+
+/** Can this piece go in the cart: available, priced, and its shipping known or worked out at checkout. */
+export function buyable(a: Pick<PublicArtwork, 'status' | 'priceCents' | 'shipping'>): boolean {
+  return a.status === 'available' && a.priceCents !== null && !!a.shipping && !a.shipping.quote;
+}
+
+/** The longest side in inches (one decimal), or null when the size isn't recorded. */
+export function longest(a: Pick<PublicArtwork, 'width' | 'height' | 'depth' | 'sizeUnit'>): number | null {
+  const dims = [a.width, a.height, a.depth].filter((v): v is number => typeof v === 'number' && v > 0);
+  if (!dims.length) return null;
+  const max = Math.max(...dims);
+  return Math.round((a.sizeUnit === 'cm' ? max / 2.54 : max) * 10) / 10;
+}
+
 /** '$1,200' for an available priced work, else null. */
 export function priceLine(a: Pick<PublicArtwork, 'priceCents' | 'currency'>): string | null {
   if (a.priceCents === null || !a.currency) return null;

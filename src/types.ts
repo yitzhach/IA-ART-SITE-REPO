@@ -1,3 +1,4 @@
+import type {ArtworkShipping} from './lib/shipping-logic';
 // Shared types from the studio platform contract (studio-api). Other modules import them from here.
 export type ActorType = 'user' | 'assistant' | 'system' | 'api';
 
@@ -58,6 +59,8 @@ export interface Artwork extends BaseRecord {
   /** "site_photo": a picture for the site's pages, kept out of the works list. Absent on older records = work. */
   kind?: 'work' | 'site_photo';
   draftedFields: DraftableField[];
+  /** Shipping tier and extras (D-146); null until set. Absent on older platforms. */
+  shipping?: ArtworkShipping | null;
 }
 
 export interface ArtworkDetail extends Artwork {
@@ -95,4 +98,5 @@ export interface ArtworkInput {
   editionSize: number | null;
   slug: string;
   kind: 'work' | 'site_photo';
+  shipping: ArtworkShipping | null;
 }

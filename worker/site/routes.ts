@@ -10,6 +10,9 @@ import {render as ask} from './pages/ask';
 import {render as inquiry} from './pages/inquiry';
 import {render as contact} from './pages/contact';
 import {render as made} from './pages/made';
+import {render as buy} from './pages/buy';
+import {render as thanks} from './pages/thanks';
+import {render as cart} from './pages/cart';
 
 /** `dynamic` pages answer from the request (a query, a token) and are never kept by the edge cache. */
 const ROUTES: [RegExp, Render, boolean?][] = [
@@ -23,6 +26,9 @@ const ROUTES: [RegExp, Render, boolean?][] = [
   [/^\/inquiry$/, inquiry],
   [/^\/contact$/, contact, true],
   [/^\/p\/(?<token>[A-Za-z0-9_-]{6,80})$/, made, true],
+  [/^\/cart$/, cart, true],
+  [/^\/buy\/(?<slug>[a-z0-9]+(?:-[a-z0-9]+)*)$/, buy, true],
+  [/^\/thanks\/(?<id>[0-9A-HJKMNP-TV-Z]{26})$/, thanks, true],
 ];
 
 export function match(path: string): {render: Render; params: Record<string, string>; dynamic: boolean} | null {

@@ -8,6 +8,7 @@ import {
   removeTag,
   STATUS_LABELS,
 } from '../lib/work-logic';
+import {mergePiece, pieceFields, TIER_LABELS, type ArtworkShipping} from '../lib/shipping-logic';
 import type {Artwork} from '../types';
 import {h} from '../ui';
 
@@ -291,4 +292,72 @@ export function tagField(initial: string[]): Field<string[]> {
 export function markDrafted<T>(f: Field<T>): Field<T> {
   f.el.querySelector('label')?.after(h('span', {class: 'drafted'}, 'drafted by the assistant'));
   return f;
+}
+
+/** Shipping (D-146): the tier Isaac picks (never guessed), a pinned price, the weight, crated or quoted. */
+export function shippingField(value: ArtworkShipping | null): Field<ArtworkShipping | null> {
+  const f = pieceFields(value);
+  const tierId = uid('f');
+  const tier = h(
+    'select',
+    {id: tierId},
+    h('option', {value: ''}, 'Not set: can’t be bought online'),
+    ([1, 2, 3, 4] as const).map(t => h('option', {value: String(t)}, `${t} · ${TIER_LABELS[t]}`)),
+  );
+  tier.value = f.tier;
+  const centsId = uid('f');
+  const cents = h('input', {id: centsId, type: 'text', inputmode: 'decimal', autocomplete: 'off', placeholder: 'None'});
+  cents.value = f.cents;
+  const weightId = uid('f');
+  const weight = h('input', {
+    id: weightId,
+    type: 'text',
+    inputmode: 'decimal',
+    autocomplete: 'off',
+    placeholder: 'Not known',
+  });
+  weight.value = f.weightLb;
+  const check = (label: string, on: boolean) => {
+    const i = h('input', {type: 'checkbox', id: uid('f')});
+    i.checked = on;
+    return {i, row: h('label', {class: 'check', for: i.id}, i, ' ', label)};
+  };
+  const crated = check('Ships crated', f.crated);
+  const quote = check('Always quote this one', f.customQuote);
+  const t = wrap(
+    'Shipping tier',
+    tier,
+    tierId,
+    'Tiers 1 and 2 have a set price. Large pieces get an estimate from the buyer’s ZIP; tier 4 needs a quote.',
+  );
+  const c = wrap(
+    'Shipping price (dollars)',
+    cents,
+    centsId,
+    'Set it to sell a quoted piece online at this price, or to fix a large piece’s price instead of the estimate.',
+  );
+  const w = wrap(
+    'Weight of the piece (pounds)',
+    weight,
+    weightId,
+    'Packing is added. Helps the estimate for heavy pieces.',
+  );
+  const el = h('div', {class: 'field-group'}, t.el, c.el, w.el, crated.row, quote.row);
+  return {
+    el,
+    read() {
+      c.ok();
+      w.ok();
+      const r = mergePiece(value, {
+        tier: tier.value,
+        cents: cents.value,
+        weightLb: weight.value,
+        crated: crated.i.checked,
+        customQuote: quote.i.checked,
+      });
+      if ('error' in r) return (r.field === 'cents' ? c : w).fail(r.error);
+      return r.value;
+    },
+    focus: () => tier.focus(),
+  };
 }
