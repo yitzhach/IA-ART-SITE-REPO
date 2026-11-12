@@ -77,7 +77,14 @@ export function freshFixture() {
     'process.finished': [photo('proc5', 'Finished', 'work-1')],
     'about.studio': [photo('about1', 'Studio')],
   };
-  return {studio, works, places, calls: [] as string[]};
+  return {
+    studio,
+    works,
+    places,
+    calls: [] as string[],
+    assistantAvailable: true,
+    pages: {} as Record<string, {title: string; question: string | null; works: string[]}>,
+  };
 }
 
 export let fixture = freshFixture();
@@ -113,6 +120,55 @@ export const api: Fetcher = {
       const from = Number(q.get('cursor') ?? 0);
       const page = items.slice(from, from + 48);
       return json({items: page, nextCursor: items.length > from + 48 ? String(from + 48) : null, catalogueVersion: v});
+    }
+    if (rest === '/assistant')
+      return json({
+        name: 'Test Studio',
+        artistName: 'Isaac',
+        greeting: 'Hello, I am the studio assistant, an AI. Ask me about the work.',
+        suggestions: ['Is this one available?', 'Do you take commissions?', 'Show me green work'],
+        replyTime: 'Isaac replies within a day.',
+        answers: {},
+        available: fixture.assistantAvailable,
+        catalogueVersion: v,
+      });
+    if (rest === '/digest')
+      return json({
+        works: fixture.works
+          .filter(w => w.status !== 'archived')
+          .map(w => ({
+            slug: w.slug,
+            title: w.title,
+            medium: w.medium,
+            year: w.year,
+            width: w.width,
+            height: w.height,
+            depth: w.depth,
+            sizeUnit: w.sizeUnit,
+            status: w.status,
+            priceCents: w.priceCents,
+            currency: w.currency,
+            collection: w.collection,
+            tags: w.tags,
+            palette: w.palette,
+            blurb: w.description?.split('\n')[0] ?? null,
+            image: w.images[0]?.sizes[0]?.url ?? null,
+          })),
+        catalogueVersion: v,
+      });
+    const made = /^\/pages\/([A-Za-z0-9_-]+)$/.exec(rest);
+    if (made) {
+      const pg = fixture.pages[made[1]!];
+      return pg
+        ? json({
+            token: made[1],
+            title: pg.title,
+            question: pg.question,
+            works: pg.works.map(sl => fixture.works.find(w => w.slug === sl)).filter(Boolean),
+            createdAt: '2026-11-12T00:00:00.000Z',
+            catalogueVersion: v,
+          })
+        : notFound();
     }
     const one = /^\/artworks\/([^/]+)$/.exec(rest);
     if (one) {

@@ -61,6 +61,5 @@ export const render: Render = async (ctx, _params) => {
     body,
     nav: 'works',
     canonical: href(collection, status, cursor, offset),
-    scripts: ['/site/inquiry.js'],
   };
 };

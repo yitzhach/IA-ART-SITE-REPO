@@ -39,22 +39,25 @@ export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContex
         sitemap(url.origin, data),
       );
     const route = match(url.pathname);
-    return await cached(
-      request,
-      `${studio.catalogueVersion}.${env.CF_VERSION_METADATA?.id ?? 'dev'}`,
-      ctx,
-      async () => {
-        const pc: PageCtx = {url, data, studio, photos: await data.sitePhotos()};
-        let page: Page;
-        try {
-          page = route ? await route.render(pc, route.params) : notFound();
-        } catch (e) {
-          if (!(e instanceof NotFound)) throw e;
-          page = notFound();
-        }
-        return new Response(layout(pc, page), {status: page.status ?? 200, headers: HTML});
-      },
-    );
+    const render = async () => {
+      const pc: PageCtx = {url, data, studio, photos: await data.sitePhotos()};
+      let page: Page;
+      try {
+        page = route ? await route.render(pc, route.params) : notFound();
+      } catch (e) {
+        if (!(e instanceof NotFound)) throw e;
+        page = notFound();
+      }
+      return new Response(layout(pc, page), {status: page.status ?? 200, headers: HTML});
+    };
+    if (route?.dynamic) {
+      // Answered from the request (a search, a token, a contact check): never kept, never indexed.
+      const res = await render();
+      res.headers.set('cache-control', 'no-store');
+      if (url.pathname !== '/ask') res.headers.set('x-robots-tag', 'noindex');
+      return request.method === 'HEAD' ? new Response(null, res) : res;
+    }
+    return await cached(request, `${studio.catalogueVersion}.${env.CF_VERSION_METADATA?.id ?? 'dev'}`, ctx, render);
   } catch (e) {
     console.error('site', url.pathname, e);
     return new Response(

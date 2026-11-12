@@ -676,3 +676,19 @@ button.small {
   align-items: center;
   gap: 12px;
 }
+
+.lead-badge {
+  display: inline-block;
+  min-width: 1.4em;
+  margin-left: 4px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  text-align: center;
+}
+.lead-badge[hidden] {
+  display: none;
+}

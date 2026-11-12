@@ -270,6 +270,63 @@ const meBody = {
 async function mock(page, {signedIn = true} = {}) {
   const auth = {signedIn};
   const state = works.map(w => ({...w})); // fresh per page
+  const lw = (i, st = 'available') => ({
+    id: `W${i}`,
+    slug: `work-${i}`,
+    title: titles[i],
+    status: st,
+    priceCents: i === 2 ? null : 120000,
+    currency: 'USD',
+  });
+  const lead = (o, i) => ({
+    id: `L${i}`,
+    version: 1,
+    kind: 'inquiry',
+    source: 'chat',
+    status: 'new',
+    name: null,
+    email: null,
+    phone: null,
+    note: null,
+    works: [lw(0)],
+    fileIds: [],
+    clientId: null,
+    threadId: null,
+    expiresAt: null,
+    createdAt: '2026-11-12T16:00:00Z',
+    updatedAt: '2026-11-12T16:00:00Z',
+    ...o,
+  });
+  const leads = [
+    lead(
+      {
+        kind: 'hold',
+        name: 'Ann Rivera',
+        email: 'ann@example.com',
+        phone: '+19495550123',
+        note: 'We love the blue. Can you hold it until Friday?',
+        works: [lw(1)],
+        fileIds: ['F1', 'F2'],
+        threadId: 'T1',
+      },
+      1,
+    ),
+    lead(
+      {
+        status: 'held',
+        kind: 'hold',
+        phone: '+19495550199',
+        works: [lw(0, 'reserved')],
+        expiresAt: '2026-11-14T20:00:00Z',
+      },
+      2,
+    ),
+    lead({email: 'designer-with-a-very-long-address@example-studio.com', works: [lw(0), lw(1), lw(2)]}, 3),
+  ];
+  const leadChat = [
+    {role: 'user', text: 'Something blue for a living room?', works: [], at: now},
+    {role: 'assistant', text: 'Figure in Blue is 30 x 40 in, available now.', works: ['W1'], at: now},
+  ];
   let settings = siteSettings();
   const json = (route, body, status = 200) =>
     route.fulfill({status, contentType: 'application/json', body: JSON.stringify(body)});
@@ -374,6 +431,23 @@ async function mock(page, {signedIn = true} = {}) {
         url: `${origin}/mock-img/${m[1]}-${url.searchParams.get('width')}.png`,
         expiresAt: new Date(Date.now() + 900000).toISOString(),
       });
+    if (path === '/leads' && method === 'GET') return json(route, {items: leads});
+    if (path === '/site/assistant-usage')
+      return json(route, {month: '2026-11', turns: 312, spentCents: 42, budgetCents: 1000, capped: false});
+    m = /^\/leads\/([^/]+)$/.exec(path);
+    if (m && method === 'GET') {
+      const l = leads.find(x => x.id === m[1]);
+      return l ? json(route, {...l, chat: leadChat}) : json(route, {error: {code: 'not_found', message: 'No'}}, 404);
+    }
+    m = /^\/leads\/([^/]+)\/(approve-hold|decline|close)$/.exec(path);
+    if (m && method === 'POST') {
+      const l = leads.find(x => x.id === m[1]);
+      if (Number(req.headers()['if-match']) !== l.version)
+        return json(route, {error: {code: 'conflict', message: 'Changed'}}, 409);
+      const status = {'approve-hold': 'held', decline: 'declined', close: 'closed'}[m[2]];
+      Object.assign(l, {status, version: l.version + 1, expiresAt: status === 'held' ? '2026-11-14T20:00:00Z' : null});
+      return json(route, l);
+    }
     if (path.startsWith('/files/')) return json(route, {id: 'x', version: 2});
     return json(route, {error: {code: 'not_found', message: 'Not found'}}, 404);
   });
@@ -408,6 +482,9 @@ const screens = [
   {name: 'work', path: '/studio/works/W3', ready: '.cover-btn img'},
   {name: 'work-public', path: '/studio/works/W1', ready: 'text=Public since'},
   {name: 'review', path: '/studio/review', ready: '.review-head'},
+  {name: 'leads', path: '/studio/leads', ready: '.lead-row'},
+  {name: 'lead-hold', path: '/studio/leads/L1', ready: '.lead-pic img'},
+  {name: 'lead-held', path: '/studio/leads/L2', ready: 'text=Decline (put back on sale)'},
   {name: 'site', path: '/studio/site', ready: '.place .site-thumb img'},
   {
     name: 'site-page-open',
@@ -479,6 +556,21 @@ for (const [w, h] of sizes)
   await page.click('.work-card >> nth=0');
   await page.waitForSelector('text=Approve and publish');
   check((await page.locator('.drafted').count()) >= 3, 'work screen labels the drafted fields');
+  await ctx.close();
+}
+{
+  // Leads: approve sends the version seen, after a confirm, and the lead becomes held.
+  const ctx = await browser.newContext({viewport: {width: 390, height: 844}});
+  const page = await ctx.newPage();
+  await mock(page);
+  await page.goto(origin + '/studio/leads/L1');
+  await page.waitForSelector('button:has-text("Approve hold (48 hours)")');
+  check((await page.locator('a[href^="sms:"]').count()) === 1, 'lead shows tap-to-text');
+  await page.click('button:has-text("Approve hold (48 hours)")');
+  await page.waitForSelector('dialog p:has-text("for 48 hours")');
+  await page.click('dialog button.primary');
+  await page.waitForSelector('text=Decline (put back on sale)');
+  check((await page.textContent('body')).includes('Held until'), 'approved lead says held until');
   await ctx.close();
 }
 {

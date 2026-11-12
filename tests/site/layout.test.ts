@@ -11,15 +11,21 @@ describe('layout', () => {
     expect(text).toMatch(/<a href="\/works"\s+aria-current="page">Works<\/a>/);
     expect(text).toMatch(/<button class="theme-switch" type="button" hidden/);
     expect(text).toContain('<script src="/site/theme.js"></script>');
-    expect(text).toContain('href="sms:+15551234567?&amp;body=');
-    expect(text).toContain('href="tel:+15551234567"');
+    // Text and Call lead to the contact sheet (a one-question page without scripts); the number is never in the HTML.
+    expect(text).toMatch(/<a href="\/contact" data-contact="sms">Text<\/a>/);
+    expect(text).toMatch(/<a href="\/contact" data-contact="tel">Call<\/a>/);
+    expect(text).toMatch(/<a class="ask-btn" href="\/ask" data-ask>Ask<\/a>/);
+    expect(text).not.toContain('sms:');
+    expect(text).not.toContain('tel:');
     expect(text).toContain('Calls 9am–6pm Pacific time');
     expect(text).toContain('rel="preload" as="font" type="font/woff2" href="/fonts/bodoni-700.woff2"');
     for (const f of ['archivo-400', 'archivo-600', 'plexmono-400']) {
       expect(text).toContain(`rel="preload" as="font" type="font/woff2" href="/fonts/${f}.woff2"`);
     }
     expect(text).toContain('href="/favicon-32.png"');
-    expect(text).toContain('data-phone="+15551234567"');
+    expect(text).not.toContain('data-phone');
+    expect(text).toContain('data-slug="test-studio-abc123"');
+    expect(text).toMatch(/data-pa="[^"]+" data-pb="[^"]+"/);
   });
   it('has no inline scripts or handlers besides JSON-LD', async () => {
     for (const p of ['/', '/works', '/works/work-1', '/about']) {

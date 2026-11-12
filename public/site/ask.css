@@ -1,0 +1,82 @@
+/* The Ask / contact sheet (loaded with /site/ask.js on a tap). Colours come from the page's Plaster tokens. */
+html.sheet-open{overflow:hidden}
+.sheet-back{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,9,8,.55)}
+.sheet{display:flex;flex-direction:column;width:100%;max-width:560px;max-height:92vh;max-height:92dvh;background:var(--bg);color:var(--ink);border-top:2px solid var(--ink);box-shadow:0 -8px 30px rgba(0,0,0,.3)}
+@media(min-width:600px){.sheet-back{align-items:center}.sheet{max-height:86vh;border:2px solid var(--ink)}}
+.sheet-hdr{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 8px 6px 16px;border-bottom:1px solid var(--line)}
+.sheet-hdr h2{margin:0;font-size:1.25rem}
+.sheet-x{width:48px;height:48px;border:0;background:none;color:var(--ink);font-size:30px;line-height:1;cursor:pointer}
+.sheet-main{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px 16px;overscroll-behavior:contain}
+.sheet-foot{padding:8px 16px max(10px,env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.sheet-foot:empty{display:none}
+.sheet button,.sheet input,.sheet textarea{font-family:inherit}
+.sheet .btn.sm{min-height:44px;padding:0 14px;font-size:11px}
+.sheet-btns{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.sheet-btns.prominent{margin:12px 0 4px}
+.sheet-ask{display:flex;gap:8px;margin-top:6px}
+.sheet-ask.stack{flex-direction:column;margin:0 0 10px}
+.sheet-ask input,.sheet-results+input,.sheet input[type=search],.sheet-form input,.sheet-form textarea{flex:1;min-width:0;min-height:48px;padding:10px 12px;border:1px solid var(--ink);border-radius:0;background:var(--card);color:var(--ink);font-size:16px}
+.sheet-form textarea{width:100%}
+.sheet input[type=search]{width:100%;margin:6px 0 14px}
+.sheet-form .field{display:block;margin:0 0 14px}
+.sheet-form input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+.sheet-form .btn,.sheet .btn{cursor:pointer}
+.sheet-files{list-style:none;margin:8px 0 0;padding:0;font-size:14px}
+.linkbtn{min-height:44px;padding:0 4px;background:none;border:0;color:var(--accent);font:600 14px var(--body);text-decoration:underline;cursor:pointer}
+.sheet-small,.sheet-about{font-size:14px;color:var(--muted);margin:0 0 12px}
+.sheet-note{margin:0 0 12px;font-weight:600}
+.sheet .the-number{font-size:1.7rem}
+.kept{display:inline-flex;align-items:center;min-height:44px;font-size:13px;color:var(--muted)}
+.msg{max-width:92%;margin:0 0 10px;padding:10px 12px;background:var(--card);border:1px solid var(--line)}
+.msg p{margin:0}
+.msg.user{margin-left:auto;background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.msg.assistant{max-width:100%}
+.dots{letter-spacing:.3em}
+.replies{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.chip-btn{min-height:44px;padding:6px 14px;border:1px solid var(--accent);background:none;color:var(--accent);font:600 14px/1.3 var(--body);text-align:left;cursor:pointer}
+.chip-btn:hover{background:var(--accent);color:var(--on-accent)}
+.acards{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.acard{margin:0;min-width:0}
+.acard a{display:flex;flex-direction:column;gap:2px;color:var(--ink);text-decoration:none}
+.acard img,.acard .blank{width:100%;aspect-ratio:4/5;object-fit:cover}
+.acard .ttl{font:500 1rem/1.25 var(--head);margin-top:6px}
+.acard .sz{font-size:13px;color:var(--muted)}
+.acard .pr{font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.acard .add{min-height:44px;width:100%;margin-top:4px;padding:0 6px;border:1px solid var(--ink);background:none;color:var(--ink);font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.04em;cursor:pointer}
+.acard .add[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.made-holder{margin-top:6px}
+.made{margin:6px 0;font-size:14px;overflow-wrap:anywhere}
+.sheet-form input[type=file]{min-height:0;padding:0;border:0}
+
+/* Shared by /ask, /contact, /inquiry and /p pages (linked there) and the sheet. */
+.search{margin:0 0 28px;max-width:40em}
+.search label{display:block;font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px}
+.search-row{display:flex;gap:10px}
+.search input[type=search],.search input[type=text],.field input,.field textarea{flex:1;min-width:0;min-height:48px;padding:10px 12px;border:1px solid var(--ink);border-radius:0;background:var(--card);color:var(--ink);font:16px var(--body)}
+.err{color:var(--accent);font-weight:600;margin:0 0 .6em}
+.count,.note-line{font:400 13px/1.5 var(--mono);color:var(--muted);margin:0 0 1em}
+.the-number{font:700 2rem/1.2 var(--head);margin:.4em 0}
+.made-q{margin-bottom:1.4em}
+.inq-list{list-style:none;margin:0 0 20px;padding:0}
+.inq-item{display:grid;grid-template-columns:84px 1fr;gap:4px 14px;align-items:start;padding:14px 0;border-top:1px solid var(--line);margin:0}
+.inq-item img,.inq-item .blank{width:84px;height:105px;object-fit:cover}
+.inq-item .ttl{font:500 1.1rem/1.25 var(--head);color:var(--ink);text-decoration:none}
+.inq-item .sz{display:block;font-size:13px;color:var(--muted)}
+.inq-item button{margin-top:6px;min-height:44px;padding:0 4px;background:none;border:0;color:var(--accent);font:600 14px var(--body);text-decoration:underline;cursor:pointer}
+.field{display:block;margin:0 0 14px}
+.field>span{display:block;font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px}
+.field textarea{width:100%;min-height:96px;resize:vertical}
+.hp{position:absolute!important;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.print-sheet{display:none}
+@media print{
+body.printing>*:not(.print-sheet){display:none!important}
+body.printing .print-sheet{display:block;padding:0;color:#000;background:#fff}
+body.printing{background:#fff}
+.print-sheet h1{font-size:22pt;margin:0 0 4pt}
+.print-sheet ul{list-style:none;padding:0;margin:12pt 0;display:grid;grid-template-columns:repeat(3,1fr);gap:12pt}
+.print-sheet li{break-inside:avoid;margin:0}
+.print-sheet img{width:100%;height:auto}
+.print-sheet .t{font-weight:700;margin:3pt 0 0}
+.print-sheet p{margin:0 0 2pt;font-size:10pt}
+@page{margin:14mm}
+}

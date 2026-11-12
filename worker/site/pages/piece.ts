@@ -2,12 +2,11 @@
 // pictures that open in a lightbox, and the neighbours. All text comes from the studio's record, escaped.
 import {NotFound} from '../data';
 import {availability, sizeLine} from '../format';
-import {mailHref, smsHref, telHref} from '../contact';
 import {html, type Raw} from '../html';
 import type {Render} from '../page';
 import {picture, sizeUrl} from '../picture';
 import type {PublicArtwork} from '../types';
-import {COVER_SIZES, firstSentence, prose} from './parts';
+import {COVER_SIZES, contactLinks, firstSentence, prose} from './parts';
 
 const AVAIL: Record<string, string> = {
   available: 'https://schema.org/InStock',
@@ -54,10 +53,8 @@ export const render: Render = async (ctx, {slug}) => {
   const [w, list] = await Promise.all([ctx.data.work(slug!), ctx.data.works()]);
   if (!w) throw new NotFound(slug);
   const url = `${ctx.url.origin}/works/${w.slug}`;
-  const about = {subject: w.title, lines: [url]};
-  const sms = smsHref(ctx.studio, about);
-  const mail = mailHref(ctx.studio, about);
-  const tel = telHref(ctx.studio);
+  const about = {subject: w.title, lines: [url], slug: w.slug, url};
+  const links = contactLinks(ctx.studio, about, ['btn', 'btn alt', 'btn alt']);
   const a = availability(w);
   const size = sizeLine(w);
   const cover = w.images[0];
@@ -114,7 +111,31 @@ export const render: Render = async (ctx, {slug}) => {
         <p class="avail">${availability_}</p>
         <div class="prose">${prose(w.description)}</div>
         <p class="btns">
-          ${sms && html`<a class="btn" href="${sms}">Text</a>`}${mail && html`<a class="btn alt" href="${mail}">Email</a>`}${tel && html`<a class="btn alt" href="${tel}">Call</a>`}
+          ${links}<a
+            class="btn alt"
+            href="/ask?piece=${w.slug}"
+            data-ask
+            data-piece="${w.slug}"
+            data-title="${w.title}"
+            data-status="${w.status}"
+            >Ask about this piece</a
+          >${
+            w.status === 'available'
+              ? html`<button
+                  class="btn alt"
+                  type="button"
+                  hidden
+                  data-js
+                  data-ask
+                  data-hold
+                  data-piece="${w.slug}"
+                  data-title="${w.title}"
+                  data-status="${w.status}"
+                >
+                  Hold for 48 hours
+                </button>`
+              : ''
+          }
           <button class="btn alt" type="button" hidden data-inquiry data-title="${w.title}" data-url="${url}">
             Add to inquiry
           </button>
@@ -141,6 +162,6 @@ export const render: Render = async (ctx, {slug}) => {
     body,
     nav: 'works',
     jsonLd: [jsonLd(w, ctx.url.origin, ctx.studio.name, a.price)],
-    scripts: ['/site/lightbox.js', '/site/inquiry.js'],
+    scripts: ['/site/lightbox.js'],
   };
 };
