@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Stage 4 (buying, D-144): a Buy button on priced, available small pieces when the studio's checkout is on; `/buy/{slug}`
+  (card on Square's page, or Venmo / Zelle with name, email and address); `/thanks/{id}` (the buyer's own order, waits
+  for Square's confirmation); the owner's Orders screen (Mark paid, Add tracking, More time, Cancel) and Site →
+  Checkout settings.
 - Leads: a visitor's own pictures showed "Couldn't load" (they have no WebP sizes, so the 480 px link was a 404). The
   picture loader now falls back to the original file.
 - The Ask sheet's thank-you after a lead or hold starts with a capital ("Thank you. The artist will reply…") while the

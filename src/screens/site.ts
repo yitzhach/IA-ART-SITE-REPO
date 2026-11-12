@@ -6,6 +6,7 @@ import {picture} from '../components/picture';
 import {mount} from '../components/mount';
 import {runSiteImportInto} from '../import/site-ui';
 import {TOPICS, fromFields, toFields, usageLine, type Assistant, type Usage} from '../lib/assistant-form';
+import * as checkoutForm from '../lib/checkout-form';
 import {isConflict, listAll, plainError, publishWork} from '../lib/artworks';
 import {
   PAGES,
@@ -43,6 +44,7 @@ interface Site {
   pages?: Partial<Record<PageKey, Page>>;
   photos?: Record<string, string[]>;
   assistant?: Assistant;
+  checkout?: checkoutForm.Checkout;
 }
 interface Settings {
   version: number;
@@ -189,6 +191,7 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
       addressCard(st),
       contactCard(st.settings, site, persist, currentSite),
       assistantCard(site.assistant, persist, currentSite),
+      checkoutCard(site.checkout, persist, currentSite),
       h('h2', null, 'Pages'),
       h('p', {class: 'muted'}, 'The words on each page of your site. Each page saves on its own.'),
       ...PAGES.map(p => pageCard(p.key, p.label, site.pages?.[p.key], persist, currentSite)),
@@ -447,6 +450,89 @@ function assistantCard(saved: Assistant | undefined, persist: Persist, current: 
     }
     const next = current();
     next.assistant = r.value;
+    button.setAttribute('disabled', '');
+    await persist(form, next);
+    button.removeAttribute('disabled');
+  });
+  return el;
+}
+
+// ---- Checkout (buying on the site: D-144)
+function checkoutCard(saved: checkoutForm.Checkout | undefined, persist: Persist, current: () => Site): HTMLElement {
+  const form = makeForm();
+  const f = checkoutForm.toFields(saved);
+  const text = (v: string, o: Record<string, string> = {}) => {
+    const i = h('input', {type: 'text', autocomplete: 'off', ...o});
+    i.value = v;
+    return i;
+  };
+  const toggle = (checked: boolean, label: string) => {
+    const i = h('input', {type: 'checkbox', id: uid('f'), class: 'switch'});
+    i.checked = checked;
+    return {i, row: h('div', {class: 'switch-row'}, i, h('label', {for: i.id}, label))};
+  };
+  const on = toggle(f.enabled, 'Buying on the site is on');
+  const card = toggle(f.card, 'Cards through Square');
+  const venmo = text(f.venmo, {placeholder: '@Your-Name'}),
+    zelle = text(f.zelle, {placeholder: 'Email or phone'}),
+    shipping = text(f.shipping, {inputmode: 'decimal'}),
+    small = text(f.smallMax, {inputmode: 'decimal'}),
+    tax = text(f.taxPercent, {inputmode: 'decimal', placeholder: 'None'}),
+    hold = text(f.holdHours, {inputmode: 'numeric'});
+  const returns = textarea(f.returns, 3);
+  const button = h('button', {class: 'primary', type: 'submit'}, 'Save checkout');
+  const el = h(
+    'form',
+    {class: 'card site-card', novalidate: true, 'aria-labelledby': 'site-checkout'},
+    h('h2', {id: 'site-checkout'}, 'Checkout'),
+    h(
+      'p',
+      {class: 'muted'},
+      'A Buy button on priced, available pieces up to the size below. Larger pieces keep the inquiry and a shipping quote. Venmo and Zelle orders sell only when you tap Mark paid on Orders.',
+    ),
+    on.row,
+    card.row,
+    form.field('Venmo name (empty: no Venmo)', venmo, 'checkout.venmo'),
+    form.field('Zelle email or phone (empty: no Zelle)', zelle, 'checkout.zelle'),
+    form.field('Shipping for a small piece (dollars, US only)', shipping, 'checkout.shippingCents'),
+    form.field('Small means up to (inches, longest side)', small, 'checkout.smallMaxInches'),
+    form.field('Sales tax (percent)', tax, 'checkout.taxBps'),
+    form.field('Venmo and Zelle orders hold the piece (hours)', hold, 'checkout.manualHoldHours'),
+    form.field('Returns (shown before paying)', returns, 'checkout.returns'),
+    form.general,
+    h('div', {class: 'row'}, button, form.status),
+  );
+  const keys: Record<keyof checkoutForm.CheckoutFields, string> = {
+    enabled: 'checkout.enabled',
+    card: 'checkout.card',
+    venmo: 'checkout.venmo',
+    zelle: 'checkout.zelle',
+    shipping: 'checkout.shippingCents',
+    smallMax: 'checkout.smallMaxInches',
+    returns: 'checkout.returns',
+    taxPercent: 'checkout.taxBps',
+    holdHours: 'checkout.manualHoldHours',
+  };
+  el.addEventListener('submit', async ev => {
+    ev.preventDefault();
+    form.clear();
+    const r = checkoutForm.fromFields({
+      enabled: on.i.checked,
+      card: card.i.checked,
+      venmo: venmo.value,
+      zelle: zelle.value,
+      shipping: shipping.value,
+      smallMax: small.value,
+      returns: returns.value,
+      taxPercent: tax.value,
+      holdHours: hold.value,
+    });
+    if ('error' in r) {
+      form.show({[keys[r.field]]: r.error}, r.error);
+      return;
+    }
+    const next = current();
+    next.checkout = r.value;
     button.setAttribute('disabled', '');
     await persist(form, next);
     button.removeAttribute('disabled');

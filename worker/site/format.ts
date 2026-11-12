@@ -13,6 +13,14 @@ export function sizeLine(a: Pick<PublicArtwork, 'width' | 'height' | 'depth' | '
   return `${dims.map(n).join(' × ')} ${a.sizeUnit} (${other.map(v => n(Math.round(v * 10) / 10)).join(' × ')} ${inch ? 'cm' : 'in'})`;
 }
 
+/** The longest side in inches (one decimal), or null when the size isn't recorded. Checkout takes small pieces only. */
+export function longest(a: Pick<PublicArtwork, 'width' | 'height' | 'depth' | 'sizeUnit'>): number | null {
+  const dims = [a.width, a.height, a.depth].filter((v): v is number => typeof v === 'number' && v > 0);
+  if (!dims.length) return null;
+  const max = Math.max(...dims);
+  return Math.round((a.sizeUnit === 'cm' ? max / 2.54 : max) * 10) / 10;
+}
+
 /** '$1,200' for an available priced work, else null. */
 export function priceLine(a: Pick<PublicArtwork, 'priceCents' | 'currency'>): string | null {
   if (a.priceCents === null || !a.currency) return null;

@@ -80,3 +80,8 @@ body.printing{background:#fff}
 .print-sheet p{margin:0 0 2pt;font-size:10pt}
 @page{margin:14mm}
 }
+.buy-piece{display:flex;gap:14px;align-items:flex-start;margin:0 0 18px}.buy-piece img{width:96px;height:auto}
+.buy-form{max-width:32em}.buy-total{margin:0 0 16px}.buy-methods{border:0;padding:0;margin:0 0 12px}
+.buy-methods legend{font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px}
+.buy-method{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-right:18px;font-weight:600}
+.buy-form input:not([type=radio]){width:100%}
