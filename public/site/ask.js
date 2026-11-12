@@ -197,6 +197,8 @@
     var lines = works.map(function (w) { return w.title + '\n' + w.url; });
     return {text: ['Hello ' + n + ", I'm interested in " + works.length + ' works.'].concat(lines).join('\n'), subject: 'About ' + works.length + ' works'};
   }
+  /** "the artist" at the start of a sentence. */
+  function cap(t) { return t ? t.charAt(0).toUpperCase() + t.slice(1) : t; }
   function artistOf(a) { return (a && a.artistName) || ds.name; }
 
   /** ctx: {works: [{title, url, slug}], source: 'chat'|'inquiry_list'|'form', threadId, back} */
@@ -323,8 +325,8 @@
           if (o.source === 'inquiry_list') Inq.note('');
           var again = view(hold ? 'Request sent' : 'Sent');
           main.appendChild(el('p', {text: hold
-            ? 'Thank you. ' + o.artist + ' will confirm by ' + (email ? 'email' : 'phone') + '. The piece is not held until then.'
-            : 'Thank you. ' + o.artist + ' will reply' + (email || tel ? ' to ' + (email || tel) : '') + '.'}));
+            ? 'Thank you. ' + cap(o.artist) + ' will confirm by ' + (email ? 'email' : 'phone') + '. The piece is not held until then.'
+            : 'Thank you. ' + cap(o.artist) + ' will reply' + (email || tel ? ' to ' + (email || tel) : '') + '.'}));
           main.appendChild(btn('Done', 'btn', close));
           again();
         },

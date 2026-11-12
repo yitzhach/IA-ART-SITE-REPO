@@ -2,6 +2,8 @@
 import {ApiError, get} from '../api';
 
 export type Width = 480 | 960 | 1600;
+/** `null`: the original file, for pictures with no sizes (a visitor's own, sent with a lead). */
+type Asked = Width | null;
 interface Signed {
   url: string;
   expiresAt: string;
@@ -16,8 +18,8 @@ const SAFETY_MS = 60_000;
 const MAX_AT_ONCE = 6;
 
 export function createPictureLoader(
-  fetchLink: (fileId: string, width: Width) => Promise<Signed> = (id, w) =>
-    get<Signed>(`/files/${encodeURIComponent(id)}/download-url?width=${w}`),
+  fetchLink: (fileId: string, width: Asked) => Promise<Signed> = (id, w) =>
+    get<Signed>(`/files/${encodeURIComponent(id)}/download-url${w ? `?width=${w}` : ''}`),
   now: () => number = Date.now,
   maxAtOnce = MAX_AT_ONCE,
 ): Loader {
@@ -37,7 +39,7 @@ export function createPictureLoader(
     }
   };
 
-  const fresh = async (fileId: string, width: Width): Promise<string> => {
+  const fresh = async (fileId: string, width: Asked): Promise<string> => {
     const key = `${fileId}@${width}`;
     const hit = cache.get(key);
     if (hit && hit.until > now()) return hit.url;
@@ -48,7 +50,9 @@ export function createPictureLoader(
       try {
         link = await slot(() => fetchLink(fileId, width));
       } catch (e) {
-        if (width !== 480 && e instanceof ApiError && e.status === 404) return fresh(fileId, 480);
+        // No such size: try the smallest, then the original (a visitor's picture has no sizes).
+        if (width !== null && e instanceof ApiError && e.status === 404)
+          return fresh(fileId, width === 480 ? null : 480);
         throw e;
       }
       const until = Date.parse(link.expiresAt) - SAFETY_MS;
