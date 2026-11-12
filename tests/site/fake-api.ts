@@ -110,6 +110,8 @@ export const api: Fetcher = {
     if (!p.startsWith(base)) return notFound();
     const rest = p.slice(base.length);
     if (rest === '') return json(fixture.studio);
+    // Checkout is off in the fake studio (as on the live site until Square keys): buy.js asks on every piece page.
+    if (rest === '/checkout') return json({enabled: false, methods: []});
     if (rest === '/site-photos') return json({places: fixture.places, catalogueVersion: v});
     if (rest === '/collections') {
       const counts = new Map<string, number>();

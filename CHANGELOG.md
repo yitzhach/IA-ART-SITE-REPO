@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Stage 5, see it on your wall (D-157…D-160): "See it on your wall" on every piece with a size and a picture. On an
+  iPhone or iPad, a live camera view at true size (a USDZ made in the browser from AR-WALLE's builder, pinch locked);
+  on any device, a photo of the wall (stays in the browser) sized from two taps on something of known length (dm-t1's
+  calibration), the piece dragged into place and saved as a picture. Its code (`/site/wall.js`, `wall-core.js`,
+  `wall.css`) loads on the tap. Checks: size within 2% on test photos, drag frames at a 4× slower CPU, the model's
+  size in meters.
 - Stage 4, shipping and the cart (D-146…D-154): piece pages say how each piece ships and offer Add to cart (any piece
   with a tier that isn't a quote); `/cart` keeps the cart in the browser, asks for a ZIP when a large piece needs an
   estimate, shows the studio's offer and suggestions, and sends the shipping it showed (a change is caught, not

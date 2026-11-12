@@ -72,4 +72,23 @@ describe('a piece', () => {
     const {text} = await get('/works/work-1');
     expect(text).toContain('<meta name="description" content="Strata — Cement, plaster, 36 × 24 in (91.4 × 61 cm)"');
   });
+
+  it('see it on your wall (stage 5): a hidden, scripts-only button with the size and the 1600 picture', async () => {
+    const {text} = await get('/works/work-1');
+    const b = /<button[^>]*data-wall[^>]*>/s.exec(text)?.[0] ?? '';
+    expect(b).toMatch(/hidden/);
+    expect(b).toMatch(/data-js/);
+    expect(b).toContain('data-w="24"');
+    expect(b).toContain('data-h="36"');
+    expect(b).toContain('data-d=""');
+    expect(b).toContain('data-unit="in"');
+    expect(b).toMatch(/data-img="[^"]*W1A[^"]*\/1600\.webp"/);
+    // The wall code loads only on the tap: not one of the page's scripts.
+    expect(text).not.toContain('/site/wall');
+  });
+  it('no wall button without a size or a picture', async () => {
+    fixture.works[0]!.width = null;
+    expect((await get('/works/work-1')).text).not.toContain('data-wall');
+    expect((await get('/works/work-5')).text).not.toContain('data-wall');
+  });
 });

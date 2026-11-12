@@ -49,6 +49,28 @@ function jsonLd(w: PublicArtwork, origin: string, studioName: string, price: str
   };
 }
 
+/** "See it on your wall" (stage 5, D-157): only with scripts, only for a piece with a width, a height and a picture. */
+function wallButton(w: PublicArtwork, cover: PublicArtwork['images'][number] | undefined): Raw | '' {
+  const ok = (v: number | null) => typeof v === 'number' && v > 0;
+  const img = cover ? sizeUrl(cover, 1600) : null;
+  if (!ok(w.width) || !ok(w.height) || !img) return '';
+  return html`<button
+    class="btn alt"
+    type="button"
+    hidden
+    data-js
+    data-wall
+    data-title="${w.title}"
+    data-w="${w.width}"
+    data-h="${w.height}"
+    data-d="${w.depth ?? ''}"
+    data-unit="${w.sizeUnit}"
+    data-img="${img}"
+  >
+    See it on your wall
+  </button>`;
+}
+
 export const render: Render = async (ctx, {slug}) => {
   const [w, list] = await Promise.all([ctx.data.work(slug!), ctx.data.works()]);
   if (!w) throw new NotFound(slug);
@@ -142,6 +164,7 @@ export const render: Render = async (ctx, {slug}) => {
                 </button>`
               : ''
           }
+          ${wallButton(w, cover)}
           <button class="btn alt" type="button" hidden data-inquiry data-title="${w.title}" data-url="${url}">
             Add to inquiry
           </button>
