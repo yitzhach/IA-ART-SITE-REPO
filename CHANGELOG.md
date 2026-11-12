@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The Ask sheet's thank-you after a lead or hold starts with a capital ("Thank you. The artist will reply…") while the
+  studio has no artist name yet.
 - Site 3.0 stage 3 (cards D and F): an Ask button in every page's header and "Ask about this piece" / "Hold for 48
   hours" on a piece open a bottom sheet (loaded on a tap, `/site/ask.js`): the assistant's greeting and questions, answers
   with up to six cards (Add to inquiry), "Open these as a page" (`/p/{token}`, noindex), Ask Isaac / Send to Isaac leads,
