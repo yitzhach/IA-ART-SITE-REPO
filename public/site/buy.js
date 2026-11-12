@@ -1,6 +1,7 @@
-// Buying (stage 4, D-144). Three places, each only where its element is:
-//  - a piece page: the Buy button shows when the studio's checkout is on and the piece is small enough;
-//  - /buy/{slug}: the form (card goes on to Square's own page; Venmo / Zelle sets the piece aside and says how to pay);
+// Buying (stage 4, D-144…D-154). Four places, each only where its element is:
+//  - a piece page: "Add to cart" shows when the studio's checkout is on (the server decides which pieces can be bought);
+//  - /buy/{slug}: the old one-piece address puts the piece in the cart and goes on to /cart;
+//  - /cart: each piece, shipping from the studio's calculator (never worked out here), the offer, then the order form;
 //  - /thanks/{id}: the buyer's own order, read with the visitor cookie (waits for Square's confirmation when needed).
 (function () {
   var ds = document.body.dataset;
@@ -63,26 +64,76 @@
   var checkout = function () {
     return json('/checkout');
   };
-  var fits = function (c, inches) {
-    return c && c.enabled && c.methods.length > 0 && Number(inches) <= c.smallMaxInches;
+  var open = function (c) {
+    return c && c.enabled && c.methods.length > 0;
   };
 
-  // ---------------------------------------------------------------- the piece page's Buy button
+  // ---------------------------------------------------------------- the cart: slugs and a ZIP, in this browser only
+  var KEY = 'studio-cart:' + (ds.slug || '');
+  var memory = {works: [], zip: ''};
+  function loadCart() {
+    try {
+      var v = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (v && Array.isArray(v.works))
+        return {
+          works: v.works
+            .filter(function (x) {
+              return typeof x === 'string' && /^[a-z0-9-]{1,120}$/.test(x);
+            })
+            .slice(0, 10),
+          zip: typeof v.zip === 'string' ? v.zip : '',
+        };
+    } catch (e) {}
+    return memory;
+  }
+  function saveCart(cart) {
+    memory = cart;
+    try {
+      localStorage.setItem(KEY, JSON.stringify(cart));
+    } catch (e) {}
+  }
+  function addToCart(slug) {
+    var cart = loadCart();
+    if (cart.works.indexOf(slug) < 0 && cart.works.length < 10) cart.works.push(slug);
+    saveCart(cart);
+  }
+  function removeFromCart(slug) {
+    var cart = loadCart();
+    cart.works = cart.works.filter(function (x) {
+      return x !== slug;
+    });
+    saveCart(cart);
+  }
+
+  // ---------------------------------------------------------------- the piece page's Add to cart
   var buyLink = document.querySelector('[data-buy]');
   if (buyLink)
     checkout().then(
       function (c) {
-        if (fits(c, buyLink.getAttribute('data-inches'))) buyLink.hidden = false;
+        if (!open(c)) return;
+        var slug = buyLink.getAttribute('data-piece');
+        if (loadCart().works.indexOf(slug) >= 0) {
+          buyLink.textContent = 'In your cart: view it';
+          buyLink.setAttribute('href', '/cart');
+        } else
+          buyLink.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            addToCart(slug);
+            location.assign('/cart');
+          });
+        buyLink.hidden = false;
       },
       function () {},
     );
 
-  // ---------------------------------------------------------------- /buy/{slug}
+  // ---------------------------------------------------------------- /buy/{slug}: into the cart
   var box = document.getElementById('buy');
   if (box)
     checkout().then(
       function (c) {
-        drawForm(box, c);
+        if (!open(c)) return noCheckout(box);
+        addToCart(box.dataset.piece);
+        location.replace('/cart');
       },
       function () {
         noCheckout(box);
@@ -98,18 +149,221 @@
     if (contact) contact.hidden = false;
   }
 
-  function drawForm(root, c) {
-    if (!fits(c, root.dataset.inches)) return noCheckout(root);
-    var price = Number(root.dataset.price),
-      cur = root.dataset.currency;
-    var tax = Math.round((price * c.taxBps) / 10000);
-    var total = price + c.shippingCents + tax;
+  // ---------------------------------------------------------------- /cart
+  var cartBox = document.getElementById('cart');
+  if (cartBox)
+    checkout().then(
+      function (c) {
+        if (!open(c)) return noCheckout(cartBox);
+        drawCart(cartBox, c, null);
+      },
+      function () {
+        noCheckout(cartBox);
+      },
+    );
+
+  var pieces = {}; // slug → the public piece (title, price, picture), read once
+  function piece(slug) {
+    if (pieces[slug]) return Promise.resolve(pieces[slug]);
+    return json('/artworks/' + encodeURIComponent(slug)).then(
+      function (w) {
+        return (pieces[slug] = w);
+      },
+      function () {
+        return (pieces[slug] = {slug: slug, title: 'A piece that is no longer on the site', images: [], gone: true});
+      },
+    );
+  }
+  function thumb(w) {
+    var img = w.images && w.images[0];
+    var size =
+      img &&
+      (img.sizes.filter(function (z) {
+        return z.width === 480;
+      })[0] ||
+        img.sizes[0]);
+    return size ? el('img', {src: size.url, alt: img.altText || w.title, width: 96, loading: 'lazy'}) : null;
+  }
+
+  function drawCart(root, c, notice) {
+    var cart = loadCart();
+    root.hidden = false;
+    if (!cart.works.length) {
+      root.replaceChildren(
+        el('p', {class: 'empty', text: 'Your cart is empty.'}),
+        el('p', {class: 'btns'}, [el('a', {class: 'btn', href: '/works', text: 'See the works'})]),
+      );
+      return;
+    }
+    var body = {works: cart.works};
+    if (/^\d{5}$/.test(cart.zip)) body.zip = cart.zip;
+    Promise.all([
+      Promise.all(cart.works.map(piece)),
+      json('/shipping/quote', {method: 'POST', body: JSON.stringify(body)}),
+    ]).then(
+      function (got) {
+        renderCart(root, c, cart, got[1], notice);
+      },
+      function (e) {
+        root.replaceChildren(el('p', {class: 'err', role: 'alert', text: e.message}));
+      },
+    );
+  }
+
+  function renderCart(root, c, cart, q, notice) {
+    var cur = 'USD';
+    var lineOf = {};
+    q.lines.forEach(function (l) {
+      lineOf[l.slug] = l;
+    });
+    var why = {};
+    q.blocked.forEach(function (b) {
+      why[b.slug] = b.why;
+    });
+    q.quote.forEach(function (s) {
+      why[s] = 'Ships by quote. Ask and the artist will reply with shipping.';
+    });
+    var list = el(
+      'ul',
+      {class: 'cart-list'},
+      cart.works.map(function (slug) {
+        var w = pieces[slug] || {slug: slug, title: slug, images: []};
+        var l = lineOf[slug];
+        var ship = !l
+          ? null
+          : l.chargedCents === 0
+            ? l.baseCents && l.coveredCents
+              ? 'Shipping: free with your cart (' + money(l.baseCents, cur) + ' off)'
+              : 'Shipping: free'
+            : 'Shipping: ' +
+              money(l.chargedCents, cur) +
+              (l.estimate ? ' (estimate to your ZIP)' : '') +
+              (l.coveredCents ? ', ' + money(l.coveredCents, cur) + ' off' : '');
+        var remove = el('button', {
+          class: 'btn alt sm',
+          type: 'button',
+          text: 'Remove',
+          on: {
+            click: function () {
+              removeFromCart(slug);
+              drawCart(root, c, null);
+            },
+          },
+        });
+        return el('li', {class: 'cart-item'}, [
+          w.gone ? null : el('a', {href: '/works/' + slug}, [thumb(w)]),
+          el('div', {}, [
+            w.gone ? el('strong', {text: w.title}) : el('a', {href: '/works/' + slug}, [el('strong', {text: w.title})]),
+            w.priceCents ? el('br') : null,
+            w.priceCents ? money(w.priceCents, cur) : null,
+            ship ? el('br') : null,
+            ship,
+            why[slug] ? el('p', {class: 'err', text: why[slug]}) : null,
+            remove,
+          ]),
+        ]);
+      }),
+    );
+
+    var zip = el('input', {
+      name: 'zip',
+      id: 'c-zip',
+      inputmode: 'numeric',
+      autocomplete: 'postal-code',
+      maxlength: '5',
+      value: cart.zip || '',
+    });
+    var zipForm = el('form', {class: 'cart-zip', novalidate: true}, [
+      el('label', {class: 'field', for: 'c-zip'}, [
+        el('span', {text: 'Your ZIP code, for the shipping estimate'}),
+        zip,
+      ]),
+      el('p', {class: 'btns'}, [el('button', {class: 'btn alt', type: 'submit', text: 'Work out shipping'})]),
+    ]);
+    zipForm.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var v = zip.value.trim();
+      if (!/^\d{5}$/.test(v)) {
+        zip.focus();
+        return;
+      }
+      var k = loadCart();
+      k.zip = v;
+      saveCart(k);
+      drawCart(root, c, null);
+    });
+    var large = q.lines.some(function (l) {
+      return l.estimate;
+    });
+
+    var kids = [list];
+    if (notice) kids.unshift(el('p', {class: 'err', role: 'alert', text: notice}));
+    if (q.needsZip || large) kids.push(zipForm);
+    if (q.nudge && q.nudge.kind !== 'quote') kids.push(el('p', {class: 'note-line', text: q.nudge.text}));
+    if (q.suggestions.length)
+      kids.push(
+        el(
+          'ul',
+          {class: 'cart-list cart-suggest'},
+          q.suggestions.map(function (s) {
+            return el('li', {class: 'cart-item'}, [
+              s.image
+                ? el('a', {href: '/works/' + s.slug}, [el('img', {src: s.image, alt: s.title, width: 96})])
+                : null,
+              el('div', {}, [
+                el('a', {href: '/works/' + s.slug}, [el('strong', {text: s.title})]),
+                el('br'),
+                money(s.priceCents, cur),
+                el('button', {
+                  class: 'btn alt sm',
+                  type: 'button',
+                  text: 'Add to cart',
+                  on: {
+                    click: function () {
+                      addToCart(s.slug);
+                      drawCart(root, c, null);
+                    },
+                  },
+                }),
+              ]),
+            ]);
+          }),
+        ),
+      );
+
+    if (!q.ok) {
+      if (!q.needsZip)
+        kids.push(
+          el('p', {
+            class: 'empty',
+            text: 'Remove the pieces marked above to check out, or ask the artist about them.',
+          }),
+        );
+      kids.push(el('p', {class: 'btns'}, [el('a', {class: 'btn alt', href: '/works', text: 'Keep looking'})]));
+      var contact = document.querySelector('.buy-contact');
+      if (contact && !q.needsZip) contact.hidden = false;
+      root.replaceChildren.apply(root, kids);
+      return;
+    }
+
+    var tax = Math.round((q.subtotalCents * c.taxBps) / 10000);
     var rows = [
-      ['Piece', money(price, cur)],
-      ['Shipping (US)', c.shippingCents ? money(c.shippingCents, cur) : 'Free'],
+      [cart.works.length > 1 ? 'Pieces' : 'Piece', money(q.subtotalCents, cur)],
+      ['Shipping (US)', q.shippingCents ? money(q.shippingCents, cur) : 'Free'],
     ];
+    if (q.coveredCents) rows.push(['Shipping covered', '−' + money(q.coveredCents, cur)]);
     if (tax) rows.push(['Sales tax', money(tax, cur)]);
-    rows.push(['Total', money(total, cur)]);
+    rows.push(['Total', money(q.totalCents + tax, cur)]);
+    kids.push(
+      orderForm(c, cart, q, rows, function (msg) {
+        drawCart(root, c, msg);
+      }),
+    );
+    kids.push(el('p', {class: 'btns'}, [el('a', {class: 'btn alt', href: '/works', text: 'Keep looking'})]));
+    root.replaceChildren.apply(root, kids);
+  }
+
+  function orderForm(c, cart, q, rows, again) {
     var f = {};
     function field(label, name, type, attrs) {
       var input = el('input', Object.assign({name: name, id: 'b-' + name, type: type}, attrs || {}));
@@ -125,7 +379,7 @@
       el('p', {
         class: 'sheet-small',
         text:
-          'The piece is set aside for you for ' +
+          'The pieces are set aside for you for ' +
           c.manualHoldHours +
           ' hours while you pay. You get an email with how to pay.',
       }),
@@ -141,11 +395,12 @@
         inputmode: 'numeric',
         maxlength: '10',
         required: true,
+        value: cart.zip || null,
       }),
     ]);
     var cardNote = el('p', {
       class: 'sheet-small',
-      text: "Square's secure page takes your card and your shipping address. The piece is set aside for 30 minutes while you pay.",
+      text: "Square's secure page takes your card and your shipping address. The pieces are set aside for 30 minutes while you pay.",
     });
     var trap = el('label', {class: 'hp', 'aria-hidden': 'true'}, [
       'Website ',
@@ -180,7 +435,7 @@
       var isCard = method() === 'card';
       manual.hidden = isCard;
       cardNote.hidden = !isCard;
-      go.textContent = isCard ? 'Continue to card payment' : 'Set it aside and email me how to pay';
+      go.textContent = isCard ? 'Continue to card payment' : 'Set them aside and email me how to pay';
     }
     methods.addEventListener('change', sync);
     sync();
@@ -188,7 +443,9 @@
       ev.preventDefault();
       err.hidden = true;
       var m = method();
-      var body = {work: root.dataset.piece, method: m};
+      // The shipping the visitor saw goes back: if it changed, the studio says so and nothing is set aside (D-151).
+      var body = {works: cart.works, method: m, shippingCents: q.shippingCents};
+      if (/^\d{5}$/.test(cart.zip)) body.zip = cart.zip;
       var trapValue = form.querySelector('input[name=website]').value;
       if (trapValue) body.website = trapValue;
       if (m !== 'card') {
@@ -214,10 +471,12 @@
       go.textContent = 'One moment…';
       json('/visitor/orders', {method: 'POST', body: JSON.stringify(body)}).then(
         function (o) {
+          saveCart({works: [], zip: cart.zip});
           if (o.method === 'card' && o.checkoutUrl) location.assign(o.checkoutUrl);
           else location.assign('/thanks/' + o.id);
         },
         function (e) {
+          if (e.status === 409) return again(e.message);
           go.disabled = false;
           sync();
           err.textContent = e.message;
@@ -225,8 +484,7 @@
         },
       );
     });
-    root.replaceChildren(form);
-    root.hidden = false;
+    return form;
   }
 
   // ---------------------------------------------------------------- /thanks/{id}

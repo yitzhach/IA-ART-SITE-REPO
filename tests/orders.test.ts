@@ -102,3 +102,22 @@ describe('checkout form', () => {
     expect(fromFields({...toFields(undefined), holdHours: '0'})).toMatchObject({field: 'holdHours'});
   });
 });
+
+describe('orders with several pieces (D-151)', () => {
+  it('lists each piece and the covered shipping', async () => {
+    const {itemLines, totalLine} = await import('../src/lib/orders');
+    const o = {
+      totalCents: 170000,
+      amountCents: 170000,
+      shippingCents: 0,
+      taxCents: 0,
+      coveredCents: 8600,
+      items: [
+        {slug: 'marsh', title: 'Marsh', priceCents: 120000, shippingCents: 0, coveredCents: 4600},
+        {slug: 'egret', title: 'Egret', priceCents: 50000, shippingCents: 0, coveredCents: 4000},
+      ],
+    } as never;
+    expect(itemLines(o)).toEqual(['Marsh · $1,200', 'Egret · $500']);
+    expect(totalLine(o)).toBe('$1,700 ($1,700); you covered $86 of shipping');
+  });
+});

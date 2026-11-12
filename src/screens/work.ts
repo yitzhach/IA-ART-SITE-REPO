@@ -4,6 +4,7 @@ import {
   markDrafted,
   numberField,
   priceField,
+  shippingField,
   sizeField,
   statusField,
   tagField,
@@ -54,6 +55,7 @@ export const editable = (a: ArtworkDetail): Partial<ArtworkInput> => ({
   priceCents: a.priceCents,
   status: a.status,
   editionSize: a.editionSize,
+  shipping: a.shipping ?? null,
   ...(a.public ? {slug: a.slug ?? ''} : {}),
 });
 
@@ -102,6 +104,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
     const year = yearField(a.year);
     const size = sizeField({width: a.width, height: a.height, depth: a.depth, sizeUnit: a.sizeUnit});
     const price = priceField(a.priceCents);
+    const shipping = shippingField(a.shipping ?? null);
     const status = statusField(a.status);
     const edition = numberField('Edition size', a.editionSize, 'Leave blank for a one-of-a-kind original.');
     const slug = textField('Web address', a.slug ?? '', {hint: 'Changing it breaks links people already have.'});
@@ -122,6 +125,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
         p = price.read(),
         st = status.read(),
         e = edition.read(),
+        sh = shipping.read(),
         sl = a.public ? slug.read() : '',
         al = alt.read();
       const checks: [unknown, {focus(): void}][] = [
@@ -130,6 +134,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
         [s, size],
         [p, price],
         [e, edition],
+        [sh, shipping],
       ];
       for (const [v, f] of checks) {
         if (v === INVALID) {
@@ -153,6 +158,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
           priceCents: p as number | null,
           status: st as ArtworkInput['status'],
           editionSize: e as number | null,
+          shipping: sh as ArtworkInput['shipping'],
           ...(a.public ? {slug: sl as string} : {}),
         },
         alt: al as string,
@@ -484,6 +490,7 @@ export async function render(el: HTMLElement, params: Params): Promise<void> {
           edition.el,
           a.public ? slug.el : null,
         ),
+        h('div', {class: 'card'}, h('h2', {}, 'Shipping'), shipping.el),
         problem,
         h('div', {class: 'row'}, h('button', {class: 'primary act', type: 'submit'}, 'Save changes')),
       ),

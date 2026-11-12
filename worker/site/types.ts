@@ -35,6 +35,8 @@ export interface PublicArtwork {
   /** Cover first. */
   images: PublicImage[];
   publishedAt: string | null;
+  /** Shipping in the US (D-146): free, a flat or pinned amount, a ZIP estimate at checkout, or a quote. Null: not set. */
+  shipping?: {tier: 1 | 2 | 3 | 4; cents: number | null; estimate: boolean; quote: boolean} | null;
 }
 
 export interface PublicArtworkList {

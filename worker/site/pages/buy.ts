@@ -1,8 +1,7 @@
-// /buy/{slug}: buying one piece (stage 4, D-144). The page shows the piece and its price; public/site/buy.js asks the
-// checkout's settings and draws the form: card (Square's own page takes the card and the address) or Venmo / Zelle
-// (name, email and address here; the piece is set aside and the studio sells it when the money arrives). Unlisted.
+// /buy/{slug}: the old one-piece address (stage 4, D-144), kept for links already shared. public/site/buy.js puts the
+// piece in the cart and goes on to /cart, where buying happens (D-151). A piece that can't be bought says why. Unlisted.
 import {NotFound} from '../data';
-import {availability, longest, sizeLine} from '../format';
+import {availability, buyable, sizeLine} from '../format';
 import {html} from '../html';
 import type {Render} from '../page';
 import {picture} from '../picture';
@@ -14,7 +13,7 @@ export const render: Render = async (ctx, {slug}) => {
   const a = availability(w);
   const size = sizeLine(w);
   const cover = w.images[0];
-  const can = w.status === 'available' && !!a.price && longest(w) !== null;
+  const can = buyable(w);
   return {
     title: `Buy ${w.title}`,
     description: `Buy ${w.title}.`,
@@ -33,16 +32,9 @@ export const render: Render = async (ctx, {slug}) => {
       </div>
       ${
         can
-          ? html`<div
-                id="buy"
-                data-js
-                hidden
-                data-piece="${w.slug}"
-                data-title="${w.title}"
-                data-price="${w.priceCents!}"
-                data-currency="${w.currency ?? 'USD'}"
-                data-inches="${longest(w)!}"
-              ></div>
+          ? html`<div id="buy" data-js hidden data-piece="${w.slug}">
+                <p class="note-line">Adding it to your cart…</p>
+              </div>
               <noscript><p class="empty">Buying here needs scripts. You can still reach the studio:</p></noscript>`
           : html`<p class="empty">
               ${

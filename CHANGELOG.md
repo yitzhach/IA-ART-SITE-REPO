@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Stage 4, shipping and the cart (D-146…D-154): piece pages say how each piece ships and offer Add to cart (any piece
+  with a tier that isn't a quote); `/cart` keeps the cart in the browser, asks for a ZIP when a large piece needs an
+  estimate, shows the studio's offer and suggestions, and sends the shipping it showed (a change is caught, not
+  charged). `/buy/{slug}` now adds to the cart. Studio: Site → Shipping (prices, the offer, UPS rates) and Shipping
+  tiers (accept the size's suggestions); a Shipping section on each work; Orders list every piece of a cart.
 - Stage 4 (buying, D-144): a Buy button on priced, available small pieces when the studio's checkout is on; `/buy/{slug}`
   (card on Square's page, or Venmo / Zelle with name, email and address); `/thanks/{id}` (the buyer's own order, waits
   for Square's confirmation); the owner's Orders screen (Mark paid, Add tracking, More time, Cancel) and Site →

@@ -34,6 +34,10 @@ export interface Order {
   tracking: string | null;
   squarePaymentId: string | null;
   conflict: boolean;
+  /** Shipping the studio covered under the offer (D-148); absent on older platforms. */
+  coveredCents?: number;
+  /** Every piece of a cart (D-151); absent on older platforms. */
+  items?: {slug: string | null; title: string; priceCents: number; shippingCents: number; coveredCents: number}[];
   createdAt: string;
   updatedAt: string;
 }
@@ -71,7 +75,9 @@ export const totalLine = (o: Order) =>
     o.taxCents ? `+ ${formatPrice(o.taxCents)} tax` : '',
   ]
     .filter(Boolean)
-    .join(' ') + ')';
+    .join(' ') +
+  ')' +
+  (o.coveredCents ? `; you covered ${formatPrice(o.coveredCents)} of shipping` : '');
 
 export const addressLines = (o: Order): string[] => {
   const a = o.shippingAddress;
@@ -122,3 +128,7 @@ export const listOrders = (status: 'open' | 'all') =>
   get<{items: Order[]}>(`/orders?status=${status}`).then(r => r.items);
 export const runOrderAction = (o: Order, action: OrderAction, body: Record<string, unknown> = {}) =>
   post<Order>(`/orders/${encodeURIComponent(o.id)}/${action}`, body, o.version);
+
+/** One line per piece when an order holds more than one: "Heron · $500". */
+export const itemLines = (o: Order): string[] =>
+  (o.items ?? []).length > 1 ? o.items!.map(i => `${i.title} · ${formatPrice(i.priceCents)}`) : [];

@@ -45,7 +45,13 @@ const photo = (id: string, title: string, workSlug: string | null = null): Publi
 
 export function freshFixture() {
   const works: PublicArtwork[] = [
-    work(1, {title: 'Strata', status: 'available', priceCents: 480000, currency: 'USD'}),
+    work(1, {
+      title: 'Strata',
+      status: 'available',
+      priceCents: 480000,
+      currency: 'USD',
+      shipping: {tier: 3, cents: null, estimate: true, quote: false},
+    }),
     work(2, {title: 'Upper Limit', status: 'sold'}),
     work(3, {title: 'Green Horizon', status: 'available'}),
     work(4, {title: 'Reserved One', status: 'reserved'}),

@@ -12,6 +12,7 @@ import {
   orderButtons,
   runOrderAction,
   statusLabel,
+  itemLines,
   totalLine,
   type Order,
   type OrderButton,
@@ -86,6 +87,13 @@ function card(o: Order, redraw: () => Promise<void>): HTMLElement {
       h('span', {class: needsYou(o) ? 'chip accent' : 'chip'}, statusLabel(o)),
     ),
     h('p', {class: 'muted'}, `${o.code} · ${methodLabel(o.method)} · ${when(o.createdAt)}`),
+    itemLines(o).length
+      ? h(
+          'ul',
+          {class: 'order-items'},
+          itemLines(o).map(l => h('li', null, l)),
+        )
+      : null,
     h('p', null, totalLine(o)),
     o.status === 'awaiting_payment' && o.expiresAt
       ? h(
