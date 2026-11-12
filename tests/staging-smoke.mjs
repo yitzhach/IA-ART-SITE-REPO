@@ -234,6 +234,26 @@ await check('See it on your wall: true size within 2% on a test photo, and the l
   return `${found}: ${(err * 100).toFixed(2)}% off, model ${Math.round(live / 1024)} KB`;
 });
 
+// Stage 6: following and collector links (no code is sent and no collector is made here).
+await check('Follow the studio: the footer links to it and its form shows', async () => {
+  await page.goto(base + '/works', {waitUntil: 'load'});
+  if (!(await page.locator('footer a[href="/follow"]').count())) throw new Error('no footer link to /follow');
+  const res = await page.goto(base + '/follow', {waitUntil: 'load'});
+  if (res.status() !== 200) throw new Error(`status ${res.status()}`);
+  await page.locator('[data-follow] input[type=email]').waitFor({state: 'visible', timeout: 10000});
+  await page.screenshot({path: `${out}/follow.png`, fullPage: false});
+  return 'form shown';
+});
+
+await check('a made-up collector link shows nothing', async () => {
+  const fake = 'smokeTestNotARealLink0000';
+  const res = await page.goto(`${base}/c/${fake}`, {waitUntil: 'load'});
+  if (res.status() !== 404) throw new Error(`page status ${res.status()}`);
+  const api = await page.request.get(`${base}/v1/public/studios/${slug}/collectors/${fake}`);
+  if (api.status() !== 404) throw new Error(`api status ${api.status()}`);
+  return '404';
+});
+
 await check('no script errors on any page', async () => {
   if (errors.length) throw new Error(errors.slice(0, 3).join(' | '));
 });

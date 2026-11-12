@@ -1,0 +1,29 @@
+/* Collector, certificate and follow pages (stage 6). Colours come from the page's Plaster tokens. */
+.collector section{margin:0 0 40px}
+.collector h2{margin:0 0 12px}
+.fl-item .btn{width:100%;margin-top:10px}
+.commission{margin:0 0 24px;padding:16px;border:1px solid var(--line);background:var(--card)}
+.commission h3{margin:0 0 4px}
+.stages{list-style:none;margin:12px 0 0;padding:0;counter-reset:st}
+.stages li{position:relative;margin:0;padding:6px 0 12px 32px;border-left:2px solid var(--line);margin-left:9px;color:var(--muted)}
+.stages li::before{counter-increment:st;content:counter(st);position:absolute;left:-11px;top:4px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--line);font:600 11px/16px var(--mono);text-align:center}
+.stages li.done,.stages li.now{color:var(--ink)}
+.stages li.done::before{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.stages li.now::before{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.stages li:last-child{border-left-color:transparent}
+.stages b{display:block}
+.stages span{display:block;font-size:14px}
+.follow-form{max-width:420px}
+.follow-form .field{display:block;margin:12px 0 6px;font-weight:600}
+.follow-form input{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--ink);border-radius:0;background:var(--card);color:var(--ink);font-size:16px;margin:0 0 12px}
+.follow-form .trap{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.follow-msg{min-height:1.5em}
+.ftr-follow{font-size:14px}
+.cert{max-width:640px;margin:0 auto;padding:28px 20px;border:2px solid var(--ink);background:var(--card)}
+.cert img{width:100%;height:auto;margin:12px 0 16px}
+.cert dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0 0 16px}
+.cert dt{font:400 12px/1.6 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.cert dd{margin:0}
+.cert .sign{margin-top:32px}
+.cert .line{display:inline-block;width:60%;border-bottom:1px solid var(--ink);vertical-align:bottom}
+@media print{.site-hdr,.site-ftr,.no-print,.skip{display:none!important}.cert{border:2px solid #000;background:#fff;color:#000}body{background:#fff}}

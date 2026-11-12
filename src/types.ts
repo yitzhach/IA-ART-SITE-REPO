@@ -56,6 +56,8 @@ export interface Artwork extends BaseRecord {
   editionSize: number | null;
   public: boolean;
   publishedAt: string | null;
+  /** First look (D-165): collectors and followers see it before this time; the public site after. Null: public now. */
+  publicFrom?: string | null;
   /** "site_photo": a picture for the site's pages, kept out of the works list. Absent on older records = work. */
   kind?: 'work' | 'site_photo';
   draftedFields: DraftableField[];

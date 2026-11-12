@@ -135,3 +135,57 @@ export interface PublicVisitorPage {
   createdAt: string;
   catalogueVersion: number;
 }
+
+/** A work a collector owns, on their page (studio-api PublicOwnedWork, D-164, D-166). Pictures come through the
+ * page's own token, so a sold work that is no longer public still shows to its owner. */
+export interface PublicOwnedWork extends PublicArtwork {
+  certificate: string;
+  /** YYYY-MM-DD, when the sale recorded it. */
+  soldOn: string | null;
+}
+
+/** A public work still in first look (D-165): shown on collector and follower pages before the public site. */
+export interface PublicFirstLookWork extends PublicArtwork {
+  /** When it reaches the public site. */
+  publicFrom: string;
+}
+
+export type CommissionStage = 'surface' | 'layering' | 'color' | 'erosion' | 'finished';
+
+/** A collector's private page (studio-api PublicCollectorPage, D-163). First name only; no email, no prices paid. */
+export interface PublicCollectorPage {
+  firstName: string;
+  studioName: string;
+  works: PublicOwnedWork[];
+  care: string | null;
+  firstLook: PublicFirstLookWork[];
+  commissions: {
+    title: string;
+    size: string | null;
+    stage: CommissionStage;
+    status: 'open' | 'done' | 'cancelled';
+    notes: Partial<Record<CommissionStage, string>>;
+    dueOn: string | null;
+    updatedAt: string;
+  }[];
+  catalogueVersion: number;
+}
+
+/** A follower's own page (studio-api PublicFollowerPage). */
+export interface PublicFollowerPage {
+  /** Partly hidden, e.g. "fa…@example.com". */
+  email: string;
+  following: boolean;
+  studioName: string;
+  firstLook: PublicFirstLookWork[];
+}
+
+/** A show, for the follow page its QR code opens (studio-api PublicShow). */
+export interface PublicShow {
+  id: string;
+  name: string;
+  venue: string | null;
+  city: string | null;
+  startsOn: string | null;
+  endsOn: string | null;
+}

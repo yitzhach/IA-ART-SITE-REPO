@@ -107,6 +107,7 @@ export function layout(ctx: PageCtx, page: Page): string {
           <p class="ftr-contact">${contactLinks(s)}</p>
           ${hours ? html`<p class="hours">${hours}</p>` : ''}
           <nav aria-label="Footer">${nav()}</nav>
+          <p class="ftr-follow"><a href="/follow">Follow the studio</a>: new work comes to followers first.</p>
         </footer>
         ${scripts.map(src => html`<script src="${src}" defer></script>`)}
       </body>

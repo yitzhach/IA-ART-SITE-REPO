@@ -3,6 +3,9 @@
 import type {
   PublicArtwork,
   PublicArtworkList,
+  PublicCollectorPage,
+  PublicFollowerPage,
+  PublicShow,
   PublicAssistant,
   PublicCollections,
   PublicDigest,
@@ -45,6 +48,12 @@ export interface SiteData {
   digest(): Promise<PublicDigest>;
   /** A made page; throws NotFound for an unknown token. */
   visitorPage(token: string): Promise<PublicVisitorPage>;
+  /** A collector's page by its private link (D-163); throws NotFound for an unknown or stopped link. */
+  collectorPage(token: string): Promise<PublicCollectorPage>;
+  /** A follower's own page; throws NotFound for an unknown token. */
+  followerPage(token: string): Promise<PublicFollowerPage>;
+  /** A show, for its QR code's follow page; throws NotFound. */
+  show(id: string): Promise<PublicShow>;
 }
 
 export function siteData(api: Fetcher, slug: string): SiteData {
@@ -83,5 +92,8 @@ export function siteData(api: Fetcher, slug: string): SiteData {
     assistant: () => get<PublicAssistant>('/assistant').catch(() => null),
     digest: () => get('/digest'),
     visitorPage: token => get(`/pages/${encodeURIComponent(token)}`),
+    collectorPage: token => get(`/collectors/${encodeURIComponent(token)}`),
+    followerPage: token => get(`/followers/${encodeURIComponent(token)}`),
+    show: id => get(`/shows/${encodeURIComponent(id)}`),
   };
 }
