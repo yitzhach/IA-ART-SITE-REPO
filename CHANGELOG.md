@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Final pass, card B: `/questions`, the answers saved under Site → Assistant → Answers, each under a plain question,
+  with `FAQPage` data. In the footer and the sitemap only while at least one answer is saved; none saved: 404.
 - Final pass, before Isaac's test (D-171, D-172): a **Listen** button on each assistant answer in the Ask sheet reads
   it aloud with the browser's own voice (speech synthesis; only on a tap, one answer at a time, stops when the sheet
   closes or the view changes; no button where the browser has no voice). The footer of every public page shows the
