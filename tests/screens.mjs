@@ -598,10 +598,10 @@ for (const [w, h] of sizes)
   check(state.find(x => x.id === 'W3').public === true, 'choosing a draft photo publishes it');
   // The trade page (D-175) starts as a draft that isn't saved until Isaac saves it.
   const trade = page.locator('#page-trade');
-  check((await trade.locator('summary').textContent()).includes('Draft, not on your site'), 'trade page is a draft');
+  check((await page.locator('#page-trade > summary').textContent()).includes('Draft, not on your site'), 'trade page is a draft');
   const before = await page.evaluate(() => fetch('/v1/settings').then(r => r.json()));
   check(!before.meta?.site?.pages?.trade, 'the trade draft is not saved by opening the screen');
-  await trade.locator('summary').click();
+  await page.locator('#page-trade > summary').click();
   await trade.locator('button:has-text("Save For designers and architects")').click();
   await trade.locator('.save-status:has-text("Saved")').waitFor();
   const after = await page.evaluate(() => fetch('/v1/settings').then(r => r.json()));
