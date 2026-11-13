@@ -73,3 +73,37 @@ export function blocks(body: string | undefined | null): ({p: string} | {list: s
       return lines.every(l => l.startsWith('• ')) ? {list: lines.map(l => l.slice(2))} : {p: lines.join(' ')};
     });
 }
+
+/** This deploy as Cloudflare names it (the `version_metadata` binding): its id and when it was uploaded. */
+export interface DeployVersion {
+  id: string;
+  timestamp?: string;
+}
+
+/** The footer's version line, in the studio's time zone: '2026-11-13 06:32 PST · 8ad56c05' (the last part is the
+ * start of the Worker version id, as Cloudflare's Deployments list shows it). Null when the deploy isn't known. */
+export function versionLine(v: DeployVersion | undefined, timeZone: string): string | null {
+  if (!v?.id) return null;
+  const id = v.id.slice(0, 8);
+  const at = v.timestamp ? new Date(v.timestamp) : null;
+  if (!at || Number.isNaN(at.getTime())) return id;
+  const parts = (zone: string) =>
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: zone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+      timeZoneName: 'short',
+    }).formatToParts(at);
+  let p: Intl.DateTimeFormatPart[];
+  try {
+    p = parts(timeZone);
+  } catch {
+    p = parts('UTC'); // a time zone this runtime doesn't know
+  }
+  const get = (type: string) => p.find(x => x.type === type)?.value ?? '';
+  return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')} ${get('timeZoneName')} · ${id}`;
+}

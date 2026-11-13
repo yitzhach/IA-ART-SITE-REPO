@@ -10,6 +10,8 @@ export interface PageCtx {
   data: SiteData;
   studio: PublicStudio;
   photos: PublicSitePhotos;
+  /** The footer's version line (which deploy this page came from); absent in tests and local runs. */
+  version?: string | null;
 }
 
 export interface Page {

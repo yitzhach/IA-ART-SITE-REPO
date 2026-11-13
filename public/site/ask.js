@@ -135,6 +135,7 @@
   }
   function close() {
     if (!root) return;
+    stopSpeaking();
     document.removeEventListener('keydown', onKey, true);
     root.remove();
     root = null;
@@ -146,6 +147,7 @@
   var nav = 0;
   function view(title, focusSel) {
     nav++;
+    stopSpeaking();
     titleEl.textContent = title;
     main.textContent = '';
     foot.textContent = '';
@@ -400,8 +402,40 @@
       function (e) { trigger.disabled = false; holder.appendChild(el('p', {class: 'err', role: 'alert', text: e.message})); },
     );
   }
+  // Listen: an answer read aloud by the browser's own voice (speech synthesis), only on a tap; one answer at a time.
+  var synth = window.speechSynthesis;
+  var canSpeak = !!(synth && window.SpeechSynthesisUtterance);
+  var speaking = null; // the Listen button of the answer being read
+  function stopSpeaking() {
+    if (!canSpeak) return;
+    var b = speaking;
+    speaking = null;
+    if (b) b.textContent = 'Listen';
+    synth.cancel();
+  }
+  function listenBtn(text) {
+    var b = el('button', {type: 'button', class: 'linkbtn listen', text: 'Listen'});
+    b.addEventListener('click', function () {
+      var mine = speaking === b;
+      stopSpeaking();
+      if (mine) return;
+      var u = new window.SpeechSynthesisUtterance(text);
+      u.lang = document.documentElement.lang || 'en';
+      u.onend = u.onerror = function () {
+        if (speaking !== b) return;
+        speaking = null;
+        b.textContent = 'Listen';
+      };
+      speaking = b;
+      b.textContent = 'Stop';
+      synth.speak(u);
+    });
+    return b;
+  }
+  if (canSpeak) window.addEventListener('pagehide', stopSpeaking);
   function drawAnswer(log, m, question, isLast) {
     var wrap = el('div', {class: 'msg assistant'}, [el('p', {text: m.text})]);
+    if (canSpeak && m.text) wrap.appendChild(listenBtn(m.text));
     var works = (m.works || []).map(function (s) { return typeof s === 'string' ? known[s] : s; }).filter(Boolean);
     if (works.length) {
       wrap.appendChild(cardList(works));
@@ -422,6 +456,7 @@
   }
   var log;
   function drawLog() {
+    stopSpeaking();
     log.textContent = '';
     var msgs = chat.state ? chat.state.messages : [];
     if (!msgs.length) {

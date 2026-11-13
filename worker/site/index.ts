@@ -3,6 +3,7 @@
 import {cached} from './cache';
 import {NotFound, siteData} from './data';
 import {oldAddress, robots, sitemap} from './extras';
+import {versionLine, type DeployVersion} from './format';
 import {layout} from './layout';
 import type {Page, PageCtx} from './page';
 import {notFound} from './pages/notfound';
@@ -12,8 +13,9 @@ export interface SiteEnv {
   API: Fetcher;
   /** The studio this site shows (D-117). */
   STUDIO_SLUG?: string;
-  /** This deploy's id: a new deploy (new templates) must not be answered from pages the last one cached. */
-  CF_VERSION_METADATA?: {id: string};
+  /** This deploy: its id keeps a new deploy (new templates) from being answered with pages the last one cached,
+   * and the footer shows it with its upload time. */
+  CF_VERSION_METADATA?: DeployVersion;
 }
 
 const HTML = {
@@ -40,7 +42,13 @@ export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContex
       );
     const route = match(url.pathname);
     const render = async () => {
-      const pc: PageCtx = {url, data, studio, photos: await data.sitePhotos()};
+      const pc: PageCtx = {
+        url,
+        data,
+        studio,
+        photos: await data.sitePhotos(),
+        version: versionLine(env.CF_VERSION_METADATA, studio.timezone),
+      };
       let page: Page;
       try {
         page = route ? await route.render(pc, route.params) : notFound();

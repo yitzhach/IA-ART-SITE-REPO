@@ -1,6 +1,8 @@
 import {beforeEach, describe, expect, it} from 'vitest';
 import {CSS} from '../../worker/site/plaster';
-import {fixture, get, reset} from './fake-api';
+import {versionLine} from '../../worker/site/format';
+import {site} from '../../worker/site/index';
+import {env, fixture, get, reset} from './fake-api';
 
 beforeEach(reset);
 
@@ -46,6 +48,24 @@ describe('layout', () => {
       const {text} = await get(p);
       expect(text.match(/<h1[\s>]/g)?.length, p).toBe(1);
     }
+  });
+  it("the footer names the deploy: its time in the studio's time zone and the version id", async () => {
+    const v = {id: '8ad56c05-1111-2222-3333-444455556666', timestamp: '2026-11-13T14:32:05Z'};
+    expect(versionLine(v, 'America/Los_Angeles')).toBe('2026-11-13 06:32 PST · 8ad56c05');
+    expect(versionLine(v, 'America/New_York')).toBe('2026-11-13 09:32 EST · 8ad56c05');
+    // Evening in the studio is already tomorrow in UTC: the date is the studio's.
+    expect(versionLine({...v, timestamp: '2026-07-04T02:05:00Z'}, 'America/Los_Angeles')).toBe(
+      '2026-07-03 19:05 PDT · 8ad56c05',
+    );
+    expect(versionLine(v, 'Not/AZone')).toBe('2026-11-13 14:32 UTC · 8ad56c05');
+    expect(versionLine({id: v.id}, 'America/Los_Angeles')).toBe('8ad56c05');
+    expect(versionLine({id: v.id, timestamp: 'nonsense'}, 'America/Los_Angeles')).toBe('8ad56c05');
+    expect(versionLine(undefined, 'America/Los_Angeles')).toBeNull();
+
+    const res = await site(new Request('https://site.test/works'), {...env, CF_VERSION_METADATA: v});
+    expect(await res.text()).toContain('<p class="ftr-ver">Version 2026-11-13 06:32 PST · 8ad56c05</p>');
+    // Without a deploy (tests, a local run) the line is left out.
+    expect((await get('/works')).text).not.toContain('class="ftr-ver"');
   });
   it('a studio without phone or email still renders', async () => {
     fixture.studio.phone = null;

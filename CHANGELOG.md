@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Final pass, before Isaac's test (D-171, D-172): a **Listen** button on each assistant answer in the Ask sheet reads
+  it aloud with the browser's own voice (speech synthesis; only on a tap, one answer at a time, stops when the sheet
+  closes or the view changes; no button where the browser has no voice). The footer of every public page shows the
+  deploy: `Version 2026-11-13 06:32 PST · 8ad56c05` (upload time in the studio's time zone, then the start of the
+  Worker version id as Cloudflare's Deployments list shows it), from the `version_metadata` binding; left out in
+  tests and local runs.
 - Stage 6, collectors (D-163…D-168): `/c/{token}`, a collector's private page (works they own with certificates,
   care notes, their commission on the five-stage line, first look with Add to cart when checkout is on);
   `/c/{token}/certificate/{number}`, a certificate laid out to print; `/follow` (footer link) and `/follow/{show}` (a

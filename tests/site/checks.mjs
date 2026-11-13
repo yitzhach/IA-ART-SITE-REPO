@@ -73,6 +73,15 @@ try {
   // the inquiry list shows the piece; the number only appears after a tap.
   for (const scheme of ['light', 'dark']) {
     const ctx = await browser.newContext({viewport: {width: 390, height: 844}, colorScheme: scheme});
+    // Listen: a stand-in for the browser's voice that records what it is asked to say.
+    await ctx.addInitScript(() => {
+      const said = (window.__said = []);
+      const fake = {speak: u => said.push(u.text), cancel: () => said.push('(stop)')};
+      Object.defineProperty(window, 'speechSynthesis', {configurable: true, get: () => fake});
+      window.SpeechSynthesisUtterance = function (text) {
+        this.text = text;
+      };
+    });
     const page = await ctx.newPage();
     const errors = [];
     page.on('pageerror', e => errors.push(String(e)));
@@ -91,6 +100,29 @@ try {
     record('/works/work-1', `answer shows a card (${scheme})`, cards, cards === 1);
     const sw = await page.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth]);
     record('/works/work-1', `sheet: no sideways scroll (${scheme})`, sw.join('<='), sw[0] <= sw[1]);
+    {
+      const listen = page.locator('.msg.assistant .listen').last();
+      const answer = await page.locator('.msg.assistant').last().locator('p').first().innerText();
+      await listen.click();
+      const said = await page.evaluate(() => window.__said.filter(t => t !== '(stop)'));
+      const label = await listen.innerText();
+      const ok = said.length === 1 && said[0] === answer && label === 'Stop';
+      record(
+        '/works/work-1',
+        `Listen reads the answer aloud (${scheme})`,
+        `${said.length} said, button "${label}"`,
+        ok,
+      );
+      await listen.click();
+      const after = await page.evaluate(() => window.__said);
+      const label2 = await listen.innerText();
+      record(
+        '/works/work-1',
+        `Stop ends it (${scheme})`,
+        `button "${label2}"`,
+        after[after.length - 1] === '(stop)' && after.filter(t => t !== '(stop)').length === 1 && label2 === 'Listen',
+      );
+    }
     await page.locator('.acard .add').click();
     const stored = await page.evaluate(() => localStorage.getItem('inquiry'));
     record(
