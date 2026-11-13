@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Final pass, card D: each piece says its colours in words on its page ("Colors: rust, deep blue and cream") and as
+  `color` in its `VisualArtwork` data, from the stored palette: the nearest of 38 named colours in CIE Lab, the top
+  three by share, by code (no model call).
 - Final pass, card C: `/trade`, "For designers and architects": the page's own words from Site → Pages, then the
   trade, commission, installation and shipping answers. Off the site, the footer and the sitemap until Isaac saves it
   (Site → Pages starts it as a draft). Each piece links a **spec sheet** (`/works/{slug}/spec`): one page to print with

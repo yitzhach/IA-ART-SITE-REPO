@@ -1,5 +1,6 @@
 // One work: big cover, the facts, how to ask about it (Text / Email / Call with the piece written in), more
 // pictures that open in a lightbox, and the neighbours. All text comes from the studio's record, escaped.
+import {colourNames, colourPhrase} from '../colours';
 import {NotFound} from '../data';
 import {availability, buyable, shippingLine, sizeLine} from '../format';
 import {html, type Raw} from '../html';
@@ -43,6 +44,7 @@ function jsonLd(w: PublicArtwork, origin: string, studioName: string, price: str
     height: dim(w.height),
     depth: dim(w.depth),
     dateCreated: w.year ? String(w.year) : undefined,
+    color: colourNames(w.palette).join(', ') || undefined,
     description: w.description ? firstSentence(w.description, 500) : undefined,
     creator: {'@type': 'Person', name: studioName},
     offers,
@@ -95,6 +97,8 @@ export const render: Render = async (ctx, {slug}) => {
   if (size) facts.push(['Size', size]);
   if (w.medium) facts.push(['Medium', w.medium]);
   if (w.year) facts.push(['Year', w.year]);
+  const colours = colourPhrase(colourNames(w.palette));
+  if (colours) facts.push(['Colors', colours]);
   const ship = w.status === 'available' && a.price ? shippingLine(w) : null;
   if (ship) facts.push(['Shipping', ship]);
   if (w.collection) facts.push(['Collection', w.collection]);
