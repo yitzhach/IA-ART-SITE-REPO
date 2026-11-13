@@ -16,7 +16,18 @@ const root = new URL('../..', import.meta.url).pathname;
 const out = join(root, 'test-results', 'site-checks');
 mkdirSync(out, {recursive: true});
 
-const PAGES = ['/', '/works', '/works/work-1', '/commissions', '/process', '/about', '/ask', '/inquiry', '/contact'];
+const PAGES = [
+  '/',
+  '/works',
+  '/works/work-1',
+  '/commissions',
+  '/process',
+  '/about',
+  '/questions',
+  '/ask',
+  '/inquiry',
+  '/contact',
+];
 const LH_PAGES = ['/', '/works', '/works/work-1'];
 const SCRIPT_BUDGET = 50 * 1024;
 const IMAGE_BUDGET = 200 * 1024;
