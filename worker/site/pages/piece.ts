@@ -169,6 +169,7 @@ export const render: Render = async (ctx, {slug}) => {
             Add to inquiry
           </button>
         </p>
+        <p class="spec-link"><a href="/works/${w.slug}/spec">Spec sheet</a> for designers: one page to print</p>
       </div>
     </article>
     ${

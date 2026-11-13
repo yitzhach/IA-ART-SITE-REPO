@@ -28,8 +28,25 @@ export const PAGES = [
   {key: 'commissions', label: 'Commissions'},
   {key: 'process', label: 'Process'},
   {key: 'about', label: 'About'},
+  {key: 'trade', label: 'For designers and architects'},
 ] as const;
 export type PageKey = (typeof PAGES)[number]['key'];
+
+/** Pages that start as a draft and reach the site only once saved (D-175): the draft the Site screen offers. */
+export const PAGE_DRAFTS: Partial<
+  Record<PageKey, {title: string; lede: string; sections: {heading: string; body: string}[]}>
+> = {
+  trade: {
+    title: 'For designers and architects',
+    lede: 'Original work for your projects, from the studio.',
+    sections: [
+      {
+        heading: 'Working together',
+        body: 'Send the room, the size and the feel you have in mind, and I will reply with pieces that fit or a commission to size.',
+      },
+    ],
+  },
+};
 
 export const US_ZONES: {value: string; label: string}[] = [
   {value: 'America/Los_Angeles', label: 'Pacific (Los Angeles)'},
