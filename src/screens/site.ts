@@ -10,13 +10,14 @@ import * as checkoutForm from '../lib/checkout-form';
 import * as shipForm from '../lib/shipping-logic';
 import {isConflict, listAll, plainError, publishWork} from '../lib/artworks';
 import {
-  PAGE_DRAFTS,
+  LEGAL_PAGES,
   PAGES,
   PLACES,
   compact,
   formatLinks,
   issuesByField,
   parseLinks,
+  pageDraft,
   tidyPhone,
   toggleSelection,
   zoneOptions,
@@ -202,7 +203,7 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
       tierCard(),
       h('h2', null, 'Pages'),
       h('p', {class: 'muted'}, 'The words on each page of your site. Each page saves on its own.'),
-      ...PAGES.map(p => pageCard(p.key, p.label, site.pages?.[p.key], persist, currentSite, PAGE_DRAFTS[p.key])),
+      ...PAGES.map(p => pageCard(p.key, p.label, site.pages?.[p.key], persist, currentSite, pageDraft(p.key, site))),
       h('h2', null, 'Photos'),
       h('p', {class: 'muted'}, 'Which pictures go where. A photo only shows on your site while it is public.'),
       photosCard(
@@ -891,7 +892,13 @@ function pageCard(
       'form',
       {novalidate: true},
       isDraft
-        ? h('p', {class: 'muted draft-note'}, 'A draft. Edit it, then save. Nothing shows on your site until you do.')
+        ? h(
+            'p',
+            {class: 'muted draft-note'},
+            LEGAL_PAGES.includes(key)
+              ? 'A draft to start from, not legal advice. Read it, change anything that isn’t true for you, then save. Nothing shows on your site until you do.'
+              : 'A draft. Edit it, then save. Nothing shows on your site until you do.',
+          )
         : null,
       form.field('Page title', title, `pages.${key}.title`),
       form.field('Opening line', lede, `pages.${key}.lede`),
