@@ -15,8 +15,22 @@ export const render: Render = async ctx => {
       </section>`;
     return sectionBlock(ctx, s);
   });
+  const origin = ctx.url.origin;
+  const sameAs = (ctx.studio.links ?? []).map(l => l.url).filter(u => /^https:\/\//i.test(u));
   return {
     title: 'About',
+    // The artist as a Person (card E): search engines and AI answers tie the site to the artist's other pages.
+    jsonLd: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: ctx.studio.name,
+        url: `${origin}/`,
+        jobTitle: 'Artist',
+        ...(pageDescription(p) ? {description: pageDescription(p)} : {}),
+        ...(sameAs.length ? {sameAs} : {}),
+      },
+    ],
     description: pageDescription(p),
     nav: 'about',
     body: html`<div class="wrap">

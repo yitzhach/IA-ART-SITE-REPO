@@ -75,6 +75,7 @@ export function freshFixture() {
     hours: {from: '09:00', to: '18:00'},
     timezone: 'America/Los_Angeles',
     pages: siteText.pages as PublicStudio['pages'],
+    links: [],
     catalogueVersion: 7,
   };
   const places: Record<string, PublicSitePhoto[]> = {

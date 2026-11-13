@@ -106,8 +106,25 @@
   }
 
   // ---------------------------------------------------------------- the piece page's Add to cart
+  // Asked once the page has loaded: the button starts hidden, and a request the page's picture would otherwise wait
+  // beside (it was found about when the picture painted) made the piece page's largest paint one round trip late.
+  function afterLoad(fn) {
+    if (document.readyState === 'complete') setTimeout(fn, 0);
+    else
+      addEventListener(
+        'load',
+        function () {
+          setTimeout(fn, 0);
+        },
+        {once: true},
+      );
+  }
   var buyLink = document.querySelector('[data-buy]');
   if (buyLink)
+    afterLoad(function () {
+      showBuy(buyLink);
+    });
+  function showBuy(buyLink) {
     checkout().then(
       function (c) {
         if (!open(c)) return;
@@ -125,6 +142,7 @@
       },
       function () {},
     );
+  }
 
   // ---------------------------------------------------------------- /buy/{slug}: into the cart
   var box = document.getElementById('buy');

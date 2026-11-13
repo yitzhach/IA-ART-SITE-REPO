@@ -84,12 +84,12 @@ await check('the phone number is never whole in a page', async () => {
   phone = (s.phone || '').replace(/\D/g, '');
   if (!phone) return 'no phone set';
   const bad = [];
-  for (const p of ['/', '/works', '/commissions', '/process', '/about', '/ask', '/inquiry', '/contact']) {
+  for (const p of ['/', '/works', '/commissions', '/process', '/about', '/ask', '/inquiry', '/contact', '/llms.txt']) {
     const html = await (await page.request.get(base + p)).text();
     if (html.replace(/\D/g, '').includes(phone)) bad.push(p);
   }
   if (bad.length) throw new Error(`whole number in ${bad.join(', ')}`);
-  return 'checked 8 pages';
+  return 'checked 9 pages';
 });
 
 let answered = false;
@@ -243,6 +243,19 @@ await check('Follow the studio: the footer links to it and its form shows', asyn
   await page.locator('[data-follow] input[type=email]').waitFor({state: 'visible', timeout: 10000});
   await page.screenshot({path: `${out}/follow.png`, fullPage: false});
   return 'form shown';
+});
+
+await check('AI search: robots.txt names the crawlers, llms.txt and the About Person (card E)', async () => {
+  const robots = await (await page.request.get(base + '/robots.txt')).text();
+  for (const a of ['GPTBot', 'OAI-SearchBot', 'ClaudeBot', 'Claude-SearchBot', 'PerplexityBot'])
+    if (!robots.includes(`User-agent: ${a}`)) throw new Error(`robots.txt doesn't name ${a}`);
+  const llms = await page.request.get(base + '/llms.txt');
+  if (llms.status() !== 200) throw new Error(`llms.txt status ${llms.status()}`);
+  const t = await llms.text();
+  if (!t.startsWith('# ') || !t.includes('/works)')) throw new Error(`llms.txt starts: ${t.slice(0, 120)}`);
+  const about = await (await page.request.get(base + '/about')).text();
+  if (!/"@type":"Person"/.test(about)) throw new Error('no Person data on /about');
+  return `${t.split('\n').filter(l => l.startsWith('- [')).length} links in llms.txt`;
 });
 
 await check('a made-up collector link shows nothing', async () => {

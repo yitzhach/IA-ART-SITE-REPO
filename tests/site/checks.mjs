@@ -275,6 +275,34 @@ try {
     await ctx.close();
   }
 
+  // Add to cart (stage 4) waits for the page to load before asking whether checkout is open, so that request never
+  // sits beside the piece's picture as it paints (the largest paint read one round trip late when it did).
+  {
+    const ctx = await browser.newContext({viewport: {width: 390, height: 844}});
+    const page = await ctx.newPage();
+    await page.route('**/v1/public/studios/*/checkout', r =>
+      r.fulfill({json: {enabled: true, methods: ['venmo']}, headers: {'cache-control': 'no-store'}}),
+    );
+    await page.goto(server.url + '/works/work-1');
+    const shown = await page
+      .waitForSelector('[data-buy]:not([hidden])', {timeout: 5000})
+      .then(() => true)
+      .catch(() => false);
+    record('/works/work-1', 'Add to cart shows when checkout is open', shown ? 'shown' : 'hidden', shown);
+    const t = await page.evaluate(() => {
+      const nav = performance.getEntriesByType('navigation')[0];
+      const r = performance.getEntriesByType('resource').find(e => e.name.endsWith('/checkout'));
+      return {load: Math.round(nav.loadEventStart), asked: r ? Math.round(r.startTime) : -1};
+    });
+    record(
+      '/works/work-1',
+      'checkout asked only after the page loads',
+      `${t.asked} ms >= ${t.load} ms`,
+      t.asked >= 0 && t.asked >= t.load,
+    );
+    await ctx.close();
+  }
+
   // b + c. 390x844, light and dark; budgets
   for (const scheme of ['light', 'dark']) {
     const ctx = await browser.newContext({

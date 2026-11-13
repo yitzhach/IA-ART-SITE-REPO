@@ -590,6 +590,26 @@ for (const [w, h] of sizes)
   await page.fill('input[type=tel]', '(555) 555-0199');
   await page.click('button:has-text("Save contact details")');
   await page.waitForSelector('.save-status:has-text("Saved")');
+  // Links (card E, D-176): a line without an address says so; good lines save as https.
+  const linksBox = page.getByLabel('Links (one a line: a name, then the address)');
+  await linksBox.fill('Instagram instagram.com/isaac\nMy gallery');
+  await page.click('button:has-text("Save contact details")');
+  check(
+    (await page.textContent('.field-err:not([hidden])')).includes('Line 2 needs an address'),
+    'a link line without an address says which line',
+  );
+  await linksBox.fill('Instagram instagram.com/isaac');
+  await page.click('button:has-text("Save contact details")');
+  let withLinks = {};
+  for (let i = 0; i < 40 && !withLinks.meta?.site?.links; i++) {
+    await page.waitForTimeout(100);
+    withLinks = await page.evaluate(() => fetch('/v1/settings').then(r => r.json()));
+  }
+  check(
+    JSON.stringify(withLinks.meta?.site?.links) ===
+      JSON.stringify([{label: 'Instagram', url: 'https://instagram.com/isaac'}]),
+    'saving a link saves it as https',
+  );
   await page.click('button[aria-label="Change Commissions — intro"]');
   await page.click('dialog.sheet .pick:has-text("Figure in Blue")');
   await page.click('dialog.sheet button:has-text("Done")');

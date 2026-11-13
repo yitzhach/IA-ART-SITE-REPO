@@ -72,7 +72,15 @@ export interface PublicStudio {
   hours: {from: string; to: string} | null;
   timezone: string;
   pages: Partial<Record<SitePageKey, SitePage>>;
+  /** The artist's links elsewhere, in order (D-176); absent from a platform older than that. */
+  links?: SiteLink[];
   catalogueVersion: number;
+}
+
+/** One of the artist's links elsewhere: a label and an https address. */
+export interface SiteLink {
+  label: string;
+  url: string;
 }
 
 export interface PublicSitePhoto extends PublicImage {
