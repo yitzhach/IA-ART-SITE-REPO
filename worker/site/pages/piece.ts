@@ -193,6 +193,8 @@ export const render: Render = async (ctx, {slug}) => {
       : [w.title, [w.medium, size].filter(Boolean).join(', ')].filter(Boolean).join(' — ').slice(0, 160),
     image: cover ?? null,
     preload: cover ?? null,
+    // The price (.avail strong) is set in Bodoni 500, which no other page shows above the fold.
+    fonts: ['/fonts/bodoni-500.woff2'],
     body,
     nav: 'works',
     jsonLd: [jsonLd(w, ctx.url.origin, ctx.studio.name, a.price)],

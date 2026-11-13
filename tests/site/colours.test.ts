@@ -85,3 +85,14 @@ describe('the piece page says its colours', () => {
     expect(ld(text).find(o => o['@type'] === 'VisualArtwork').color).toBeUndefined();
   });
 });
+
+describe('the piece page preloads its price face', () => {
+  const pre = (f: string) => `rel="preload" as="font" type="font/woff2" href="/fonts/${f}.woff2"`;
+
+  it('Bodoni 500 on a piece page, once, and not on the home page', async () => {
+    const piece = (await get('/works/work-1')).text;
+    expect(piece.split(pre('bodoni-500')).length - 1).toBe(1);
+    expect(piece).toContain(pre('bodoni-700'));
+    expect((await get('/')).text).not.toContain(pre('bodoni-500'));
+  });
+});
