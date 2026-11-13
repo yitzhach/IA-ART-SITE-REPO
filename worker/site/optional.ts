@@ -61,5 +61,7 @@ export function morePages(studio: PublicStudio, assistant: PublicAssistant | nul
   const out: MoreLink[] = [];
   if (savedAnswers(assistant).length) out.push({href: '/questions', label: 'Questions'});
   if (savedPage(studio, 'trade')) out.push({href: '/trade', label: 'For designers'});
+  if (savedPage(studio, 'privacy')) out.push({href: '/privacy', label: 'Privacy'});
+  if (savedPage(studio, 'terms')) out.push({href: '/terms', label: 'Terms'});
   return out;
 }

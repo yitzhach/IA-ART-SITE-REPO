@@ -629,6 +629,17 @@ for (const [w, h] of sizes)
   await trade.locator('.save-status:has-text("Saved")').waitFor();
   const after = await page.evaluate(() => fetch('/v1/settings').then(r => r.json()));
   check(after.meta?.site?.pages?.trade?.title === 'For designers and architects', 'saving the trade draft saves it');
+  // Privacy and terms (card F): drafts, said once to be a starting point and not legal advice, saved only on Save.
+  check(
+    (await page.locator('#page-privacy > summary').textContent()).includes('Draft, not on your site'),
+    'privacy page is a draft',
+  );
+  await page.locator('#page-privacy > summary').click();
+  check(
+    (await page.locator('#page-privacy .draft-note').textContent()).includes('not legal advice'),
+    'the privacy draft says it is not legal advice',
+  );
+  check(!after.meta?.site?.pages?.privacy && !after.meta?.site?.pages?.terms, 'privacy and terms drafts are not saved');
   await ctx.close();
 }
 {

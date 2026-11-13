@@ -29,13 +29,19 @@ export const PAGES = [
   {key: 'process', label: 'Process'},
   {key: 'about', label: 'About'},
   {key: 'trade', label: 'For designers and architects'},
+  {key: 'privacy', label: 'Privacy'},
+  {key: 'terms', label: 'Terms'},
 ] as const;
 export type PageKey = (typeof PAGES)[number]['key'];
 
+export interface PageDraft {
+  title: string;
+  lede: string;
+  sections: {heading: string; body: string}[];
+}
+
 /** Pages that start as a draft and reach the site only once saved (D-175): the draft the Site screen offers. */
-export const PAGE_DRAFTS: Partial<
-  Record<PageKey, {title: string; lede: string; sections: {heading: string; body: string}[]}>
-> = {
+export const PAGE_DRAFTS: Partial<Record<PageKey, PageDraft>> = {
   trade: {
     title: 'For designers and architects',
     lede: 'Original work for your projects, from the studio.',
@@ -157,4 +163,84 @@ export function parseLinks(text: string): {links: SiteLink[]} | {error: string} 
   }
   if (links.length > MAX_LINKS) return {error: `At most ${MAX_LINKS} links.`};
   return {links};
+}
+
+/** Privacy and terms drafts are a starting point the artist reads and changes; the screen says so once. */
+export const LEGAL_PAGES: PageKey[] = ['privacy', 'terms'];
+
+/** What the drafts read from the saved settings. */
+export interface DraftSource {
+  email?: string;
+  checkout?: {returns?: string; manualHoldHours?: number};
+  assistant?: {answers?: Record<string, string>};
+}
+
+const said = (v: string | undefined) => (typeof v === 'string' && v.trim() ? v.trim() : '');
+
+/**
+ * The draft for a page that starts as one (D-175). Privacy (card F) says only what the platform really keeps: the
+ * `sv` cookie (one year), the assistant chats, inquiries, holds, follows and orders, kept until someone asks, with no
+ * other number. Terms takes the return terms shown before paying and the saved shipping and deposit answers.
+ */
+export function pageDraft(key: PageKey, site: DraftSource): PageDraft | undefined {
+  const email = said(site.email);
+  const ask = email ? `email me at ${email}` : 'write to me from the contact details on this site';
+  const answers = site.assistant?.answers ?? {};
+  if (key === 'privacy')
+    return {
+      title: 'Privacy',
+      lede: 'What this site keeps about you, and how to have it deleted.',
+      sections: [
+        {
+          heading: 'What this site keeps',
+          body: [
+            '• A small cookie named sv, so the assistant can carry on your conversation when you come back. It holds a random number, not your name, and lasts one year.',
+            '• What you ask the assistant here and its answers, so I can see what visitors want to know.',
+            '• Your name, email or phone and your note when you send an inquiry, ask me to hold a piece, follow the studio or buy a piece.',
+            '• Your order: the piece, the price and where it ships. If you pay by card, you pay on Square’s own page, and this site never sees your card number.',
+          ].join('\n'),
+        },
+        {
+          heading: 'Who else sees it',
+          body: 'The assistant’s answers are written by an AI model, Claude by Anthropic, which receives your question to answer it. I don’t sell your details.',
+        },
+        {
+          heading: 'How long I keep it',
+          body: 'I keep these until you ask me to delete them. The cookie ends after a year, or sooner if you clear it in your browser. If you follow the studio, every email has a link to stop them.',
+        },
+        {
+          heading: 'Seeing or deleting what I hold',
+          body: `To see what I hold about you or to have it deleted, ${ask}.`,
+        },
+      ],
+    };
+  if (key === 'terms') {
+    const hold = site.checkout?.manualHoldHours ?? 48;
+    const returns =
+      said(site.checkout?.returns) ||
+      said(answers.returns) ||
+      'Returns within 7 days of delivery for pieces bought here, in their original condition. Commissions are final.';
+    const shipping =
+      said(answers.shipping) ||
+      'Small pieces ship at the flat rate shown before you pay. For large pieces I send a quote within two working days.';
+    const deposit = said(answers.deposit);
+    return {
+      title: 'Terms',
+      lede: 'Buying, returns and shipping, in plain words.',
+      sections: [
+        {
+          heading: 'Buying a piece',
+          body: `The price is shown on each piece, in US dollars. If you pay by Venmo or Zelle, the piece is held for you for ${hold} hours while I check the payment; it is yours once the payment arrives.`,
+        },
+        {heading: 'Returns', body: returns},
+        {heading: 'Shipping', body: shipping},
+        ...(deposit ? [{heading: 'Commissions', body: deposit}] : []),
+        {
+          heading: 'The pictures and words',
+          body: `The pictures and words on this site are mine. To use them, ${ask} first.`,
+        },
+      ],
+    };
+  }
+  return PAGE_DRAFTS[key];
 }
