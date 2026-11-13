@@ -1,5 +1,6 @@
 // robots.txt, sitemap.xml and the old site's addresses. Card E owns this file.
 import type {SiteData} from './data';
+import {morePages} from './optional';
 
 const OLD: Record<string, string> = {
   '/index.html': '/',
@@ -35,7 +36,9 @@ const esc = (s: string) =>
 const MAX_WORKS = 2000;
 
 export async function sitemap(origin: string, data: SiteData): Promise<Response> {
-  const urls = ['/', '/works', '/commissions', '/process', '/about'].map(
+  const [studio, assistant] = await Promise.all([data.studio(), data.assistant()]);
+  const more = morePages(studio, assistant).map(m => m.href);
+  const urls = ['/', '/works', '/commissions', '/process', '/about', ...more].map(
     p => `<url><loc>${esc(origin + p)}</loc></url>`,
   );
   let n = 0;

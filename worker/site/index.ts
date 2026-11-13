@@ -7,6 +7,7 @@ import {versionLine, type DeployVersion} from './format';
 import {layout} from './layout';
 import type {Page, PageCtx} from './page';
 import {notFound} from './pages/notfound';
+import {morePages} from './optional';
 import {match} from './routes';
 
 export interface SiteEnv {
@@ -42,12 +43,14 @@ export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContex
       );
     const route = match(url.pathname);
     const render = async () => {
+      const [photos, assistant] = await Promise.all([data.sitePhotos(), data.assistant()]);
       const pc: PageCtx = {
         url,
         data,
         studio,
-        photos: await data.sitePhotos(),
+        photos,
         version: versionLine(env.CF_VERSION_METADATA, studio.timezone),
+        more: morePages(studio, assistant),
       };
       let page: Page;
       try {

@@ -2,6 +2,7 @@
 // the layout (layout.ts) wraps it in the document, header, footer, theme and contact links.
 import type {Raw} from './html';
 import type {SiteData} from './data';
+import type {MoreLink} from './optional';
 import type {PublicImage, PublicSitePhoto, PublicSitePhotos, PublicStudio} from './types';
 
 export interface PageCtx {
@@ -12,6 +13,8 @@ export interface PageCtx {
   photos: PublicSitePhotos;
   /** The footer's version line (which deploy this page came from); absent in tests and local runs. */
   version?: string | null;
+  /** The footer's links to pages that exist only once saved (questions, trade, privacy, terms). */
+  more?: MoreLink[];
 }
 
 export interface Page {

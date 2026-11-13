@@ -67,7 +67,8 @@ describe('sitemap.xml', () => {
     expect(x).toContain('/works/m-99<');
     expect(x).toContain('/works/a%26b<');
     expect(x).toContain('https://a.test/?x=&lt;/');
-    expect(x.match(/<url>/g)!.length).toBe(5 + fixture.works.length);
+    // Five pages, /questions (the fixture has saved answers), then the works.
+    expect(x.match(/<url>/g)!.length).toBe(6 + fixture.works.length);
   });
   it('is served at /sitemap.xml', async () => {
     const r = await site(new Request('https://site.test/sitemap.xml'), env);

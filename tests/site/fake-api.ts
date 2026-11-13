@@ -97,6 +97,12 @@ export function freshFixture() {
     places,
     calls: [] as string[],
     assistantAvailable: true,
+    /** The assistant's saved answers (Site → Assistant → Answers): /questions and /trade read them. */
+    answers: {
+      shipping: 'Small pieces ship flat rate in a crate.\n\nLarge pieces get a quote within two working days.',
+      hanging: 'Every piece arrives ready to hang on a French cleat.',
+      care: 'Dust with a soft dry brush.',
+    } as Record<string, string>,
     pages: {} as Record<string, {title: string; question: string | null; works: string[]}>,
     collectors: {} as Record<string, PublicCollectorPage>,
     followers: {} as Record<string, PublicFollowerPage>,
@@ -147,7 +153,7 @@ export const api: Fetcher = {
         greeting: 'Hello, I am the studio assistant, an AI. Ask me about the work.',
         suggestions: ['Is this one available?', 'Do you take commissions?', 'Show me green work'],
         replyTime: 'Isaac replies within a day.',
-        answers: {},
+        answers: fixture.answers,
         available: fixture.assistantAvailable,
         catalogueVersion: v,
       });

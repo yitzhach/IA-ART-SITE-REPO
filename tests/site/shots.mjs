@@ -11,7 +11,7 @@ const {chromium} = require('playwright');
 const out = join(new URL('../..', import.meta.url).pathname, 'test-results', 'site-shots');
 mkdirSync(out, {recursive: true});
 
-const PAGES = ['/', '/works', '/works/work-1', '/commissions', '/process', '/about'];
+const PAGES = ['/', '/works', '/works/work-1', '/commissions', '/process', '/about', '/questions'];
 const SIZES = [
   [390, 844],
   [1280, 900],

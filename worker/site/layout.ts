@@ -106,7 +106,14 @@ export function layout(ctx: PageCtx, page: Page): string {
           <p class="ftr-name">${s.name}</p>
           <p class="ftr-contact">${contactLinks(s)}</p>
           ${hours ? html`<p class="hours">${hours}</p>` : ''}
-          <nav aria-label="Footer">${nav()}</nav>
+          <nav aria-label="Footer">
+            ${nav()}${(ctx.more ?? []).map(
+              m =>
+                html`<a href="${m.href}" ${ctx.url.pathname === m.href ? raw('aria-current="page"') : ''}
+                  >${m.label}</a
+                >`,
+            )}
+          </nav>
           <p class="ftr-follow"><a href="/follow">Follow the studio</a>: new work comes to followers first.</p>
           ${ctx.version ? html`<p class="ftr-ver">Version ${ctx.version}</p>` : ''}
         </footer>
