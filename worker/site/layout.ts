@@ -108,6 +108,7 @@ export function layout(ctx: PageCtx, page: Page): string {
           ${hours ? html`<p class="hours">${hours}</p>` : ''}
           <nav aria-label="Footer">${nav()}</nav>
           <p class="ftr-follow"><a href="/follow">Follow the studio</a>: new work comes to followers first.</p>
+          ${ctx.version ? html`<p class="ftr-ver">Version ${ctx.version}</p>` : ''}
         </footer>
         ${scripts.map(src => html`<script src="${src}" defer></script>`)}
       </body>

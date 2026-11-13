@@ -137,6 +137,7 @@ article.split{margin-bottom:40px}
 .ftr-contact a{display:inline-flex;align-items:center;min-height:44px;font-weight:600}
 .hours{margin:0 0 8px;text-transform:none;letter-spacing:.04em}
 .site-ftr nav{display:flex;flex-wrap:wrap;gap:0 18px}
+.ftr-ver{margin:10px 0 0;font:400 11px var(--mono);color:var(--muted)}
 .inq-bar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;padding:8px var(--gut) max(8px,env(safe-area-inset-bottom));background:var(--ink);color:var(--bg);font-weight:600}
 .inq-bar a,.inq-bar button{display:inline-flex;align-items:center;min-height:44px;color:var(--bg);background:none;border:0;font:600 14px var(--body);text-decoration:underline;cursor:pointer;padding:0 4px}
 .inq-bar button{margin-left:auto;font-weight:400}
