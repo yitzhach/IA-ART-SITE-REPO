@@ -57,7 +57,8 @@ export interface SitePage {
   lede?: string;
   sections?: SiteSection[];
 }
-export type SitePageKey = 'home' | 'commissions' | 'process' | 'about';
+/** `trade`, `privacy` and `terms` exist only once the artist saves them (D-175). */
+export type SitePageKey = 'home' | 'commissions' | 'process' | 'about' | 'trade' | 'privacy' | 'terms';
 
 export interface PublicStudio {
   slug: string;

@@ -10,6 +10,7 @@ import * as checkoutForm from '../lib/checkout-form';
 import * as shipForm from '../lib/shipping-logic';
 import {isConflict, listAll, plainError, publishWork} from '../lib/artworks';
 import {
+  PAGE_DRAFTS,
   PAGES,
   PLACES,
   compact,
@@ -198,7 +199,7 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
       tierCard(),
       h('h2', null, 'Pages'),
       h('p', {class: 'muted'}, 'The words on each page of your site. Each page saves on its own.'),
-      ...PAGES.map(p => pageCard(p.key, p.label, site.pages?.[p.key], persist, currentSite)),
+      ...PAGES.map(p => pageCard(p.key, p.label, site.pages?.[p.key], persist, currentSite, PAGE_DRAFTS[p.key])),
       h('h2', null, 'Photos'),
       h('p', {class: 'muted'}, 'Which pictures go where. A photo only shows on your site while it is public.'),
       photosCard(
@@ -756,11 +757,15 @@ function pageCard(
   page: Page | undefined,
   persist: Persist,
   current: () => Site,
+  /** A page that is off the site until saved starts from this draft (D-175). */
+  draft?: Page,
 ): HTMLElement {
   const form = makeForm();
+  const isDraft = !page && !!draft;
+  const shown = page ?? draft;
   const title = h('input', {type: 'text', autocomplete: 'off'});
-  title.value = page?.title ?? '';
-  const lede = textarea(page?.lede ?? '', 3);
+  title.value = shown?.title ?? '';
+  const lede = textarea(shown?.lede ?? '', 3);
   let drafts: Draft[] = [];
   const list = h('div', {class: 'sections'});
 
@@ -816,7 +821,7 @@ function pageCard(
       }),
     );
   };
-  drafts = (page?.sections ?? []).map(makeDraft);
+  drafts = (shown?.sections ?? []).map(makeDraft);
   drawList();
 
   const newHeading = textarea('', 1);
@@ -860,12 +865,17 @@ function pageCard(
       h(
         'small',
         {class: 'muted count'},
-        `${page?.sections?.length ?? 0} section${page?.sections?.length === 1 ? '' : 's'}`,
+        isDraft
+          ? 'Draft, not on your site'
+          : `${page?.sections?.length ?? 0} section${page?.sections?.length === 1 ? '' : 's'}`,
       ),
     ),
     h(
       'form',
       {novalidate: true},
+      isDraft
+        ? h('p', {class: 'muted draft-note'}, 'A draft. Edit it, then save. Nothing shows on your site until you do.')
+        : null,
       form.field('Page title', title, `pages.${key}.title`),
       form.field('Opening line', lede, `pages.${key}.lede`),
       list,

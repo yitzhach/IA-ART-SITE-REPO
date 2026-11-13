@@ -7,6 +7,8 @@ import {render as commissions} from './pages/commissions';
 import {render as process} from './pages/process';
 import {render as about} from './pages/about';
 import {render as questions} from './pages/questions';
+import {render as trade} from './pages/trade';
+import {spec} from './pages/spec';
 import {render as ask} from './pages/ask';
 import {render as inquiry} from './pages/inquiry';
 import {render as contact} from './pages/contact';
@@ -22,10 +24,12 @@ const ROUTES: [RegExp, Render, boolean?][] = [
   [/^\/$/, home],
   [/^\/works$/, works],
   [/^\/works\/(?<slug>[a-z0-9]+(?:-[a-z0-9]+)*)$/, piece],
+  [/^\/works\/(?<slug>[a-z0-9]+(?:-[a-z0-9]+)*)\/spec$/, spec],
   [/^\/commissions$/, commissions],
   [/^\/process$/, process],
   [/^\/about$/, about],
   [/^\/questions$/, questions],
+  [/^\/trade$/, trade],
   [/^\/ask$/, ask, true],
   [/^\/inquiry$/, inquiry],
   [/^\/contact$/, contact, true],

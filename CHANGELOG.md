@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Final pass, card C: `/trade`, "For designers and architects": the page's own words from Site → Pages, then the
+  trade, commission, installation and shipping answers. Off the site, the footer and the sitemap until Isaac saves it
+  (Site → Pages starts it as a draft). Each piece links a **spec sheet** (`/works/{slug}/spec`): one page to print with
+  the picture, title, size in both units, medium, year, price or "Price on request", email and address; no phone.
 - Final pass, card B: `/questions`, the answers saved under Site → Assistant → Answers, each under a plain question,
   with `FAQPage` data. In the footer and the sitemap only while at least one answer is saved; none saved: 404.
 - Final pass, before Isaac's test (D-171, D-172): a **Listen** button on each assistant answer in the Ask sheet reads
