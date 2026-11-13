@@ -4,6 +4,8 @@
   "name": "studio-site",
   "compatibility_date": "2026-10-01",
   "main": "worker/index.ts",
+  // Workers Logs (card H, Art-Talk-Back D-178): what failed and why, kept by Cloudflare for a few days.
+  "observability": {"enabled": true, "head_sampling_rate": 1},
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
