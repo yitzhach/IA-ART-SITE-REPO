@@ -619,8 +619,17 @@
     return getDigest().then(function (d) { remember(d.works); }, function () {});
   }
 
+  // A count only (card G): no cookie, nothing about the visitor; the browser sends it when it can.
+  function tell(kind, work) {
+    try {
+      var b = JSON.stringify(work ? {kind: kind, work: work} : {kind: kind});
+      if (navigator.sendBeacon) navigator.sendBeacon('/count', new Blob([b], {type: 'application/json'}));
+    } catch (e) { /* a count is never worth an error */ }
+  }
+
   function openChat(from) {
     var d = from.dataset;
+    tell('ask', d.piece);
     chat.piece = d.piece || null;
     chat.pieceTitle = d.title || '';
     chat.pieceStatus = d.status || '';

@@ -62,6 +62,7 @@ function wallButton(w: PublicArtwork, cover: PublicArtwork['images'][number] | u
     hidden
     data-js
     data-wall
+    data-piece="${w.slug}"
     data-title="${w.title}"
     data-w="${w.width}"
     data-h="${w.height}"

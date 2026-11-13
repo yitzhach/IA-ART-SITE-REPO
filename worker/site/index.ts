@@ -1,6 +1,7 @@
 // The public site: one request → (old address? redirect) → the studio's profile (its catalogue version keys the
 // cache) → the page → the layout. All data from studio-api's public routes; nothing from the request picks the studio.
 import {cached} from './cache';
+import {count, fromAPerson} from './counts';
 import {NotFound, siteData} from './data';
 import {llmsTxt, oldAddress, robots, sitemap} from './extras';
 import {versionLine, type DeployVersion} from './format';
@@ -46,6 +47,13 @@ export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContex
         llmsTxt(url.origin, data),
       );
     const route = match(url.pathname);
+    // A piece page viewed by a person counts once (card G, D-177); the page itself doesn't wait for it.
+    const piece = /^\/works\/([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(url.pathname);
+    if (piece && request.method === 'GET' && fromAPerson(request)) {
+      const sent = count(env.API, env.STUDIO_SLUG, 'view', piece[1]);
+      if (ctx) ctx.waitUntil(sent);
+      else await sent;
+    }
     const render = async () => {
       const [photos, assistant] = await Promise.all([data.sitePhotos(), data.assistant()]);
       const pc: PageCtx = {

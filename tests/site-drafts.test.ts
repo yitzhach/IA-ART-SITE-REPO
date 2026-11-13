@@ -13,6 +13,11 @@ describe('pageDraft', () => {
       expect(t).toContain(w);
     expect(t).toContain('email me at studio@example.com');
     expect(t).toContain('never sees your card number');
+    // What the platform really keeps (checked against studio-api): the cookie for more than the assistant, the
+    // scrambled address kept with questions and leads, and card G's counts.
+    expect(t).toContain('your inquiries and orders stay together');
+    expect(t).toContain('a scrambled form of your internet address');
+    expect(t).toContain('with nothing about who did it');
     // No promise the platform doesn't keep: no number of days for anything (the cookie's year is in words).
     expect(t.replace('studio@example.com', '')).not.toMatch(/\d/);
   });

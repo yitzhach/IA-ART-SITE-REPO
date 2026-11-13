@@ -20,6 +20,8 @@ import {
   pageDraft,
   tidyPhone,
   toggleSelection,
+  visitorSummary,
+  type SiteCounts,
   zoneOptions,
   type PageKey,
   type PlaceInfo,
@@ -196,6 +198,7 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
       h('h1', null, 'Site'),
       needsImport ? importCard(redo) : null,
       addressCard(st),
+      visitorsCard(),
       contactCard(st.settings, site, persist, currentSite),
       assistantCard(site.assistant, persist, currentSite),
       checkoutCard(site.checkout, persist, currentSite),
@@ -216,6 +219,32 @@ export async function render(el: HTMLElement, _params: Params): Promise<void> {
     ];
   };
   draw();
+}
+
+// ---- Visitors (card G): counts only, loaded on their own so a slow or missing answer never holds up the screen.
+function visitorsCard(): HTMLElement {
+  const body = h('div', {class: 'visitors'}, h('p', {class: 'muted'}, 'Loading…'));
+  const card = h(
+    'section',
+    {class: 'card site-card', 'aria-labelledby': 'site-visitors'},
+    h('h2', {id: 'site-visitors'}, 'Visitors'),
+    h('p', {class: 'muted'}, 'The last 30 days. Counts only: nothing about who visited.'),
+    body,
+  );
+  get<SiteCounts>('/site/counts?days=30').then(
+    c => {
+      const v = visitorSummary(c);
+      mount(
+        body,
+        v.empty ? h('p', null, 'Nothing counted yet. Views, questions and inquiries show here as they come in.') : null,
+        h('dl', {class: 'visitor-totals'}, ...v.totals.flatMap(t => [h('dt', null, t.label), h('dd', null, t.n)])),
+        v.top.length ? h('h3', null, 'Seen most') : null,
+        v.top.length ? h('ol', {class: 'visitor-top'}, ...v.top.map(line => h('li', null, line))) : null,
+      );
+    },
+    () => mount(body, h('p', {class: 'muted'}, "Couldn't load the numbers just now.")),
+  );
+  return card;
 }
 
 // ---- Your site

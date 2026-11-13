@@ -258,6 +258,20 @@ await check('AI search: robots.txt names the crawlers, llms.txt and the About Pe
   return `${t.split('\n').filter(l => l.startsWith('- [')).length} links in llms.txt`;
 });
 
+await check('visitor numbers: /count is live, counts no robot and sets no cookie (card G)', async () => {
+  // A robot's agent, so the smoke never adds to Isaac's numbers.
+  const post = (data, ua = 'SmokeCheckBot/1.0') =>
+    page.request.post(base + '/count', {data, headers: {'user-agent': ua, 'content-type': 'application/json'}});
+  const ok = await post({kind: 'ask'});
+  if (ok.status() !== 204) throw new Error(`a robot's count answered ${ok.status()}`);
+  if (ok.headers()['set-cookie']) throw new Error('/count set a cookie');
+  const bad = await post({kind: 'view', work: 'anything'});
+  if (bad.status() !== 400) throw new Error(`a view sent by script answered ${bad.status()}`);
+  const api = await page.request.post(`${base}/v1/public/studios/${slug}/counts`, {data: {kind: 'nonsense'}});
+  if (api.status() !== 400) throw new Error(`the platform's count route answered ${api.status()} to an unknown kind`);
+  return '204, 400, 400';
+});
+
 await check('a made-up collector link shows nothing', async () => {
   const fake = 'smokeTestNotARealLink0000';
   const res = await page.goto(`${base}/c/${fake}`, {waitUntil: 'load'});

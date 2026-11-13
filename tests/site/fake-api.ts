@@ -108,6 +108,8 @@ export function freshFixture() {
     collectors: {} as Record<string, PublicCollectorPage>,
     followers: {} as Record<string, PublicFollowerPage>,
     shows: {} as Record<string, PublicShow>,
+    /** What the site counted (card G): each POST to /counts, with the headers it carried. */
+    counts: [] as {body: unknown; headers: Record<string, string>}[],
   };
 }
 
@@ -119,7 +121,7 @@ const json = (v: unknown, status = 200) =>
 const notFound = () => json({error: {code: 'not_found', message: 'Not found', details: {}}}, 404);
 
 export const api: Fetcher = {
-  fetch: async (input: RequestInfo | URL) => {
+  fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url);
     fixture.calls.push(url.pathname + url.search);
     const base = `/v1/public/studios/${SLUG}`;
@@ -128,6 +130,13 @@ export const api: Fetcher = {
     if (!p.startsWith(base)) return notFound();
     const rest = p.slice(base.length);
     if (rest === '') return json(fixture.studio);
+    if (rest === '/counts') {
+      fixture.counts.push({
+        body: JSON.parse(String(init?.body ?? 'null')),
+        headers: Object.fromEntries(new Headers(init?.headers).entries()),
+      });
+      return new Response(null, {status: 204});
+    }
     // Checkout is off in the fake studio (as on the live site until Square keys): buy.js asks on every piece page.
     if (rest === '/checkout') return json({enabled: false, methods: []});
     if (rest === '/site-photos') return json({places: fixture.places, catalogueVersion: v});

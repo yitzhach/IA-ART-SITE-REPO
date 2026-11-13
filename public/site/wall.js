@@ -489,11 +489,20 @@
     }
   }
 
+  // A count only (card G): no cookie, nothing about the visitor; the browser sends it when it can.
+  function tell(kind, work) {
+    try {
+      var b = JSON.stringify(work ? {kind: kind, work: work} : {kind: kind});
+      if (navigator.sendBeacon) navigator.sendBeacon('/count', new Blob([b], {type: 'application/json'}));
+    } catch (e) { /* a count is never worth an error */ }
+  }
+
   function open(btn) {
     if (back) return;
     var d = btn.dataset,
       size = C.pieceSize(d);
     if (!size) return;
+    tell('wall', d.piece);
     opener = btn;
     css('/site/ask.css');
     css('/site/wall.css');
