@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Final pass, card H (Art-Talk-Back D-178): Workers Logs on for `studio-site` (every request, kept by Cloudflare for a
+  few days), so a failure on the public site has a record to read.
 - Final pass, card G (D-177): visitor numbers. A person's view of a piece page counts once (bots, link previews,
   prefetches and scripted browsers left out by agent); Ask, the wall tool and Add to inquiry send a count through
   `POST /count`, which passes on no cookie, visitor key or address. Studio → Site shows a **Visitors** card: the last
