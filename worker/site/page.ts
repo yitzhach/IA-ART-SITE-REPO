@@ -38,6 +38,9 @@ export interface Page {
   nav?: 'works' | 'commissions' | 'process' | 'about';
   /** Pictures to preload with high priority (the largest above the fold). */
   preload?: PublicImage | null;
+  /** More font files to preload, paths under /fonts/, for a face this page alone shows above the fold
+   * (the layout already preloads PRELOAD_FONTS). A face found only once the CSS is in arrives late. */
+  fonts?: string[];
   noindex?: boolean;
   /** Extra stylesheets this page links, paths under /site/ (e.g. '/site/ask.css'). */
   styles?: string[];

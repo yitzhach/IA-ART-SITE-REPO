@@ -56,7 +56,7 @@ export function layout(ctx: PageCtx, page: Page): string {
         }
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        ${PRELOAD_FONTS.map(f => html`<link rel="preload" as="font" type="font/woff2" href="${f}" crossorigin />`)}
+        ${[...PRELOAD_FONTS, ...(page.fonts ?? []).filter(f => !PRELOAD_FONTS.includes(f))].map(f => html`<link rel="preload" as="font" type="font/woff2" href="${f}" crossorigin />`)}
         ${
           pre
             ? html`<link
