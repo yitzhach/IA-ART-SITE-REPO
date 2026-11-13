@@ -6,7 +6,8 @@
   Google, Apple and Microsoft by name, with everyone's rules; `/llms.txt` says who the artist is, what is for sale,
   the main pages and how to ask, from public things only (never the phone); About carries the artist as a `Person`
   with `sameAs` from a new **Links** box in Site → Contact (one a line, saved as https). The live smoke checks all
-  three.
+  three. A piece page now asks whether checkout is open only after it has loaded: that request was found as the
+  picture painted and made CI's largest-paint reading one round trip late (2.10 s against 2.0 s) about half the time.
 - Final pass, card D: each piece says its colours in words on its page ("Colors: rust, deep blue and cream") and as
   `color` in its `VisualArtwork` data, from the stored palette: the nearest of 38 named colours in CIE Lab, the top
   three by share, by code (no model call). Piece pages also preload the price's Bodoni 500 face, so it no longer arrives late.
