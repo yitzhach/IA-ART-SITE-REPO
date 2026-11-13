@@ -194,7 +194,9 @@ export function pageDraft(key: PageKey, site: DraftSource): PageDraft | undefine
         {
           heading: 'What this site keeps',
           body: [
-            '• A small cookie named sv, so the assistant can carry on your conversation when you come back. It holds a random number, not your name, and lasts one year.',
+            '• A small cookie named sv, so this site knows your browser again: the assistant carries on your conversation, and your inquiries and orders stay together. It holds a random number, not your name, and lasts one year.',
+            '• With your questions and inquiries, a scrambled form of your internet address, so the site can stop anyone flooding them.',
+            '• Counts of how often each piece is viewed and the site’s tools are used, with nothing about who did it.',
             '• What you ask the assistant here and its answers, so I can see what visitors want to know.',
             '• Your name, email or phone and your note when you send an inquiry, ask me to hold a piece, follow the studio or buy a piece.',
             '• Your order: the piece, the price and where it ships. If you pay by card, you pay on Square’s own page, and this site never sees your card number.',
@@ -243,4 +245,46 @@ export function pageDraft(key: PageKey, site: DraftSource): PageDraft | undefine
     };
   }
   return PAGE_DRAFTS[key];
+}
+
+// ---- Visitors (card G): the studio's counts from GET /v1/site/counts, in words.
+export interface SiteCounts {
+  days: number;
+  from: string;
+  totals: Record<'view' | 'ask' | 'wall' | 'inquiry' | 'question' | 'lead' | 'order', number>;
+  topWorks: {
+    id: string;
+    title: string;
+    slug: string | null;
+    view: number;
+    ask: number;
+    wall: number;
+    inquiry: number;
+  }[];
+}
+const COUNT_LINES: [keyof SiteCounts['totals'], string][] = [
+  ['view', 'Pieces viewed'],
+  ['ask', 'Ask opened'],
+  ['question', 'Questions asked'],
+  ['wall', 'Tried on a wall'],
+  ['inquiry', 'Added to an inquiry'],
+  ['lead', 'Inquiries and holds sent'],
+  ['order', 'Orders started'],
+];
+const plural = (n: number, one: string, many: string) => `${n.toLocaleString('en-US')} ${n === 1 ? one : many}`;
+
+/** The card's lines: every total (zeros too, so the list reads the same each time) and the pieces seen most. */
+export function visitorSummary(c: SiteCounts): {empty: boolean; totals: {label: string; n: string}[]; top: string[]} {
+  const empty = Object.values(c.totals).every(n => !n);
+  const totals = COUNT_LINES.map(([k, label]) => ({label, n: (c.totals[k] ?? 0).toLocaleString('en-US')}));
+  const top = c.topWorks
+    .filter(w => w.view || w.ask || w.wall || w.inquiry)
+    .map(w => {
+      const bits = [plural(w.view, 'view', 'views')];
+      if (w.inquiry) bits.push(plural(w.inquiry, 'inquiry', 'inquiries'));
+      if (w.wall) bits.push(plural(w.wall, 'wall try', 'wall tries'));
+      if (w.ask) bits.push(plural(w.ask, 'question opened', 'questions opened'));
+      return `${w.title}: ${bits.join(', ')}`;
+    });
+  return {empty, totals, top};
 }

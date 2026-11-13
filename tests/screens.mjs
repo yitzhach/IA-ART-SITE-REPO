@@ -370,6 +370,13 @@ async function mock(page, {signedIn = true} = {}) {
             hasPassword: false,
           })
         : json(route, {error: {code: 'unauthorized', message: 'Sign in'}}, 401);
+    if (path === '/site/counts')
+      return json(route, {
+        days: 30,
+        from: '2026-10-15',
+        totals: {view: 1240, ask: 31, wall: 12, inquiry: 9, question: 22, lead: 4, order: 1},
+        topWorks: [{id: 'W1', title: 'Lifted Up', slug: 'lifted-up', view: 310, ask: 4, wall: 3, inquiry: 2}],
+      });
     if (path === '/settings' && method === 'GET') return json(route, settings);
     if (path === '/settings' && method === 'PATCH') {
       if (Number(req.headers()['if-match']) !== settings.version)
@@ -580,6 +587,18 @@ for (const [w, h] of sizes)
   const state = await mock(page);
   await page.goto(origin + '/studio/site');
   await page.waitForSelector('.place');
+  // Visitors (card G): counts in words at phone width, with the pieces seen most, and no sideways scroll.
+  await page.waitForSelector('.visitor-totals');
+  const visitors = await page.textContent('#site-visitors + p + .visitors');
+  check(visitors.includes('Pieces viewed') && visitors.includes('1,240'), `visitors card shows views (${visitors})`);
+  check(
+    visitors.includes('Lifted Up: 310 views, 2 inquiries, 3 wall tries'),
+    'visitors card names the piece seen most',
+  );
+  check(
+    await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+    'site screen has no sideways scroll at 390 px',
+  );
   await page.fill('input[type=tel]', '12');
   await page.click('button:has-text("Save contact details")');
   await page.waitForSelector('.field-err:not([hidden])');

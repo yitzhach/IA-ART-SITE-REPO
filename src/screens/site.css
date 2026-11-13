@@ -242,3 +242,26 @@ dialog.sheet[open] {
   margin: 4px 0 8px;
   padding-left: 1.2em;
 }
+.visitor-totals {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 16px;
+  margin: 8px 0 0;
+}
+.visitor-totals dt {
+  margin: 0;
+}
+.visitor-totals dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.visitors h3 {
+  margin: 16px 0 4px;
+  font-size: 1rem;
+}
+.visitor-top {
+  margin: 0;
+  padding-left: 1.25rem;
+  overflow-wrap: anywhere;
+}

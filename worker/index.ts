@@ -1,6 +1,7 @@
 // studio-site: serves the studio's public site (/, /works, … — worker/site/), the owner's area (/studio), and
 // forwards /v1/* to studio-api and /assistant/* to studio-assistant through service bindings. It holds no data
 // and no secrets.
+import {countBeacon} from './site/counts';
 import {site} from './site/index';
 import {askChat, forwardAssistant, forwardV1} from './site/visitor';
 
@@ -63,6 +64,7 @@ export default {
     const url = new URL(request.url);
     const p = url.pathname;
     if (PICTURE.test(p) && request.method === 'GET') return picture(request, env, ctx);
+    if (p === '/count') return countBeacon(request, env, ctx);
     if (p === '/ask/chat') return askChat(request, env);
     if (p.startsWith('/ask/')) return Response.json({error: {code: 'not_found', message: 'Not found'}}, {status: 404});
     if (under(p, '/v1')) return forwardV1(request, env);

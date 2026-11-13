@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Final pass, card G (D-177): visitor numbers. A person's view of a piece page counts once (bots, link previews,
+  prefetches and scripted browsers left out by agent); Ask, the wall tool and Add to inquiry send a count through
+  `POST /count`, which passes on no cookie, visitor key or address. Studio → Site shows a **Visitors** card: the last
+  30 days' totals and the pieces seen most. The privacy draft now says the `sv` cookie serves more than the
+  assistant, that a scrambled internet address is kept with questions and inquiries, and that counts are kept. The
+  live smoke checks `/count` with a robot's agent, so it never adds to the numbers.
 - Final pass, card E (D-176): `robots.txt` welcomes the search and answer crawlers of OpenAI, Anthropic, Perplexity,
   Google, Apple and Microsoft by name, with everyone's rules; `/llms.txt` says who the artist is, what is for sale,
   the main pages and how to ask, from public things only (never the phone); About carries the artist as a `Person`

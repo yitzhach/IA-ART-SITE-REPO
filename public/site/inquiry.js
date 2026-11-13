@@ -83,6 +83,14 @@
 
   // "Add to inquiry" on a piece page.
   var buttons = [].slice.call(document.querySelectorAll('[data-inquiry]'));
+  // A count only (card G): no cookie, nothing about the visitor; the browser sends it when it can.
+  function tell(kind, work) {
+    try {
+      var b = JSON.stringify(work ? {kind: kind, work: work} : {kind: kind});
+      if (navigator.sendBeacon) navigator.sendBeacon('/count', new Blob([b], {type: 'application/json'}));
+    } catch (e) { /* a count is never worth an error */ }
+  }
+
   function itemOf(b) {
     var url = b.getAttribute('data-url');
     return {title: b.getAttribute('data-title'), url: url, slug: slugOf(url)};
@@ -99,7 +107,10 @@
     b.addEventListener('click', function () {
       var it = itemOf(b);
       if (api.has(it)) api.remove(it);
-      else api.add(it);
+      else {
+        api.add(it);
+        tell('inquiry', it.slug);
+      }
     });
   });
 
