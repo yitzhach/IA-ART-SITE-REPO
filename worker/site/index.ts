@@ -2,7 +2,7 @@
 // cache) → the page → the layout. All data from studio-api's public routes; nothing from the request picks the studio.
 import {cached} from './cache';
 import {NotFound, siteData} from './data';
-import {oldAddress, robots, sitemap} from './extras';
+import {llmsTxt, oldAddress, robots, sitemap} from './extras';
 import {versionLine, type DeployVersion} from './format';
 import {layout} from './layout';
 import type {Page, PageCtx} from './page';
@@ -40,6 +40,10 @@ export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContex
     if (url.pathname === '/sitemap.xml')
       return await cached(request, `${studio.catalogueVersion}.${env.CF_VERSION_METADATA?.id ?? 'dev'}`, ctx, () =>
         sitemap(url.origin, data),
+      );
+    if (url.pathname === '/llms.txt')
+      return await cached(request, `${studio.catalogueVersion}.${env.CF_VERSION_METADATA?.id ?? 'dev'}`, ctx, () =>
+        llmsTxt(url.origin, data),
       );
     const route = match(url.pathname);
     const render = async () => {

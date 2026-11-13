@@ -112,3 +112,49 @@ export function toggleSelection(current: string[], id: string, multi: boolean): 
   if (current.includes(id)) return current.filter(x => x !== id);
   return current.length >= MAX_PHOTOS_PER_PLACE ? current : [...current, id];
 }
+
+/** One of the artist's links elsewhere (D-176). */
+export interface SiteLink {
+  label: string;
+  url: string;
+}
+
+export const MAX_LINKS = 12;
+
+/** The links as the Links box shows them: one a line, the name, then the address. */
+export function formatLinks(links: SiteLink[] | undefined): string {
+  return (links ?? []).map(l => `${l.label} ${l.url}`).join('\n');
+}
+
+/**
+ * The Links box read back (card E): one link a line, a name and then an address ("Instagram instagram.com/me").
+ * The address may come without https:// or with http://; it is saved as https. A line with no name takes the
+ * address's site name. Blank lines are skipped. Returns the links, or the first line's problem in plain words.
+ */
+export function parseLinks(text: string): {links: SiteLink[]} | {error: string} {
+  const links: SiteLink[] = [];
+  const lines = text.split('\n').map(l => l.trim());
+  for (const [i, line] of lines.entries()) {
+    if (!line) continue;
+    const words = line.split(/\s+/);
+    const last = words[words.length - 1]!;
+    const bare = last.replace(/^https?:\/\//i, '');
+    if (!/^[^\s/?#]+\.[^\s/?#]+/.test(bare))
+      return {error: `Line ${i + 1} needs an address at the end, like instagram.com/yourname.`};
+    let url: URL;
+    try {
+      url = new URL(`https://${bare}`);
+    } catch {
+      return {error: `Line ${i + 1}: that address doesn't look right.`};
+    }
+    const label =
+      words
+        .slice(0, -1)
+        .join(' ')
+        .replace(/[:\-–—]+$/, '')
+        .trim() || url.hostname.replace(/^www\./, '');
+    links.push({label: label.slice(0, 60), url: url.toString()});
+  }
+  if (links.length > MAX_LINKS) return {error: `At most ${MAX_LINKS} links.`};
+  return {links};
+}

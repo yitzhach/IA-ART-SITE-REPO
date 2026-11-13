@@ -14,7 +14,9 @@ import {
   PAGES,
   PLACES,
   compact,
+  formatLinks,
   issuesByField,
+  parseLinks,
   tidyPhone,
   toggleSelection,
   zoneOptions,
@@ -48,6 +50,7 @@ interface Site {
   assistant?: Assistant;
   checkout?: checkoutForm.Checkout;
   shipping?: shipForm.ShippingSettings;
+  links?: {label: string; url: string}[];
 }
 interface Settings {
   version: number;
@@ -308,6 +311,9 @@ function contactCard(settings: Settings, site: Site, persist: Persist, current: 
     phone = text(site.phone, {type: 'tel', inputmode: 'tel', autocomplete: 'tel'}),
     email = text(site.email, {type: 'email', inputmode: 'email', autocomplete: 'email'});
   const description = textarea(site.description ?? '', 3);
+  // The artist's links elsewhere (card E): About names them for search engines, and llms.txt lists them.
+  const links = textarea(formatLinks(site.links), 3);
+  links.setAttribute('placeholder', 'Instagram instagram.com/yourname');
   const from = text(site.hours?.from, {type: 'time'}),
     to = text(site.hours?.to, {type: 'time'});
   const zone = h(
@@ -332,6 +338,7 @@ function contactCard(settings: Settings, site: Site, persist: Persist, current: 
     form.field('Description', description, 'description'),
     form.field('Phone', phone, 'phone'),
     form.field('Email', email, 'email'),
+    form.field('Links (one a line: a name, then the address)', links, 'links'),
     h(
       'div',
       {class: 'field'},
@@ -355,6 +362,11 @@ function contactCard(settings: Settings, site: Site, persist: Persist, current: 
       form.show({hours: 'Fill in both times, or leave both empty.'}, '');
       return;
     }
+    const read = parseLinks(links.value);
+    if ('error' in read) {
+      form.show({links: read.error}, '');
+      return;
+    }
     const next = current();
     const fields = {
       name: name.value.trim(),
@@ -367,11 +379,16 @@ function contactCard(settings: Settings, site: Site, persist: Persist, current: 
     Object.assign(next, compact(fields));
     if (from.value && to.value) next.hours = {from: from.value, to: to.value};
     else delete next.hours;
+    if (read.links.length) next.links = read.links;
+    else delete next.links;
     button.setAttribute('disabled', '');
     const tz = zone.value !== settings.timezone ? zone.value : undefined;
     const ok = await persist(form, next, tz);
     button.removeAttribute('disabled');
-    if (ok) phone.value = next.phone ?? '';
+    if (ok) {
+      phone.value = next.phone ?? '';
+      links.value = formatLinks(next.links);
+    }
   });
   return el;
 }
