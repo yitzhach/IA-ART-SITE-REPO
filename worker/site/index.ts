@@ -6,6 +6,7 @@ import {NotFound, siteData} from './data';
 import {llmsTxt, oldAddress, robots, sitemap} from './extras';
 import {versionLine, type DeployVersion} from './format';
 import {layout} from './layout';
+import {carryLook, readLook} from './look';
 import type {Page, PageCtx} from './page';
 import {notFound} from './pages/notfound';
 import {morePages} from './optional';
@@ -54,15 +55,20 @@ export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContex
       if (ctx) ctx.waitUntil(sent);
       else await sent;
     }
+    // `?look=` (D-180): a preview in another template. The query is part of the cache key, so a preview is never
+    // answered for the plain address and the other way round.
+    const look = readLook(url);
     const render = async () => {
       const [photos, assistant] = await Promise.all([data.sitePhotos(), data.assistant()]);
       const pc: PageCtx = {
-        url,
+        url: look.url,
         data,
         studio,
         photos,
         version: versionLine(env.CF_VERSION_METADATA, studio.timezone),
         more: morePages(studio, assistant),
+        template: look.template,
+        look: look.preview,
       };
       let page: Page;
       try {
@@ -71,7 +77,11 @@ export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContex
         if (!(e instanceof NotFound)) throw e;
         page = notFound();
       }
-      return new Response(layout(pc, page), {status: page.status ?? 200, headers: HTML});
+      if (!look.preview) return new Response(layout(pc, page), {status: page.status ?? 200, headers: HTML});
+      return new Response(carryLook(layout(pc, page), look.preview), {
+        status: page.status ?? 200,
+        headers: {...HTML, 'x-robots-tag': 'noindex'},
+      });
     };
     if (route?.dynamic) {
       // Answered from the request (a search, a token, a contact check): never kept, never indexed.

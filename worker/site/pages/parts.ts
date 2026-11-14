@@ -66,6 +66,17 @@ export function photo(p: PublicSitePhoto, sizes: string, eager = false): Raw {
   return p.workSlug ? html`<a href="/works/${p.workSlug}">${img}</a>` : img;
 }
 
+/** A picture in a fixed-shape frame (the template's `frames`): every picture in a row the same height, cropped to
+ * fill, or whole on a mat (`cls: 'mat'`). `cls` also names the shape (r-43, r-closely, r-hero); 4:5 by default. */
+export function frame(
+  img: PublicImage | undefined,
+  o: {cls?: string; sizes: string; alt?: string | null; eager?: boolean; href?: string},
+): Raw {
+  const inner = img ? picture(img, {sizes: o.sizes, alt: o.alt, eager: o.eager}) : raw('<span class="blank"></span>');
+  const cls = `ph${o.cls ? ` ${o.cls}` : ''}`;
+  return o.href ? html`<a class="${cls}" href="${o.href}">${inner}</a>` : html`<span class="${cls}">${inner}</span>`;
+}
+
 export const indexNo = (n: number) => `No. ${String(n).padStart(2, '0')}`;
 
 /** The chip on a card: the price (only when the studio shows one), Price on request, Sold, Reserved. */
@@ -77,9 +88,18 @@ export function chip(w: Pick<PublicArtwork, 'status' | 'priceCents' | 'currency'
   return a.price ? html`<span class="chip price">${a.price}</span>` : html`<span class="chip">${a.label}</span>`;
 }
 
-export function workCard(w: PublicArtwork, n: number): Raw {
+export function workCard(w: PublicArtwork, n: number, frames = false): Raw {
   const cover: PublicImage | undefined = w.images[0];
   const size = sizeLine(w)?.replace(/ \(.*\)$/, '');
+  if (frames)
+    return html`<li>
+      <a class="card" href="/works/${w.slug}"
+        >${frame(cover, {cls: 'mat', sizes: CARD_SIZES, alt: cover?.altText ?? w.title})}<span class="meta"
+          ><span class="no"><b>${indexNo(n)}</b>${w.collection ? ` · ${w.collection}` : ''}</span
+          ><span class="ttl">${w.title}</span>${size ? html`<span class="sz">${size}</span>` : ''}${chip(w)}</span
+        ></a
+      >
+    </li>`;
   return html`<li>
     <a class="card" href="/works/${w.slug}">
       ${cover ? picture(cover, {sizes: CARD_SIZES, alt: cover.altText ?? w.title}) : raw('<div class="blank"></div>')}

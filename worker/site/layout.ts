@@ -5,7 +5,6 @@ import {html, raw, type Raw} from './html';
 import type {Page, PageCtx} from './page';
 import {contactLinks, COVER_SIZES, HERO_SIZES} from './pages/parts';
 import {sizeUrl} from './picture';
-import {CSS, PRELOAD_FONTS} from './plaster';
 
 const NAV = [
   ['works', '/works', 'Works'],
@@ -14,8 +13,18 @@ const NAV = [
   ['about', '/about', 'About'],
 ] as const;
 
+const SWITCH = raw(`<button class="theme-switch" type="button" hidden aria-label="Switch between light and dark">
+              <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+                <circle cx="10" cy="10" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                <path d="M10 1.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" />
+              </svg>
+            </button>`);
+
 export function layout(ctx: PageCtx, page: Page): string {
   const s = ctx.studio;
+  const t = ctx.template;
+  const o = t.options;
+  const fonts = t.preloadFonts;
   const home = ctx.url.pathname === '/';
   const title = home ? `${s.name}${s.tagline ? ` — ${s.tagline}` : ''}` : `${page.title} — ${s.name}`;
   const description = (page.description || s.description || s.tagline || `Original work by ${s.name}.`).slice(0, 160);
@@ -30,17 +39,17 @@ export function layout(ctx: PageCtx, page: Page): string {
   const scripts = [...new Set(['/site/site.js', '/site/inquiry.js', ...(page.scripts ?? [])])];
   const hours = hoursLine(s);
   const pre = page.preload?.sizes.length ? page.preload : null;
-  const preSizes = ctx.url.pathname.startsWith('/works/') ? COVER_SIZES : HERO_SIZES;
+  const preSizes = page.preloadSizes ?? (ctx.url.pathname.startsWith('/works/') ? COVER_SIZES : HERO_SIZES);
   const doc: Raw = html`<!doctype html>
     <html lang="en">
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="color-scheme" content="light dark" />
+        <meta name="color-scheme" content="${o.themeSwitch === false ? 'light' : 'light dark'}" />
         <title>${title}</title>
         <meta name="description" content="${description}" />
         <link rel="canonical" href="${canonical}" />
-        ${page.noindex ? raw('<meta name="robots" content="noindex">') : ''}
+        ${page.noindex || ctx.look ? raw('<meta name="robots" content="noindex">') : ''}
         <meta property="og:type" content="website" />
         <meta property="og:title" content="${title}" />
         <meta property="og:description" content="${description}" />
@@ -56,7 +65,7 @@ export function layout(ctx: PageCtx, page: Page): string {
         }
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        ${[...PRELOAD_FONTS, ...(page.fonts ?? []).filter(f => !PRELOAD_FONTS.includes(f))].map(f => html`<link rel="preload" as="font" type="font/woff2" href="${f}" crossorigin />`)}
+        ${[...fonts, ...(page.fonts ?? []).filter(f => !fonts.includes(f))].map(f => html`<link rel="preload" as="font" type="font/woff2" href="${f}" crossorigin />`)}
         ${
           pre
             ? html`<link
@@ -75,7 +84,7 @@ export function layout(ctx: PageCtx, page: Page): string {
         <script src="/site/theme.js"></script>
         ${(page.styles ?? []).map(href => html`<link rel="stylesheet" href="${href}" />`)}
         <style>
-          ${raw(CSS)}
+          ${raw(t.css)}
         </style>
         ${(page.jsonLd ?? []).map(o =>
           raw(`<script type="application/ld+json">${JSON.stringify(o).replace(/</g, '\\u003c')}</script>`),
@@ -89,16 +98,11 @@ export function layout(ctx: PageCtx, page: Page): string {
       >
         <a class="skip" href="#main">Skip to content</a>
         <header class="site-hdr">
-          <a class="site-name" href="/">${s.name}</a>
+          <a class="site-name" href="/">${s.name}${o.barSuffix ?? ''}</a>
           <nav aria-label="Main">${nav()}</nav>
           <div class="hdr-tools">
             <a class="ask-btn" href="/ask" data-ask>Ask</a>
-            <button class="theme-switch" type="button" hidden aria-label="Switch between light and dark">
-              <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-                <circle cx="10" cy="10" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5" />
-                <path d="M10 1.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" />
-              </svg>
-            </button>
+            ${o.themeSwitch === false ? '' : SWITCH}
           </div>
         </header>
         <main id="main">${page.body}</main>

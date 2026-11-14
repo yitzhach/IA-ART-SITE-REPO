@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Templates, cards T1–T3 (Art-Talk-Back D-180): a template registry (`worker/site/templates/`; Plaster moved in
+  unchanged, still the default, its pages byte for byte the same); a preview of any page in another look at
+  `?look=gallery` (noindex by meta and `x-robots-tag`, canonical on the plain address, the look carried on every
+  same-site link and GET form); the "Gallery" template, light only: Newsreader 400 headings, Bodoni only for the name,
+  no italics, fixed-shape picture frames, works whole on a mat, the bodies of work in a charcoal pane, "Seen in" chips,
+  the open-band close; its home page leads with a full-bleed photograph, the `<h1>` kept but visually hidden, " Art"
+  after the name in the bar only. New font files (open licence, latin subset, from Fontsource): Newsreader 400
+  upright, Plex Mono 500 and 600, Archivo 500.
+
 - Final pass, card H (Art-Talk-Back D-178): Workers Logs on for `studio-site` (every request, kept by Cloudflare for a
   few days), so a failure on the public site has a record to read.
 - Final pass, card G (D-177): visitor numbers. A person's view of a piece page counts once (bots, link previews,

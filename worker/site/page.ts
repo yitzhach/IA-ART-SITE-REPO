@@ -3,6 +3,7 @@
 import type {Raw} from './html';
 import type {SiteData} from './data';
 import type {MoreLink} from './optional';
+import type {Template} from './templates';
 import type {PublicImage, PublicSitePhoto, PublicSitePhotos, PublicStudio} from './types';
 
 export interface PageCtx {
@@ -15,6 +16,10 @@ export interface PageCtx {
   version?: string | null;
   /** The footer's links to pages that exist only once saved (questions, trade, privacy, terms). */
   more?: MoreLink[];
+  /** The look the page is written in (D-180): its CSS, fonts and the options the pages ask. */
+  template: Template;
+  /** Set when the page is a preview in a look other than the studio's own (`?look=`): never indexed. */
+  look?: string | null;
 }
 
 export interface Page {
@@ -38,6 +43,8 @@ export interface Page {
   nav?: 'works' | 'commissions' | 'process' | 'about';
   /** Pictures to preload with high priority (the largest above the fold). */
   preload?: PublicImage | null;
+  /** The preloaded picture's `sizes`, when the page draws it at another width than the default for its path. */
+  preloadSizes?: string;
   /** More font files to preload, paths under /fonts/, for a face this page alone shows above the fold
    * (the layout already preloads PRELOAD_FONTS). A face found only once the CSS is in arrives late. */
   fonts?: string[];
