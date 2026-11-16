@@ -30,6 +30,8 @@ export function layout(ctx: PageCtx, page: Page): string {
   const scripts = [...new Set(['/site/site.js', '/site/inquiry.js', ...(page.scripts ?? [])])];
   const hours = hoursLine(s);
   const pre = page.preload?.sizes.length ? page.preload : null;
+  // Home with a hero photo: the header sits on the picture.
+  const over = home && !!page.image;
   const preSizes = ctx.url.pathname.startsWith('/works/') ? COVER_SIZES : HERO_SIZES;
   const doc: Raw = html`<!doctype html>
     <html lang="en">
@@ -88,7 +90,7 @@ export function layout(ctx: PageCtx, page: Page): string {
         ${parts ? html`data-pa="${parts.a}" data-pb="${parts.b}"` : ''}
       >
         <a class="skip" href="#main">Skip to content</a>
-        <header class="site-hdr">
+        <header class="site-hdr${over ? ' over' : ''}">
           <a class="site-name" href="/">${s.name}</a>
           <nav aria-label="Main">${nav()}</nav>
           <div class="hdr-tools">
@@ -102,20 +104,22 @@ export function layout(ctx: PageCtx, page: Page): string {
           </div>
         </header>
         <main id="main">${page.body}</main>
-        <footer class="site-ftr">
-          <p class="ftr-name">${s.name}</p>
-          <p class="ftr-contact">${contactLinks(s)}</p>
-          ${hours ? html`<p class="hours">${hours}</p>` : ''}
-          <nav aria-label="Footer">
-            ${nav()}${(ctx.more ?? []).map(
-              m =>
-                html`<a href="${m.href}" ${ctx.url.pathname === m.href ? raw('aria-current="page"') : ''}
-                  >${m.label}</a
-                >`,
-            )}
-          </nav>
-          <p class="ftr-follow"><a href="/follow">Follow the studio</a>: new work comes to followers first.</p>
-          ${ctx.version ? html`<p class="ftr-ver">Version ${ctx.version}</p>` : ''}
+        <footer class="site-ftr band">
+          <div class="wrap">
+            <p class="ftr-name">${s.name}</p>
+            <p class="ftr-contact">${contactLinks(s)}</p>
+            ${hours ? html`<p class="hours">${hours}</p>` : ''}
+            <nav aria-label="Footer">
+              ${nav()}${(ctx.more ?? []).map(
+                m =>
+                  html`<a href="${m.href}" ${ctx.url.pathname === m.href ? raw('aria-current="page"') : ''}
+                    >${m.label}</a
+                  >`,
+              )}
+            </nav>
+            <p class="ftr-follow"><a href="/follow">Follow the studio</a>: new work comes to followers first.</p>
+            ${ctx.version ? html`<p class="ftr-ver">Version ${ctx.version}</p>` : ''}
+          </div>
         </footer>
         ${scripts.map(src => html`<script src="${src}" defer></script>`)}
       </body>

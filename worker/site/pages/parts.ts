@@ -7,9 +7,9 @@ import {place, type PageCtx} from '../page';
 import type {PublicArtwork, PublicImage, PublicSitePhoto, SitePage, SitePageKey, SiteSection} from '../types';
 
 /** The `sizes` of the above-the-fold picture; the layout's preload must say the same. */
-export const HERO_SIZES = '(min-width: 1240px) 1240px, 100vw';
+export const HERO_SIZES = '100vw';
 export const COVER_SIZES = '(min-width: 900px) 58vw, 100vw';
-export const CARD_SIZES = '(min-width: 1100px) 25vw, (min-width: 760px) 33vw, 50vw';
+export const CARD_SIZES = '(min-width: 760px) 30vw, 50vw';
 export const WIDE_SIZES = '(min-width: 1240px) 600px, (min-width: 760px) 50vw, 100vw';
 
 export const prose = (body: string | undefined | null): Raw =>
@@ -53,8 +53,10 @@ export function buttons(ctx: PageCtx, about: About = {}): Raw {
 export function conversation(ctx: PageCtx, sec?: SiteSection): Raw {
   return html`<section class="convo" aria-labelledby="convo-h">
     <h2 id="convo-h">${sec?.heading || 'Start a conversation'}</h2>
-    <div class="prose">${prose(sec?.body)}</div>
-    ${buttons(ctx)}
+    <div class="convo-txt">
+      <div class="prose">${prose(sec?.body)}</div>
+      ${buttons(ctx)}
+    </div>
   </section>`;
 }
 

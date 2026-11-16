@@ -38,7 +38,7 @@ describe('layout', () => {
     }
   });
   it('the template is lean and has both themes', () => {
-    expect(CSS.length).toBeLessThan(12 * 1024);
+    expect(CSS.length).toBeLessThan(16 * 1024);
     expect(CSS).toContain('prefers-color-scheme:dark');
     expect(CSS).toContain('[data-theme=dark]');
     expect(CSS).not.toContain('fonts.googleapis');

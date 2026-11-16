@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- "Gallery wall, lighter" (Art-Talk-Back D-180): the public site's new look, chosen by Isaac from three trials. Words,
+  section order and data are unchanged. Home opens on a full-width photo with the header on it and the studio name
+  across its foot; with two or more hero photos they cross-fade slowly (CSS only, still under reduced motion or with
+  scripts off). Below: the description as a large italic statement, collections at three sizes, available works on
+  an uneven column wall, "The work, closely" as rows with the picture to the screen edge, the three rooms in one row
+  sized by their shape, "Seen in" as one line, and a dark closing band that runs into a new dark footer. Works uses
+  the same wall, every piece at its true shape. A piece page keeps its cover uncropped beside a ruled list of facts
+  and moves previous / next into a dark "More works" band. The design system is written down in `docs/DESIGN.md`;
+  the stylesheet limit is now 16 KB (15.8 KB).
 - Final pass, card H (Art-Talk-Back D-178): Workers Logs on for `studio-site` (every request, kept by Cloudflare for a
   few days), so a failure on the public site has a record to read.
 - Final pass, card G (D-177): visitor numbers. A person's view of a piece page counts once (bots, link previews,
