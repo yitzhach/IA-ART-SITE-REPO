@@ -22,6 +22,23 @@ describe('home', () => {
     expect(text).toContain('Start a conversation');
     expect(text).toContain('Residential + commercial');
   });
+  it('gallery wall: header on the hero, cross-fading hero photos, works on the wall, dark closing', async () => {
+    const {text} = await get('/');
+    expect(text).toContain('<header class="site-hdr over">');
+    expect(text).toContain('class="hero-img xf xf-2"'); // two hero photos in the fixture
+    expect(text).toMatch(/imagesizes="100vw"/);
+    expect(text).toContain('<ul class="wall">');
+    expect(text).toContain('<ul class="salon">');
+    expect(text).toContain('style="--r:1.33"'); // a room as wide as its shape
+    expect(text).toContain('<footer class="site-ftr band">');
+    expect((await get('/works')).text).toContain('<header class="site-hdr">');
+  });
+  it('no hero photo: the header stays above the page', async () => {
+    fixture.places = {};
+    const {text} = await get('/');
+    expect(text).toContain('<header class="site-hdr">');
+    expect(text).not.toContain('class="hero-img');
+  });
   it('one works() call for covers and available works', async () => {
     await get('/');
     expect(fixture.calls.filter(c => c.includes('/artworks')).length).toBe(1);

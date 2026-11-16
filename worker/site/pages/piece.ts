@@ -112,80 +112,85 @@ export const render: Render = async (ctx, {slug}) => {
         : a.label;
 
   const body = html`<div class="wrap">
-    <article class="piece">
-      <div class="piece-media">
-        ${cover ? lb(cover, COVER_SIZES, true) : ''}
-        ${
-          more.length
-            ? html`<ul class="pics">
-                ${more.map(i => html`<li>${lb(i, '(min-width: 900px) 28vw, 50vw', false)}</li>`)}
-              </ul>`
-            : ''
-        }
-      </div>
-      <div class="piece-info">
-        <p class="eyebrow">${w.collection ?? 'Work'}</p>
-        <h1>${w.title}</h1>
-        ${
-          facts.length
-            ? html`<dl class="facts">
-                ${facts.map(
-                  ([k, v]) =>
-                    html`<dt>${k}</dt>
-                      <dd>${v}</dd>`,
-                )}
-              </dl>`
-            : ''
-        }
-        <p class="avail">${availability_}</p>
-        <div class="prose">${prose(w.description)}</div>
-        <p class="btns">
+      <article class="piece">
+        <div class="piece-media">
+          ${cover ? lb(cover, COVER_SIZES, true) : ''}
           ${
-            buyable(w)
-              ? html`<a class="btn" href="/buy/${w.slug}" hidden data-buy data-piece="${w.slug}">Add to cart</a>`
-              : ''
-          }${links}<a
-            class="btn alt"
-            href="/ask?piece=${w.slug}"
-            data-ask
-            data-piece="${w.slug}"
-            data-title="${w.title}"
-            data-status="${w.status}"
-            >Ask about this piece</a
-          >${
-            w.status === 'available'
-              ? html`<button
-                  class="btn alt"
-                  type="button"
-                  hidden
-                  data-js
-                  data-ask
-                  data-hold
-                  data-piece="${w.slug}"
-                  data-title="${w.title}"
-                  data-status="${w.status}"
-                >
-                  Hold for 48 hours
-                </button>`
+            more.length
+              ? html`<ul class="pics">
+                  ${more.map(i => html`<li>${lb(i, '(min-width: 900px) 20vw, 40vw', false)}</li>`)}
+                </ul>`
               : ''
           }
-          ${wallButton(w, cover)}
-          <button class="btn alt" type="button" hidden data-inquiry data-title="${w.title}" data-url="${url}">
-            Add to inquiry
-          </button>
-        </p>
-        <p class="spec-link"><a href="/works/${w.slug}/spec">Spec sheet</a> for designers: one page to print</p>
-      </div>
-    </article>
+        </div>
+        <div class="piece-info">
+          <p class="eyebrow">${w.collection ?? 'Work'}</p>
+          <h1>${w.title}</h1>
+          ${
+            facts.length
+              ? html`<dl class="facts">
+                  ${facts.map(
+                    ([k, v]) =>
+                      html`<dt>${k}</dt>
+                        <dd>${v}</dd>`,
+                  )}
+                </dl>`
+              : ''
+          }
+          <p class="avail">${availability_}</p>
+          <div class="prose">${prose(w.description)}</div>
+          <p class="btns">
+            ${
+              buyable(w)
+                ? html`<a class="btn" href="/buy/${w.slug}" hidden data-buy data-piece="${w.slug}">Add to cart</a>`
+                : ''
+            }${links}<a
+              class="btn alt"
+              href="/ask?piece=${w.slug}"
+              data-ask
+              data-piece="${w.slug}"
+              data-title="${w.title}"
+              data-status="${w.status}"
+              >Ask about this piece</a
+            >${
+              w.status === 'available'
+                ? html`<button
+                    class="btn alt"
+                    type="button"
+                    hidden
+                    data-js
+                    data-ask
+                    data-hold
+                    data-piece="${w.slug}"
+                    data-title="${w.title}"
+                    data-status="${w.status}"
+                  >
+                    Hold for 48 hours
+                  </button>`
+                : ''
+            }
+            ${wallButton(w, cover)}
+            <button class="btn alt" type="button" hidden data-inquiry data-title="${w.title}" data-url="${url}">
+              Add to inquiry
+            </button>
+          </p>
+          <p class="spec-link"><a href="/works/${w.slug}/spec">Spec sheet</a> for designers: one page to print</p>
+        </div>
+      </article>
+    </div>
     ${
       prev || next
-        ? html`<nav class="prevnext" aria-label="More works">
-            ${prev ? html`<a href="/works/${prev.slug}" rel="prev">← ${prev.title}</a>` : html`<span></span>`}
-            ${next ? html`<a href="/works/${next.slug}" rel="next">${next.title} →</a>` : ''}
+        ? html`<nav class="band endband" aria-label="More works">
+            <div class="wrap">
+              <p class="eyebrow">More works</p>
+              <div class="prevnext">
+                ${prev ? html`<a href="/works/${prev.slug}" rel="prev">← ${prev.title}</a>` : html`<span></span>`}
+                ${next ? html`<a href="/works/${next.slug}" rel="next">${next.title} →</a>` : ''}
+              </div>
+            </div>
           </nav>`
         : ''
-    }
-  </div>`;
+    }`;
 
   return {
     title: w.title,

@@ -48,7 +48,7 @@ export const render: Render = async (ctx, _params) => {
     </nav>
     ${
       list.items.length
-        ? html`<ul class="grid top">
+        ? html`<ul class="wall top">
             ${list.items.map((w, i) => workCard(w, offset + i + 1))}
           </ul>`
         : html`<p class="empty">No works match. <a href="/works">See all works</a>.</p>`
