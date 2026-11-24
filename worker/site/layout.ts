@@ -14,6 +14,7 @@ const NAV = [
   ['commissions', '/commissions', 'Commissions'],
   ['process', '/process', 'Process'],
   ['about', '/about', 'About'],
+  ['shows', '/shows', 'Shows'],
 ] as const;
 
 export function layout(ctx: PageCtx, page: Page): string {
@@ -25,8 +26,9 @@ export function layout(ctx: PageCtx, page: Page): string {
   const og = page.image ? sizeUrl(page.image, 960) : null;
   const ogSize = page.image?.sizes.find(z => z.url === og)?.width ?? null;
   const ogAlt = page.image?.altText?.trim() || page.title;
+  // Shows only once a show page is published (D-182).
   const nav = () =>
-    NAV.map(
+    NAV.filter(([key]) => key !== 'shows' || ctx.shows).map(
       ([key, href, label]) =>
         html`<a href="${href}" ${page.nav === key ? raw('aria-current="page"') : ''}>${label}</a>`,
     );

@@ -198,3 +198,31 @@ export interface PublicShow {
   startsOn: string | null;
   endsOn: string | null;
 }
+
+/** A published show as the Shows page lists it (studio-api PublicShowSummary, D-182). */
+export interface PublicShowSummary {
+  slug: string;
+  name: string;
+  venue: string | null;
+  city: string | null;
+  startsOn: string | null;
+  endsOn: string | null;
+  booth: string | null;
+  cover: PublicImage | null;
+  workCount: number;
+  photoCount: number;
+}
+
+export interface PublicShowList {
+  items: PublicShowSummary[];
+  catalogueVersion: number;
+}
+
+/** One show's page: its words, booth photos and the public works it brought (studio-api PublicShowDetail). */
+export interface PublicShowDetail extends PublicShowSummary {
+  description: string | null;
+  website: string | null;
+  photos: PublicSitePhoto[];
+  works: PublicArtwork[];
+  catalogueVersion: number;
+}

@@ -50,6 +50,7 @@ function header(user: Me) {
       leads,
       link('/studio/orders', 'Orders', 'orders'),
       link('/studio/collectors', 'Collectors', 'collectors'),
+      link('/studio/shows', 'Shows', 'shows'),
       link('/studio/site', 'Site', 'site'),
     ),
     h(

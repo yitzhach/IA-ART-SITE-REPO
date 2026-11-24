@@ -87,7 +87,7 @@ async function answer(request: Request, env: SiteEnv, ctx?: ExecutionContext): P
       else await sent;
     }
     const render = async () => {
-      const [photos, assistant] = await Promise.all([data.sitePhotos(), data.assistant()]);
+      const [photos, assistant, shows] = await Promise.all([data.sitePhotos(), data.assistant(), data.showPages()]);
       const pc: PageCtx = {
         url,
         canonicalOrigin: origin,
@@ -96,6 +96,7 @@ async function answer(request: Request, env: SiteEnv, ctx?: ExecutionContext): P
         photos,
         version: versionLine(env.CF_VERSION_METADATA, studio.timezone),
         more: morePages(studio, assistant),
+        shows: shows.items.length > 0,
       };
       let page: Page;
       try {

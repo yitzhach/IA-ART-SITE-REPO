@@ -11,6 +11,8 @@ it.each([
   ['/studio/site', 'site'],
   ['/studio/leads', 'leads'],
   ['/studio/leads/01ABC', 'leads'],
+  ['/studio/shows', 'shows'],
+  ['/studio/shows/01ABC', 'shows'],
   ['/studio/', 'works'],
 ])('matches %s', (path, name) => expect(match(path)?.route.name).toBe(name));
 it('extracts :id', () => expect(match('/studio/works/01ABC')?.params).toEqual({id: '01ABC'}));

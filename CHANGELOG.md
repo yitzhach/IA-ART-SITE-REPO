@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Shows (Art-Talk-Back D-182): `/shows` lists every show with a published page, coming up first, and
+  `/shows/{slug}` gives each one its own page with the dates, venue, city and booth, the booth photos, the works shown,
+  and `ExhibitionEvent` and breadcrumb markup. Titles and descriptions name the show and the city. The menu shows a
+  Shows link only once a page is published; the sitemap and llms.txt list the pages. Studio → **Shows** adds a show,
+  edits its details, puts its page on the site or takes it off, sets the address and words, adds booth photos (new
+  uploads or chosen from existing photos) and the works shown. The photo picker moved to
+  `src/components/pick-photos.ts` so Site and Shows share it. Tests: `tests/site/shows.test.ts`, `tests/shows.test.ts`.
+
 - Search and AI readiness (Art-Talk-Back D-181): every public page carries one `WebSite` and one `Person` (the
   artist, `@id` `{origin}/#artist`) that a piece's `creator`, About's new `ProfilePage`, Commissions' new `Service` and
   later a show's data all point at (`worker/site/schema.ts`); a `BreadcrumbList` on every listed page; Works as a

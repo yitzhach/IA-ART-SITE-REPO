@@ -3,7 +3,8 @@ import type {SiteData} from './data';
 import {availability, blocks, clip, sizeLine} from './format';
 import {morePages, savedAnswers, savedPage} from './optional';
 import {sizeUrl} from './picture';
-import type {PublicArtwork, SitePage} from './types';
+import {showDates, showPlace, showTitle} from './pages/shows';
+import type {PublicArtwork, PublicShowDetail, SitePage} from './types';
 
 const OLD: Record<string, string> = {
   '/index.html': '/',
@@ -74,7 +75,7 @@ const MAX_LLMS_WORKS = 200;
  * email only because every page's footer already shows it.
  */
 export async function llmsTxt(origin: string, data: SiteData): Promise<Response> {
-  const [studio, assistant] = await Promise.all([data.studio(), data.assistant()]);
+  const [studio, assistant, {items: shows}] = await Promise.all([data.studio(), data.assistant(), data.showPages()]);
   const about = studio.pages.about;
   const summary = md(studio.tagline || studio.description || about?.lede || "An artist's studio");
   const forSale: string[] = [];
@@ -104,6 +105,7 @@ export async function llmsTxt(origin: string, data: SiteData): Promise<Response>
     `- [Commissions](${origin}/commissions): a piece made to order`,
     `- [Process](${origin}/process): how the work is made`,
     `- [About](${origin}/about): the artist`,
+    ...(shows.length ? [`- [Shows](${origin}/shows): art fairs and shows, with booth photos and the works shown`] : []),
     ...more,
     '',
     '## For sale',
@@ -113,6 +115,25 @@ export async function llmsTxt(origin: string, data: SiteData): Promise<Response>
     `- [Ask](${origin}/ask): the studio's assistant answers questions about the work`,
     ...(studio.email ? [`- Email: ${md(studio.email)}`] : []),
     ...(studio.phone ? [`- [Text or call](${origin}/contact): from the contact page`] : []),
+    ...(shows.length
+      ? [
+          '',
+          '## Shows',
+          ...shows.slice(0, 50).map(s => {
+            const year = (s.startsOn ?? '').slice(0, 4);
+            const name = /^\d{4}$/.test(year) && !s.name.includes(year) ? `${s.name} ${year}` : s.name;
+            const bits = [
+              s.startsOn && s.endsOn && s.endsOn !== s.startsOn ? `${s.startsOn} to ${s.endsOn}` : s.startsOn,
+              s.venue,
+              s.city,
+              s.booth ? `booth ${s.booth}` : null,
+            ]
+              .filter(Boolean)
+              .map(b => md(String(b)));
+            return `- [${md(name)}](${origin}/shows/${encodeURIComponent(s.slug)})${bits.length ? `: ${bits.join(', ')}` : ''}`;
+          }),
+        ]
+      : []),
     ...(links.length ? ['', '## Elsewhere', ...links] : []),
     '',
     '## Optional',
@@ -127,11 +148,13 @@ const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
 const MAX_WORKS = 2000;
+const MAX_FULL_SHOWS = 20;
 
 export async function sitemap(origin: string, data: SiteData): Promise<Response> {
   const [studio, assistant] = await Promise.all([data.studio(), data.assistant()]);
   const more = morePages(studio, assistant).map(m => m.href);
-  const urls = ['/', '/works', '/commissions', '/process', '/about', ...more].map(
+  const shows = (await data.showPages()).items;
+  const urls = ['/', '/works', '/commissions', '/process', '/about', ...(shows.length ? ['/shows'] : []), ...more].map(
     p => `<url><loc>${esc(origin + p)}</loc></url>`,
   );
   // Each piece's pictures (Google's image sitemap): image search finds the work and its page together.
@@ -142,6 +165,15 @@ export async function sitemap(origin: string, data: SiteData): Promise<Response>
       .filter((u): u is string => !!u)
       .map(u => `<image:image><image:loc>${esc(new URL(u, origin).toString())}</image:loc></image:image>`)
       .join('');
+  // Each show page, with its cover, so a search for the show finds the artist (D-182).
+  for (const sh of shows) {
+    const cover = sh.cover ? sizeUrl(sh.cover, 1600) : null;
+    urls.push(
+      `<url><loc>${esc(`${origin}/shows/${encodeURIComponent(sh.slug)}`)}</loc>${
+        cover ? `<image:image><image:loc>${esc(new URL(cover, origin).toString())}</image:loc></image:image>` : ''
+      }</url>`,
+    );
+  }
   let n = 0;
   let cursor: string | undefined;
   do {
@@ -182,7 +214,11 @@ const MAX_FULL_WORKS = 500;
  * with its facts and description. Never the phone number; nothing that isn't already on a public page.
  */
 export async function llmsFullTxt(origin: string, data: SiteData): Promise<Response> {
-  const [studio, assistant] = await Promise.all([data.studio(), data.assistant()]);
+  const [studio, assistant, {items: showList}] = await Promise.all([data.studio(), data.assistant(), data.showPages()]);
+  // The newest shows in full (their words and the works shown); a show that fails to load is left out.
+  const shows = (
+    await Promise.all(showList.slice(0, MAX_FULL_SHOWS).map(s => data.showPage(s.slug).catch(() => null)))
+  ).filter((s): s is PublicShowDetail => !!s);
   const works: PublicArtwork[] = [];
   let cursor: string | undefined;
   do {
@@ -211,6 +247,23 @@ export async function llmsFullTxt(origin: string, data: SiteData): Promise<Respo
       ...(w.description ? [md(w.description), ''] : []),
     ];
   };
+  const showText = (s: PublicShowDetail): string[] => {
+    const facts: [string, string | null][] = [
+      ['Dates', showDates(s.startsOn, s.endsOn) || null],
+      ['Where', showPlace(s) || null],
+      ['Booth', s.booth],
+      ['Works shown', s.works.map(w => w.title).join(', ') || null],
+    ];
+    return [
+      `### ${md(showTitle(s))}`,
+      '',
+      `${origin}/shows/${encodeURIComponent(s.slug)}`,
+      '',
+      ...facts.filter(([, v]) => v).map(([k, v]) => `- ${k}: ${md(String(v))}`),
+      '',
+      ...(s.description ? [md(s.description), ''] : []),
+    ];
+  };
   const out = [
     `# ${md(studio.name)}`,
     '',
@@ -224,6 +277,7 @@ export async function llmsFullTxt(origin: string, data: SiteData): Promise<Respo
     ...pageText(studio.pages.process, 'Process'),
     ...pageText(savedPage(studio, 'trade'), 'For designers and architects'),
     ...(answers.length ? ['## Questions', '', ...answers.flatMap(q => [`### ${md(q.q)}`, '', md(q.a), ''])] : []),
+    ...(shows.length ? ['## Shows', '', ...shows.flatMap(showText)] : []),
     '## Works',
     '',
     ...works.flatMap(piece),

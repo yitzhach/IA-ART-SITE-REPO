@@ -6,6 +6,8 @@ import type {
   PublicCollectorPage,
   PublicFollowerPage,
   PublicShow,
+  PublicShowDetail,
+  PublicShowList,
   PublicAssistant,
   PublicCollections,
   PublicDigest,
@@ -54,6 +56,10 @@ export interface SiteData {
   followerPage(token: string): Promise<PublicFollowerPage>;
   /** A show, for its QR code's follow page; throws NotFound. */
   show(id: string): Promise<PublicShow>;
+  /** The published show pages, newest first (D-182); empty when studio-api can't say, so no page breaks. */
+  showPages(): Promise<PublicShowList>;
+  /** One published show page; throws NotFound. */
+  showPage(slug: string): Promise<PublicShowDetail>;
 }
 
 export function siteData(api: Fetcher, slug: string): SiteData {
@@ -95,5 +101,11 @@ export function siteData(api: Fetcher, slug: string): SiteData {
     collectorPage: token => get(`/collectors/${encodeURIComponent(token)}`),
     followerPage: token => get(`/followers/${encodeURIComponent(token)}`),
     show: id => get(`/shows/${encodeURIComponent(id)}`),
+    showPages: () =>
+      get<PublicShowList>('/show-pages').catch(e => {
+        console.error('show pages', e);
+        return {items: [], catalogueVersion: 0};
+      }),
+    showPage: s => get(`/show-pages/${encodeURIComponent(s)}`),
   };
 }

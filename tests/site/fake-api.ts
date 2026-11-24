@@ -8,6 +8,7 @@ import type {
   PublicFollowerPage,
   PublicImage,
   PublicShow,
+  PublicShowDetail,
   PublicSitePhoto,
   PublicStudio,
 } from '../../worker/site/types';
@@ -45,7 +46,7 @@ export const work = (n: number, over: Partial<PublicArtwork> = {}): PublicArtwor
   ...over,
 });
 
-const photo = (id: string, title: string, workSlug: string | null = null): PublicSitePhoto => ({
+export const photo = (id: string, title: string, workSlug: string | null = null): PublicSitePhoto => ({
   ...img(id, 1.33),
   title,
   workSlug,
@@ -108,6 +109,8 @@ export function freshFixture() {
     collectors: {} as Record<string, PublicCollectorPage>,
     followers: {} as Record<string, PublicFollowerPage>,
     shows: {} as Record<string, PublicShow>,
+    /** Published show pages (D-182), newest first, by slug. Empty: the nav has no Shows. */
+    showPages: [] as Omit<PublicShowDetail, 'catalogueVersion'>[],
     /** What the site counted (card G): each POST to /counts, with the headers it carried. */
     counts: [] as {body: unknown; headers: Record<string, string>}[],
   };
@@ -209,6 +212,16 @@ export const api: Fetcher = {
     if (coll) return fixture.collectors[coll[1]!] ? json(fixture.collectors[coll[1]!]) : notFound();
     const fol = /^\/followers\/([A-Za-z0-9_-]+)$/.exec(rest);
     if (fol) return fixture.followers[fol[1]!] ? json(fixture.followers[fol[1]!]) : notFound();
+    if (rest === '/show-pages')
+      return json({
+        items: fixture.showPages.map(({description: _d, website: _w, photos: _p, works: _x, ...summary}) => summary),
+        catalogueVersion: v,
+      });
+    const sp = /^\/show-pages\/([^/]+)$/.exec(rest);
+    if (sp) {
+      const s = fixture.showPages.find(x => x.slug === sp[1]);
+      return s ? json({...s, catalogueVersion: v}) : notFound();
+    }
     const sh = /^\/shows\/([0-9A-Z]+)$/.exec(rest);
     if (sh) return fixture.shows[sh[1]!] ? json(fixture.shows[sh[1]!]) : notFound();
     const one = /^\/artworks\/([^/]+)$/.exec(rest);

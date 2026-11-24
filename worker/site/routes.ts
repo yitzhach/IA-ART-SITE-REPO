@@ -19,6 +19,7 @@ import {render as thanks} from './pages/thanks';
 import {render as cart} from './pages/cart';
 import {certificate, render as collector} from './pages/collector';
 import {follower, render as follow, show as followShow} from './pages/follow';
+import {render as shows, show as showPage} from './pages/shows';
 
 /** `dynamic` pages answer from the request (a query, a token) and are never kept by the edge cache. */
 const ROUTES: [RegExp, Render, boolean?][] = [
@@ -29,6 +30,8 @@ const ROUTES: [RegExp, Render, boolean?][] = [
   [/^\/commissions$/, commissions],
   [/^\/process$/, process],
   [/^\/about$/, about],
+  [/^\/shows$/, shows],
+  [/^\/shows\/(?<slug>[a-z0-9]+(?:-[a-z0-9]+)*)$/, showPage],
   [/^\/questions$/, questions],
   [/^\/trade$/, trade],
   [/^\/privacy$/, privacy],

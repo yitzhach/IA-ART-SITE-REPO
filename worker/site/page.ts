@@ -18,6 +18,8 @@ export interface PageCtx {
   version?: string | null;
   /** The footer's links to pages that exist only once saved (questions, trade, privacy, terms). */
   more?: MoreLink[];
+  /** At least one show page is published: the nav shows Shows (D-182). */
+  shows?: boolean;
 }
 
 export interface Page {
@@ -37,8 +39,8 @@ export interface Page {
   scripts?: string[];
   /** Path for <link rel=canonical>; defaults to the URL's path (without query except `page`/filters the page sets). */
   canonical?: string;
-  /** Mark the nav item for this section: 'works' | 'commissions' | 'process' | 'about'. */
-  nav?: 'works' | 'commissions' | 'process' | 'about';
+  /** Mark the nav item for this section: 'works' | 'commissions' | 'process' | 'about' | 'shows'. */
+  nav?: 'works' | 'commissions' | 'process' | 'about' | 'shows';
   /** Pictures to preload with high priority (the largest above the fold). */
   preload?: PublicImage | null;
   /** More font files to preload, paths under /fonts/, for a face this page alone shows above the fold
