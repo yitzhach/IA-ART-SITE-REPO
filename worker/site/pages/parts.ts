@@ -1,6 +1,6 @@
 // Bits shared by the pages: plain text → HTML (never inserted raw), contact buttons, picture links, work cards.
 import {contactHref, mailHref, type About} from '../contact';
-import {availability, blocks, sizeLine} from '../format';
+import {availability, blocks, clip, sizeLine} from '../format';
 import {html, raw, type Raw} from '../html';
 import {picture} from '../picture';
 import {place, type PageCtx} from '../page';
@@ -96,8 +96,8 @@ export function workCard(w: PublicArtwork, n: number): Raw {
 
 export const isEmail = (s: string | undefined) => !!s && /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(s.trim());
 
-export const firstSentence = (s: string | undefined | null, max = 160) =>
-  (s ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
+/** The start of a text for a description: whole words, at most `max` characters (see clip). */
+export const firstSentence = (s: string | undefined | null, max = 160) => clip(s ?? '', max);
 
 const CLOSERS = ['inquire', 'contact', 'close'];
 

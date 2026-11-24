@@ -2,6 +2,7 @@
 import {html} from '../html';
 import type {Render} from '../page';
 import {conversation, isEmail, pageDescription, pageOf, sectionBlock, splitClose, titleBlock} from './parts';
+import {artistRef, breadcrumbs} from '../schema';
 
 export const render: Render = async ctx => {
   const p = pageOf(ctx, 'about');
@@ -15,21 +16,21 @@ export const render: Render = async ctx => {
       </section>`;
     return sectionBlock(ctx, s);
   });
-  const origin = ctx.url.origin;
-  const sameAs = (ctx.studio.links ?? []).map(l => l.url).filter(u => /^https:\/\//i.test(u));
+  const origin = ctx.canonicalOrigin;
   return {
     title: 'About',
-    // The artist as a Person (card E): search engines and AI answers tie the site to the artist's other pages.
+    // The artist (the Person every page carries, D-181) is this page's subject: search engines and AI answers read it
+    // as the artist's profile.
     jsonLd: [
       {
         '@context': 'https://schema.org',
-        '@type': 'Person',
-        name: ctx.studio.name,
-        url: `${origin}/`,
-        jobTitle: 'Artist',
+        '@type': 'ProfilePage',
+        url: `${origin}/about`,
+        name: `About ${ctx.studio.name}`,
         ...(pageDescription(p) ? {description: pageDescription(p)} : {}),
-        ...(sameAs.length ? {sameAs} : {}),
+        mainEntity: artistRef(origin),
       },
+      breadcrumbs(origin, [['About', '/about']]),
     ],
     description: pageDescription(p),
     nav: 'about',

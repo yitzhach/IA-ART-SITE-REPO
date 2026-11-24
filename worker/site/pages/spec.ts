@@ -13,7 +13,7 @@ export const spec: Render = async (ctx, {slug}) => {
   const a = availability(w);
   const size = sizeLine(w);
   const c = w.images[0];
-  const url = `${ctx.url.origin}/works/${w.slug}`;
+  const url = `${ctx.canonicalOrigin}/works/${w.slug}`;
   const s = ctx.studio;
   const row = (k: string, v: string | number | null | undefined) =>
     v === null || v === undefined || v === ''

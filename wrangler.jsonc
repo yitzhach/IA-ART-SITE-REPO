@@ -16,7 +16,10 @@
   },
   // The studio platform (yitzhach/Art-Talk-Back): its API as /v1/*, its assistant as /assistant/*, on this origin.
   // The studio the public site shows (D-117). Production's is set before its first deploy.
-  "vars": {"STUDIO_SLUG": ""},
+  // SITE_ORIGIN (D-181): the site's own address, e.g. "https://isaacandersonart.com", set when the domain moves. Empty:
+  // each host is its own canonical address. Set: canonical links, previews, the sitemap and llms.txt name it, and other
+  // hosts (workers.dev) answer noindex.
+  "vars": {"STUDIO_SLUG": "", "SITE_ORIGIN": ""},
   // This deploy's id: part of the public pages' cache key, so new templates show at once.
   "version_metadata": {"binding": "CF_VERSION_METADATA"},
   "services": [

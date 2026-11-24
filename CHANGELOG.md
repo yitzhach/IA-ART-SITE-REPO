@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- Search and AI readiness (Art-Talk-Back D-181): every public page carries one `WebSite` and one `Person` (the
+  artist, `@id` `{origin}/#artist`) that a piece's `creator`, About's new `ProfilePage`, Commissions' new `Service` and
+  later a show's data all point at (`worker/site/schema.ts`); a `BreadcrumbList` on every listed page; Works as a
+  `CollectionPage` with an `ItemList` of its pieces. A piece's `VisualArtwork` gains an `@id`, every picture as an
+  `ImageObject` with its alt text as caption and true size, `keywords` (its tags), `genre` (its collection) and unit
+  codes; the page says "Artist" in its facts and links its collection. Descriptions say what and who first ("Strata by
+  Isaac Anderson, cement, plaster, 36 × 24 in. …") and end on a whole word. Home's title is the name and what the artist
+  makes, from the studio's description. Previews give the picture's size and alt text and a Twitter title. The
+  sitemap lists each piece's pictures; `/llms.txt` gives each piece's first words and links the new `/llms-full.txt`
+  (every page's words, the saved answers, every piece with its facts). `robots.txt` also names DuckAssistBot,
+  MistralAI-User and Meta-ExternalFetcher. New setting `SITE_ORIGIN` for the domain move: when set, canonical links,
+  previews, data, the sitemap and llms files name it and every other host (workers.dev) answers `noindex`.
 - "Gallery wall, lighter" (Art-Talk-Back D-180): the public site's new look, chosen by Isaac from three trials. Words,
   section order and data are unchanged. Home opens on a full-width photo with the header on it and the studio name
   across its foot; with two or more hero photos they cross-fade slowly (CSS only, still under reduced motion or with

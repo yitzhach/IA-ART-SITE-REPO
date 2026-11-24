@@ -14,7 +14,7 @@ export const render: Render = async ctx => {
   if (slug) {
     const w = await ctx.data.work(slug).catch(e => (e instanceof NotFound ? null : Promise.reject(e)));
     if (w) {
-      const url = `${ctx.url.origin}/works/${w.slug}`;
+      const url = `${ctx.canonicalOrigin}/works/${w.slug}`;
       about = {subject: w.title, lines: [url], slug: w.slug, url};
     }
   }

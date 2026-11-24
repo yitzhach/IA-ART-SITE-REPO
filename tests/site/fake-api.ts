@@ -225,8 +225,8 @@ export const api: Fetcher = {
 
 export const env: SiteEnv = {API: api, STUDIO_SLUG: SLUG};
 
-/** Fetch a public page as a visitor would. */
-export async function get(path: string, init?: RequestInit) {
-  const res = await site(new Request('https://site.test' + path, init), env);
+/** Fetch a public page as a visitor would; `more` adds settings to the Worker's (e.g. SITE_ORIGIN). */
+export async function get(path: string, init?: RequestInit, more: Partial<SiteEnv> = {}) {
+  const res = await site(new Request('https://site.test' + path, init), {...env, ...more});
   return {res, status: res.status, text: await res.text()};
 }

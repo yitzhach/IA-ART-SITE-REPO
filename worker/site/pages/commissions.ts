@@ -2,6 +2,7 @@
 import {html, type Raw} from '../html';
 import type {Render} from '../page';
 import type {SiteSection} from '../types';
+import {artistRef} from '../schema';
 import {conversation, pageDescription, pageOf, prose, sectionBlock, splitClose, titleBlock} from './parts';
 
 const stepHead = (s: SiteSection, i: number): {n: string; title: string} => {
@@ -39,6 +40,19 @@ export const render: Render = async ctx => {
   return {
     title: 'Commissions',
     description: pageDescription(p),
+    // What the artist offers, in the page's own words: answer engines asked "who makes commissioned cement and plaster
+    // art" read it as a service the artist provides.
+    jsonLd: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name: `Commissions by ${ctx.studio.name}`,
+        serviceType: 'Commissioned artwork',
+        url: `${ctx.canonicalOrigin}/commissions`,
+        provider: artistRef(ctx.canonicalOrigin),
+        ...(pageDescription(p) ? {description: pageDescription(p)} : {}),
+      },
+    ],
     nav: 'commissions',
     body: html`<div class="wrap">
       ${titleBlock(p?.title ?? 'Commissions', p?.lede)}${out}${conversation(ctx, closer)}

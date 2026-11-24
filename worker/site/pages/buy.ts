@@ -45,7 +45,7 @@ export const render: Render = async (ctx, {slug}) => {
             </p>`
       }
       <div class="buy-contact" ${can ? 'hidden' : ''}>
-        ${buttons(ctx, {subject: w.title, lines: [`${ctx.url.origin}/works/${w.slug}`], slug: w.slug, url: `${ctx.url.origin}/works/${w.slug}`})}
+        ${buttons(ctx, {subject: w.title, lines: [`${ctx.canonicalOrigin}/works/${w.slug}`], slug: w.slug, url: `${ctx.canonicalOrigin}/works/${w.slug}`})}
       </div>
     </div>`,
   };

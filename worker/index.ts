@@ -11,6 +11,8 @@ export interface Env {
   ASSETS: Fetcher;
   /** The studio the public site shows (D-117). */
   STUDIO_SLUG?: string;
+  /** The site's own address once the domain moves (D-181); see worker/site/index.ts. */
+  SITE_ORIGIN?: string;
   CF_VERSION_METADATA?: {id: string; timestamp?: string};
 }
 

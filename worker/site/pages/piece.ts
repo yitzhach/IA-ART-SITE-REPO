@@ -2,12 +2,13 @@
 // pictures that open in a lightbox, and the neighbours. All text comes from the studio's record, escaped.
 import {colourNames, colourPhrase} from '../colours';
 import {NotFound} from '../data';
-import {availability, buyable, shippingLine, sizeLine} from '../format';
+import {availability, buyable, clip, shippingLine, sizeLine} from '../format';
 import {html, type Raw} from '../html';
 import type {Render} from '../page';
 import {picture, sizeUrl} from '../picture';
 import type {PublicArtwork} from '../types';
 import {COVER_SIZES, contactLinks, firstSentence, prose} from './parts';
+import {abs, artistRef, breadcrumbs, UNIT_CODE} from '../schema';
 
 const AVAIL: Record<string, string> = {
   available: 'https://schema.org/InStock',
@@ -15,11 +16,12 @@ const AVAIL: Record<string, string> = {
   sold: 'https://schema.org/SoldOut',
 };
 
-function jsonLd(w: PublicArtwork, origin: string, studioName: string, price: string | null): object {
-  const abs = (u: string | null) => (u ? new URL(u, origin).toString() : undefined);
+function jsonLd(w: PublicArtwork, origin: string, price: string | null): object {
+  const url = `${origin}/works/${w.slug}`;
   const dim = (v: number | null) =>
-    v && v > 0 ? {'@type': 'QuantitativeValue', value: v, unitText: w.sizeUnit} : undefined;
-  const cover = w.images[0];
+    v && v > 0
+      ? {'@type': 'QuantitativeValue', value: v, unitCode: UNIT_CODE[w.sizeUnit], unitText: w.sizeUnit}
+      : undefined;
   const offers =
     w.status === 'sold'
       ? {'@type': 'Offer', availability: AVAIL.sold}
@@ -29,15 +31,32 @@ function jsonLd(w: PublicArtwork, origin: string, studioName: string, price: str
             price: (w.priceCents / 100).toFixed(2),
             priceCurrency: w.currency,
             availability: AVAIL.available,
-            url: `${origin}/works/${w.slug}`,
+            url,
           }
         : undefined;
+  // Every picture of the piece, each with its words, so image search and answer engines can describe it.
+  const images = w.images.flatMap(i => {
+    const src = sizeUrl(i, 1600);
+    if (!src) return [];
+    const largest = [...i.sizes].sort((a, b) => b.width - a.width)[0];
+    return [
+      {
+        '@type': 'ImageObject',
+        contentUrl: abs(origin, src),
+        ...(i.altText ? {caption: i.altText} : {}),
+        ...(largest && i.aspectRatio ? {width: largest.width, height: Math.round(largest.width / i.aspectRatio)} : {}),
+        creator: artistRef(origin),
+      },
+    ];
+  });
   return {
     '@context': 'https://schema.org',
     '@type': 'VisualArtwork',
+    '@id': `${url}#artwork`,
     name: w.title,
-    url: `${origin}/works/${w.slug}`,
-    image: cover ? abs(sizeUrl(cover, 960)) : undefined,
+    url,
+    mainEntityOfPage: url,
+    image: images.length ? images : undefined,
     artform: w.collection === 'Sculptural' ? 'Sculpture' : undefined,
     artMedium: w.medium ?? undefined,
     width: dim(w.width),
@@ -45,10 +64,23 @@ function jsonLd(w: PublicArtwork, origin: string, studioName: string, price: str
     depth: dim(w.depth),
     dateCreated: w.year ? String(w.year) : undefined,
     color: colourNames(w.palette).join(', ') || undefined,
+    keywords: w.tags.length ? w.tags.join(', ') : undefined,
+    genre: w.collection ?? undefined,
+    artEdition: w.editionSize && w.editionSize > 1 ? String(w.editionSize) : undefined,
     description: w.description ? firstSentence(w.description, 500) : undefined,
-    creator: {'@type': 'Person', name: studioName},
+    creator: artistRef(origin),
     offers,
   };
+}
+
+/** The page's description: what the piece is and who made it first (that is what a search result or an AI answer
+ * quotes), then its own first words. */
+export function pieceDescription(w: PublicArtwork, artist: string): string {
+  // "Cement, plaster" reads as "cement, plaster" mid-sentence; "Venetian plaster" or "UV ink" keep their capitals.
+  const medium = w.medium && /^[A-Z][a-z]/.test(w.medium) ? w.medium[0]!.toLowerCase() + w.medium.slice(1) : w.medium;
+  const what = [medium, sizeLine(w)?.replace(/ \(.*\)$/, '')].filter(Boolean).join(', ');
+  const lead = `${w.title} by ${artist}${what ? `, ${what}` : ''}${w.status === 'sold' ? ' (sold)' : ''}.`;
+  return clip(w.description ? `${lead} ${w.description}` : lead, 160);
 }
 
 /** "See it on your wall" (stage 5, D-157): only with scripts, only for a piece with a width, a height and a picture. */
@@ -77,7 +109,7 @@ function wallButton(w: PublicArtwork, cover: PublicArtwork['images'][number] | u
 export const render: Render = async (ctx, {slug}) => {
   const [w, list] = await Promise.all([ctx.data.work(slug!), ctx.data.works()]);
   if (!w) throw new NotFound(slug);
-  const url = `${ctx.url.origin}/works/${w.slug}`;
+  const url = `${ctx.canonicalOrigin}/works/${w.slug}`;
   const about = {subject: w.title, lines: [url], slug: w.slug, url};
   const links = contactLinks(ctx.studio, about, ['btn', 'btn alt', 'btn alt']);
   const a = availability(w);
@@ -94,7 +126,9 @@ export const render: Render = async (ctx, {slug}) => {
       >${picture(img, {sizes, alt: img.altText ?? w.title, eager})}</a
     >`;
   };
-  const facts: [string, string | number][] = [];
+  const facts: [string, string | number | Raw][] = [];
+  // Said in words on the page, not only in the data: many answer engines read only what a visitor sees.
+  facts.push(['Artist', html`<a href="/about">${ctx.studio.name}</a>`]);
   if (size) facts.push(['Size', size]);
   if (w.medium) facts.push(['Medium', w.medium]);
   if (w.year) facts.push(['Year', w.year]);
@@ -102,7 +136,11 @@ export const render: Render = async (ctx, {slug}) => {
   if (colours) facts.push(['Colors', colours]);
   const ship = w.status === 'available' && a.price ? shippingLine(w) : null;
   if (ship) facts.push(['Shipping', ship]);
-  if (w.collection) facts.push(['Collection', w.collection]);
+  if (w.collection)
+    facts.push([
+      'Collection',
+      html`<a href="/works?collection=${encodeURIComponent(w.collection)}">${w.collection}</a>`,
+    ]);
 
   const availability_ =
     w.status === 'sold'
@@ -194,16 +232,23 @@ export const render: Render = async (ctx, {slug}) => {
 
   return {
     title: w.title,
-    description: w.description
-      ? firstSentence(w.description)
-      : [w.title, [w.medium, size].filter(Boolean).join(', ')].filter(Boolean).join(' — ').slice(0, 160),
+    description: pieceDescription(w, ctx.studio.name),
     image: cover ?? null,
     preload: cover ?? null,
     // The price (.avail strong) is set in Bodoni 500, which no other page shows above the fold.
     fonts: ['/fonts/bodoni-500.woff2'],
     body,
     nav: 'works',
-    jsonLd: [jsonLd(w, ctx.url.origin, ctx.studio.name, a.price)],
+    jsonLd: [
+      jsonLd(w, ctx.canonicalOrigin, a.price),
+      breadcrumbs(ctx.canonicalOrigin, [
+        ['Works', '/works'],
+        ...(w.collection
+          ? ([[w.collection, `/works?collection=${encodeURIComponent(w.collection)}`]] as [string, string][])
+          : []),
+        [w.title, `/works/${w.slug}`],
+      ]),
+    ],
     scripts: ['/site/lightbox.js', '/site/buy.js'],
   };
 };

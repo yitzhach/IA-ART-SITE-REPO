@@ -3,7 +3,7 @@
 import {cached} from './cache';
 import {count, fromAPerson} from './counts';
 import {NotFound, siteData} from './data';
-import {llmsTxt, oldAddress, robots, sitemap} from './extras';
+import {llmsFullTxt, llmsTxt, oldAddress, robots, sitemap} from './extras';
 import {versionLine, type DeployVersion} from './format';
 import {layout} from './layout';
 import type {Page, PageCtx} from './page';
@@ -15,6 +15,10 @@ export interface SiteEnv {
   API: Fetcher;
   /** The studio this site shows (D-117). */
   STUDIO_SLUG?: string;
+  /** The site's own address once the domain moves (e.g. https://isaacandersonart.com), D-181. Empty: the request's own
+   * origin. When set, every other host (workers.dev) answers with `x-robots-tag: noindex` and points its canonical
+   * links here, so search engines list one copy. */
+  SITE_ORIGIN?: string;
   /** This deploy: its id keeps a new deploy (new templates) from being answered with pages the last one cached,
    * and the footer shows it with its upload time. */
   CF_VERSION_METADATA?: DeployVersion;
@@ -26,13 +30,37 @@ const HTML = {
   'referrer-policy': 'strict-origin-when-cross-origin',
 };
 
+/** SITE_ORIGIN as `https://host` (no path, no slash), or null when unset or not an https origin. */
+export function siteOrigin(v: string | undefined): string | null {
+  if (!v?.trim()) return null;
+  try {
+    const u = new URL(v.trim());
+    return u.protocol === 'https:' && !u.username && !u.password ? u.origin : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContext): Promise<Response> {
+  const res = await answer(request, env, ctx);
+  const own = siteOrigin(env.SITE_ORIGIN);
+  // Another copy of the site (the workers.dev address after the domain move): readable, never listed.
+  if (own && new URL(request.url).origin !== own && !res.headers.has('x-robots-tag')) {
+    const out = new Response(res.body, res);
+    out.headers.set('x-robots-tag', 'noindex');
+    return out;
+  }
+  return res;
+}
+
+async function answer(request: Request, env: SiteEnv, ctx?: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
+  const origin = siteOrigin(env.SITE_ORIGIN) ?? url.origin;
   if (request.method !== 'GET' && request.method !== 'HEAD')
     return new Response('Method not allowed', {status: 405, headers: {allow: 'GET, HEAD'}});
   const moved = oldAddress(url.pathname);
   if (moved) return Response.redirect(new URL(moved, url.origin).toString(), 301);
-  if (url.pathname === '/robots.txt') return robots(url.origin);
+  if (url.pathname === '/robots.txt') return robots(origin);
   if (!env.STUDIO_SLUG) return new Response('This site is not set up yet.', {status: 503, headers: HTML});
 
   const data = siteData(env.API, env.STUDIO_SLUG);
@@ -40,11 +68,15 @@ export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContex
     const studio = await data.studio();
     if (url.pathname === '/sitemap.xml')
       return await cached(request, `${studio.catalogueVersion}.${env.CF_VERSION_METADATA?.id ?? 'dev'}`, ctx, () =>
-        sitemap(url.origin, data),
+        sitemap(origin, data),
       );
     if (url.pathname === '/llms.txt')
       return await cached(request, `${studio.catalogueVersion}.${env.CF_VERSION_METADATA?.id ?? 'dev'}`, ctx, () =>
-        llmsTxt(url.origin, data),
+        llmsTxt(origin, data),
+      );
+    if (url.pathname === '/llms-full.txt')
+      return await cached(request, `${studio.catalogueVersion}.${env.CF_VERSION_METADATA?.id ?? 'dev'}`, ctx, () =>
+        llmsFullTxt(origin, data),
       );
     const route = match(url.pathname);
     // A piece page viewed by a person counts once (card G, D-177); the page itself doesn't wait for it.
@@ -58,6 +90,7 @@ export async function site(request: Request, env: SiteEnv, ctx?: ExecutionContex
       const [photos, assistant] = await Promise.all([data.sitePhotos(), data.assistant()]);
       const pc: PageCtx = {
         url,
+        canonicalOrigin: origin,
         data,
         studio,
         photos,

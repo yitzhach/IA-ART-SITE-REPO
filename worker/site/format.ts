@@ -107,3 +107,14 @@ export function versionLine(v: DeployVersion | undefined, timeZone: string): str
   const get = (type: string) => p.find(x => x.type === type)?.value ?? '';
   return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')} ${get('timeZoneName')} · ${id}`;
 }
+
+/** A meta description: whole words, at most `max` characters, ending at a sentence when one fits. */
+export function clip(text: string, max: number): string {
+  const t = text.replace(/\s+/g, ' ').trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  const stop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
+  if (stop >= max * 0.5) return cut.slice(0, stop + 1);
+  const space = cut.lastIndexOf(' ');
+  return `${(space > 0 ? cut.slice(0, space) : cut.slice(0, max - 1)).replace(/[\s,;:—–-]+$/, '')}…`;
+}

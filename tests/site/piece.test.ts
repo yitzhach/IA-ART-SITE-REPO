@@ -3,8 +3,10 @@ import {fixture, get, reset} from './fake-api';
 
 beforeEach(reset);
 
-const ld = (text: string) =>
+const all = (text: string) =>
   [...text.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(m => JSON.parse(m[1]!));
+/** The page's own data: the site graph (WebSite + Person) comes first on every page. */
+const ld = (text: string) => all(text).filter(o => !o['@graph']);
 
 describe('a piece', () => {
   it('priced work: title, facts, price, contact links with title and URL, JSON-LD offer', async () => {
@@ -26,14 +28,46 @@ describe('a piece', () => {
     expect(text).toMatch(/<a href="[^"]*W1B[^"]*\/1600\.webp" data-lb/);
     const [art] = ld(text);
     expect(art['@type']).toBe('VisualArtwork');
-    expect(art.image).toMatch(/^https:\/\/site\.test\/.*\/960\.webp$/);
-    expect(art.creator).toEqual({'@type': 'Person', name: 'Test Studio'});
+    expect(art['@id']).toBe('https://site.test/works/work-1#artwork');
+    expect(art.image).toHaveLength(2);
+    expect(art.image[0]).toMatchObject({
+      '@type': 'ImageObject',
+      caption: 'Alt for w1a',
+      width: 1600,
+      height: 2133,
+      creator: {'@id': 'https://site.test/#artist'},
+    });
+    expect(art.image[0].contentUrl).toMatch(/^https:\/\/site\.test\/.*\/1600\.webp$/);
+    // The creator is the one Person every page carries, by @id.
+    expect(art.creator).toEqual({'@id': 'https://site.test/#artist'});
+    const person = all(text)
+      .find(o => o['@graph'])
+      ['@graph'].find((n: {'@type': string}) => n['@type'] === 'Person');
+    expect(person).toMatchObject({'@id': 'https://site.test/#artist', name: 'Test Studio', jobTitle: 'Artist'});
+    expect(art.keywords).toBe('texture');
+    expect(art.genre).toBe('Figurative');
     expect(art.offers).toMatchObject({
       price: '4800.00',
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
     });
-    expect(art.height).toMatchObject({value: 36, unitText: 'in'});
+    expect(art.height).toMatchObject({value: 36, unitCode: 'INH', unitText: 'in'});
+    const crumbs = ld(text).find(o => o['@type'] === 'BreadcrumbList');
+    expect(crumbs.itemListElement.map((i: {name: string}) => i.name)).toEqual([
+      'Home',
+      'Works',
+      'Figurative',
+      'Strata',
+    ]);
+    expect(crumbs.itemListElement[3].item).toBe('https://site.test/works/work-1');
+    // Who made it, in words a visitor (and an answer engine) can read; the collection links to its works.
+    expect(text).toMatch(/<dt>Artist<\/dt>\s*<dd><a href="\/about">Test Studio<\/a><\/dd>/);
+    expect(text).toContain('<a href="/works?collection=Figurative">Figurative</a>');
+    expect(text).toContain(
+      '<meta name="description" content="Strata by Test Studio, cement, plaster, 36 × 24 in. The description of work 1.',
+    );
+    expect(text).toContain('<meta property="og:image:width" content="960" />');
+    expect(text).toContain('<meta property="og:image:alt" content="Alt for w1a" />');
     expect(text).toContain('<meta property="og:image" content="https://site.test/');
     expect(text).toMatch(/rel="preload"\s+as="image"/);
   });
@@ -70,7 +104,7 @@ describe('a piece', () => {
   it('description falls back to title, medium and size', async () => {
     fixture.works[0]!.description = null;
     const {text} = await get('/works/work-1');
-    expect(text).toContain('<meta name="description" content="Strata — Cement, plaster, 36 × 24 in (91.4 × 61 cm)"');
+    expect(text).toContain('<meta name="description" content="Strata by Test Studio, cement, plaster, 36 × 24 in." />');
   });
 
   it('see it on your wall (stage 5): a hidden, scripts-only button with the size and the 1600 picture', async () => {

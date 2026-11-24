@@ -6,6 +6,8 @@ import type {Page, PageCtx} from './page';
 import {contactLinks, COVER_SIZES, HERO_SIZES} from './pages/parts';
 import {sizeUrl} from './picture';
 import {CSS, PRELOAD_FONTS} from './plaster';
+import {breadcrumbs, siteGraph} from './schema';
+import {clip} from './format';
 
 const NAV = [
   ['works', '/works', 'Works'],
@@ -17,10 +19,12 @@ const NAV = [
 export function layout(ctx: PageCtx, page: Page): string {
   const s = ctx.studio;
   const home = ctx.url.pathname === '/';
-  const title = home ? `${s.name}${s.tagline ? ` — ${s.tagline}` : ''}` : `${page.title} — ${s.name}`;
-  const description = (page.description || s.description || s.tagline || `Original work by ${s.name}.`).slice(0, 160);
-  const canonical = new URL(page.canonical ?? ctx.url.pathname, ctx.url.origin).toString();
+  const title = home ? homeTitle(s) : `${page.title} — ${s.name}`;
+  const description = clip(page.description || s.description || s.tagline || `Original work by ${s.name}.`, 160);
+  const canonical = new URL(page.canonical ?? ctx.url.pathname, ctx.canonicalOrigin).toString();
   const og = page.image ? sizeUrl(page.image, 960) : null;
+  const ogSize = page.image?.sizes.find(z => z.url === og)?.width ?? null;
+  const ogAlt = page.image?.altText?.trim() || page.title;
   const nav = () =>
     NAV.map(
       ([key, href, label]) =>
@@ -48,14 +52,29 @@ export function layout(ctx: PageCtx, page: Page): string {
         <meta property="og:description" content="${description}" />
         <meta property="og:url" content="${canonical}" />
         <meta property="og:site_name" content="${s.name}" />
+        <meta property="og:locale" content="en_US" />
         ${
           og
-            ? html`<meta property="og:image" content="${new URL(og, ctx.url.origin).toString()}" /><meta
-                  name="twitter:card"
-                  content="summary_large_image"
-                />`
-            : ''
+            ? html`<meta property="og:image" content="${new URL(og, ctx.canonicalOrigin).toString()}" />
+                ${
+                  ogSize
+                    ? html`<meta property="og:image:width" content="${ogSize}" />${
+                          page.image?.aspectRatio
+                            ? html`<meta
+                                property="og:image:height"
+                                content="${Math.round(ogSize / page.image.aspectRatio)}"
+                              />`
+                            : ''
+                        }`
+                    : ''
+                }
+                <meta property="og:image:alt" content="${ogAlt}" />
+                <meta name="twitter:card" content="summary_large_image" />`
+            : html`<meta name="twitter:card" content="summary" />`
         }
+        <meta name="twitter:title" content="${title}" />
+        <meta name="twitter:description" content="${description}" />
+        <link rel="alternate" type="text/plain" href="/llms.txt" title="About this site, for AI assistants" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         ${[...PRELOAD_FONTS, ...(page.fonts ?? []).filter(f => !PRELOAD_FONTS.includes(f))].map(f => html`<link rel="preload" as="font" type="font/woff2" href="${f}" crossorigin />`)}
@@ -79,7 +98,7 @@ export function layout(ctx: PageCtx, page: Page): string {
         <style>
           ${raw(CSS)}
         </style>
-        ${(page.jsonLd ?? []).map(o =>
+        ${[siteGraph(ctx), ...(page.jsonLd ?? []), ...trail(ctx, page)].map(o =>
           raw(`<script type="application/ld+json">${JSON.stringify(o).replace(/</g, '\\u003c')}</script>`),
         )}
       </head>
@@ -125,4 +144,20 @@ export function layout(ctx: PageCtx, page: Page): string {
       </body>
     </html>`;
   return doc.value;
+}
+
+/** Home › this page, for a listed page that doesn't give its own trail (a piece, a show and Works do). */
+function trail(ctx: PageCtx, page: Page): object[] {
+  const path = ctx.url.pathname;
+  if (path === '/' || page.noindex || (page.status ?? 200) !== 200) return [];
+  if ((page.jsonLd ?? []).some(o => (o as {'@type'?: unknown})['@type'] === 'BreadcrumbList')) return [];
+  return [breadcrumbs(ctx.canonicalOrigin, [[page.title, page.canonical ?? path]])];
+}
+
+/** Home's <title>: the name and what the artist makes, in the studio's own words (its description up to the first
+ * dash or full stop when that is short), else the tagline. Search results show about 60 characters. */
+export function homeTitle(s: {name: string; tagline: string | null; description: string | null}): string {
+  const what = s.description?.split(/\s[—–-]\s|\.\s|\.$/)[0]?.trim();
+  if (what && what.length >= 12 && s.name.length + 3 + what.length <= 70) return `${s.name} — ${what}`;
+  return `${s.name}${s.tagline ? ` — ${s.tagline}` : ''}`;
 }

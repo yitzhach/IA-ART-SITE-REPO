@@ -7,7 +7,8 @@ describe('home', () => {
   it('name, tagline, hero preloaded, collections, available works, objects, rooms, contact', async () => {
     const {text, status} = await get('/');
     expect(status).toBe(200);
-    expect(text).toContain('<title>Test Studio — Revelation in the midst of decay.</title>');
+    // What the artist makes, in the studio's own words (its description), is what search results show.
+    expect(text).toContain('<title>Test Studio — Site-specific sculptural work in cement and plaster</title>');
     expect(text).toMatch(/<h1>Test Studio<\/h1>/);
     expect(text).toMatch(/rel="preload"\s+as="image"/);
     expect(text).toMatch(/imagesrcset="[^"]*HERO1/);

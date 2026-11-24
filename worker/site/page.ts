@@ -8,6 +8,9 @@ import type {PublicImage, PublicSitePhoto, PublicSitePhotos, PublicStudio} from 
 export interface PageCtx {
   /** The visitor's URL (origin = this site's address, used for canonical links and the links in messages). */
   url: URL;
+  /** The address search engines should know the site by: SITE_ORIGIN once the site has its own domain, otherwise the
+   * request's origin. Canonical links, previews, structured data, the sitemap and llms.txt use it. */
+  canonicalOrigin: string;
   data: SiteData;
   studio: PublicStudio;
   photos: PublicSitePhotos;

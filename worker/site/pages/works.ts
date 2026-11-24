@@ -3,6 +3,7 @@
 import {html, type Raw} from '../html';
 import type {Render} from '../page';
 import {workCard} from './parts';
+import {abs, artistRef, breadcrumbs} from '../schema';
 
 const STATUSES = [
   ['available', 'Available'],
@@ -61,5 +62,29 @@ export const render: Render = async (ctx, _params) => {
     body,
     nav: 'works',
     canonical: href(collection, status, cursor, offset),
+    // The works on this page as a list, so a crawler reads the catalogue without following every card.
+    jsonLd: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        url: abs(ctx.canonicalOrigin, href(collection, status, cursor, offset)),
+        name: `Works by ${ctx.studio.name}${collection ? ` — ${collection}` : ''}`,
+        author: artistRef(ctx.canonicalOrigin),
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: list.items.length,
+          itemListElement: list.items.map((w, i) => ({
+            '@type': 'ListItem',
+            position: offset + i + 1,
+            url: `${ctx.canonicalOrigin}/works/${w.slug}`,
+            name: w.title,
+          })),
+        },
+      },
+      breadcrumbs(ctx.canonicalOrigin, [
+        ['Works', '/works'],
+        ...(collection ? ([[collection, href(collection)]] as [string, string][]) : []),
+      ]),
+    ],
   };
 };
